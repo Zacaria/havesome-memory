@@ -34,6 +34,12 @@ FORBIDDEN_TRACKED_SUFFIXES = {
     ".zip", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf", ".pyc",
     ".tar", ".gz", ".7z", ".dmg", ".exe",
 }
+EXPECTED_ACTION_PINS = {
+    "actions/checkout": "3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/configure-pages": "45bfe0192ca1faeb007ade9deae92b16b8254a0d",
+    "actions/upload-pages-artifact": "fc324d3547104276b827a68afc52ff2a11cc49c9",
+    "actions/deploy-pages": "368f82528645a54fb793d4d04e342629a3f51346",
+}
 REQUIRED_IDS = {
     "meet", "company", "chapter-two", "chapter-three", "chapter-four", "chapter-five",
     "systems", "hindsight", "mem0", "openviking", "supermemory", "graphrag",
@@ -245,6 +251,7 @@ def check_tracked_tree() -> None:
         "missing": sorted(TRACKED_ALLOWLIST - tracked),
     }
     credential_name = re.compile(r"(^|/)(\.env|credentials?|secrets?|tokens?)(\.|$)", re.I)
+    staged_blobs: dict[str, str] = {}
     for relative in sorted(tracked):
         path = ROOT / relative
         assert path.is_file() and not path.is_symlink(), f"Tracked path is not a regular file: {relative}"
@@ -256,12 +263,22 @@ def check_tracked_tree() -> None:
         assert b"\0" not in payload, f"Binary tracked blob: {relative}"
         assert len(payload) < 1_000_000, f"Unexpectedly large tracked blob: {relative}"
         decoded = payload.decode("utf-8")
+        staged_blobs[relative] = decoded
         lowered = decoded.lower()
         if relative != "scripts/check_site.py":
             forbidden_snapshot_path = "docs/research/" + "source-snapshots"
             assert forbidden_snapshot_path not in lowered, f"Snapshot path leaked in {relative}"
         for label, pattern in SECRET_PATTERNS.items():
             assert not pattern.search(decoded), f"Potential {label} in tracked file {relative}"
+
+    workflow = staged_blobs[".github/workflows/pages.yml"]
+    uses = re.findall(r"^\s*uses:\s*([^\s#]+)", workflow, re.M)
+    expected_uses = {f"{action}@{sha}" for action, sha in EXPECTED_ACTION_PINS.items()}
+    assert set(uses) == expected_uses and len(uses) == len(expected_uses), {
+        "invalid_action_references": sorted(set(uses) - expected_uses),
+        "missing_action_references": sorted(expected_uses - set(uses)),
+    }
+    assert all(re.fullmatch(r"[^@]+@[0-9a-f]{40}", value) for value in uses)
 
 
 def main() -> None:
