@@ -54,6 +54,25 @@ class ComparisonTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             raster_data(dict(original, width=9999))
 
+    def test_table_explains_columns_and_links_to_every_provider(self):
+        from html.parser import HTMLParser
+        import json
+        class Headers(HTMLParser):
+            def __init__(self):
+                super().__init__(); self.links=[]
+            def handle_starttag(self,tag,attrs):
+                if tag=='a': self.links.append(dict(attrs))
+        with tempfile.TemporaryDirectory() as tmp:
+            build(Path(tmp)); home=(Path(tmp)/'index.html').read_text()
+            for text in ('Saved information','What is kept for future tasks.','Recall method','How the agent finds it again.','Published tests','Reported results—not a shared ranking.','Runs on','Your device, your server, or a cloud service.'):
+                self.assertIn(text,home)
+            parser=Headers();parser.feed(home)
+            links=[x for x in parser.links if x.get('class')=='provider-site']
+            self.assertEqual(len(links),9)
+            self.assertTrue(all(x.get('target')=='_blank' and set(x.get('rel','').split()) >= {'noopener','noreferrer'} for x in links))
+            self.assertIn('data-icon-library="Lucide"',home)
+            self.assertIn('Lucide Icons and Contributors',home)
+
     def test_visual_identities_are_embedded_and_keep_text_labels(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp)

@@ -223,7 +223,11 @@
           "url": "https://hindsight.vectorize.io/guides/2026/04/21/comparison-agent-memory-benchmark-hindsight-vs-alternatives",
           "quote": "| 10M | **64.1%** | 40.6% | 26.6% | 24.9% |"
         }
-      ]
+      ],
+      "website": {
+        "url": "https://hindsight.vectorize.io/",
+        "label": "Provider website"
+      }
     },
     {
       "id": "honcho",
@@ -304,7 +308,11 @@
           "url": "https://honcho.dev/blog/blog/benchmarking-honcho",
           "quote": "We score 89.9% on the full LoCoMo benchmark."
         }
-      ]
+      ],
+      "website": {
+        "url": "https://honcho.dev/",
+        "label": "Provider website"
+      }
     },
     {
       "id": "mem0",
@@ -400,7 +408,11 @@
           "url": "https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md",
           "quote": "| **BEAM 10M** (200 questions) | **50.5%** (101/200) | 0.486 | **45.5%** (91/200) | 0.413 |"
         }
-      ]
+      ],
+      "website": {
+        "url": "https://mem0.ai/",
+        "label": "Provider website"
+      }
     },
     {
       "id": "openviking",
@@ -472,7 +484,11 @@
           "url": "https://blog.openviking.ai/post/openviking-benchmark-results/",
           "quote": "| Hermes native memory | 33.38% | 82.4s | 79,228,398 |"
         }
-      ]
+      ],
+      "website": {
+        "url": "https://openviking.ai/",
+        "label": "Provider website"
+      }
     },
     {
       "id": "supermemory",
@@ -574,7 +590,11 @@
           "url": "https://smfs.ai/research/memory-as-a-filesystem/",
           "quote": "| Pass rate (%) | 92.7 | 91.4 | -1.4pp |"
         }
-      ]
+      ],
+      "website": {
+        "url": "https://supermemory.ai/",
+        "label": "Provider website"
+      }
     },
     {
       "id": "byterover",
@@ -651,7 +671,11 @@
           "url": "https://www.byterover.dev/blog/html-vs-markdown-for-agent-memory-a-full-scale-benchmark-on-accuracy-latency-and-cost",
           "quote": "For latency: HTML's slowest queries (p95) are much slower than Markdown's (4,311 ms versus 259 ms)."
         }
-      ]
+      ],
+      "website": {
+        "url": "https://www.byterover.dev/",
+        "label": "Provider website"
+      }
     },
     {
       "id": "retaindb",
@@ -714,7 +738,11 @@
           "url": "https://retaindb.com/benchmark",
           "quote": "Overall\nPublished / in progress\n79%"
         }
-      ]
+      ],
+      "website": {
+        "url": "https://www.retaindb.com/",
+        "label": "Provider website"
+      }
     },
     {
       "id": "holographic",
@@ -767,7 +795,11 @@
           "publisher": "Nous Research / Hermes Agent contributors"
         }
       ],
-      "claims": []
+      "claims": [],
+      "website": {
+        "url": "https://github.com/NousResearch/hermes-agent/tree/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic",
+        "label": "Plugin docs"
+      }
     },
     {
       "id": "memori",
@@ -849,7 +881,11 @@
           "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/docs/memori-cloud/benchmark/results.mdx",
           "quote": "| **Memori** | **721** | **0.000577** | **2.8** |"
         }
-      ]
+      ],
+      "website": {
+        "url": "https://memorilabs.ai/",
+        "label": "Provider website"
+      }
     }
   ],
   "cohorts": [

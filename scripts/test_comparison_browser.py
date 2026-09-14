@@ -40,6 +40,18 @@ def main():
                 assert page.locator('[data-cohort-provider="holographic"] .bar').count()==0
                 assert page.locator('.historical .claim').count()==3
                 assert page.locator('#filter-status').inner_text()=='13 of 13 approaches'
+                expected_sites={item['website']['url'] for item in DATA['approaches'] if item['kind']=='provider'}
+                assert set(page.locator('a.provider-site').evaluate_all('(links)=>links.map(a=>a.href)'))==expected_sites
+                assert page.locator('a.provider-site').count()==9
+                assert page.locator('a.provider-site').evaluate_all('(links)=>links.every(a=>a.target==="_blank" && a.relList.contains("noopener") && a.relList.contains("noreferrer") && a.getAttribute("aria-label").includes("opens in a new tab"))')
+                label_style=page.locator('#comparison .eyebrow').evaluate('(el)=>({size:parseFloat(getComputedStyle(el).fontSize),weight:parseInt(getComputedStyle(el).fontWeight)})')
+                assert label_style['size']>=13 and label_style['weight']>=600,label_style
+                if width>850:
+                    assert page.locator('.column-help:visible').count()==5
+                    assert page.locator('.column-title').first.evaluate('(el)=>parseInt(getComputedStyle(el).fontWeight)')>=600
+                else:
+                    assert page.locator('tbody td').first.evaluate('(el)=>parseFloat(getComputedStyle(el,"::before").fontSize)')>=13
+                assert page.locator('svg[data-icon-library="Lucide"]').count()>0
                 assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
                 # The problem, definition and comparison action precede tool names.
                 hero = page.locator('#memory-introduction')
@@ -62,12 +74,17 @@ def main():
                     page.locator(f'[data-filter="{kind}"]').click()
                     assert page.locator('tbody tr:visible').count()==n
                     assert page.locator(f'[data-filter="{kind}"]').get_attribute('aria-pressed')=='true'
+                if width in (1440,390):
+                    page.locator('[data-filter="provider"]').click()
+                    page.evaluate('scrollTo(0,document.getElementById("comparison").getBoundingClientRect().top+scrollY-24)')
+                    page.screenshot(path=str(output/f'{width}-clear-table-and-provider-links.png'))
+                    page.locator('[data-filter="all"]').click()
                 page.locator('#search').fill('not-a-provider')
                 assert page.locator('tbody tr:visible').count()==0
                 assert 'try another name' in page.locator('#filter-status').inner_text()
                 page.locator('#search').fill('Hindsight')
                 assert page.locator('tbody tr:visible').count()==1
-                page.locator('tbody tr:visible a').click()
+                page.locator('tbody tr:visible a[href="#provider-hindsight"]').click()
                 expect(page.locator('#provider-hindsight')).to_have_attribute('open', '')
                 assert page.locator('#provider-hindsight summary').first.bounding_box()['y']>=0
                 page.locator('#provider-hindsight .back').click()
@@ -95,7 +112,7 @@ def main():
                     assert box and box['width']>=28 and box['height']>=28
                 assert page.locator('img.provider-glyph').evaluate_all('(imgs)=>imgs.length===3 && imgs.every(img=>img.complete && img.naturalWidth>0)')
                 page.locator('.asset-credits > summary').click()
-                assert page.locator('.asset-credits article').count()==4
+                assert page.locator('.asset-credits article').count()==5
                 assert page.locator('.asset-credits pre').first.is_visible()
                 assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
                 page.locator('.asset-credits > summary').click()

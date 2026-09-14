@@ -13,26 +13,27 @@ ROOT = Path(__file__).resolve().parents[1]
 SVG_NS = 'http://www.w3.org/2000/svg'
 ET.register_namespace('', SVG_NS)
 
-# Original, deliberately simple concept drawings—not provider trademarks.
-ICONS = {
-    'brain': '<path d="M16 7c-3-6-10-3-9 2-6 1-6 9-2 11-1 6 6 10 11 5V7Zm0 0c3-6 10-3 9 2 6 1 6 9 2 11 1 6-6 10-11 5"/><path d="M7 9c0 3 2 4 4 4M5 20c2-2 4-2 6-1M25 9c0 3-2 4-4 4M27 20c-2-2-4-2-6-1M16 12l-3 4m3 5 3-4"/>',
-    'chart': '<path d="M4 4v24h25M9 24v-8h4v8M17 24V6h4v18M25 24V12h4v12"/>',
-    'puzzle': '<path d="M4 6h9c-3 8 9 8 6 0h9v9c-8-3-8 9 0 6v7h-9c3-8-9-8-6 0H4v-7c8 3 8-9 0-6z"/>',
-    'notes': '<path d="M6 4h11l5 5v18H6z"/><path d="M17 4v6h5M10 15h8M10 20h5"/><path d="M3 8v22h15"/>',
-    'files': '<path d="M3 9h10l3 4h13v14H3z"/><path d="M7 9V5h17v8M11 18h10M11 22h6"/>',
-    'compact': '<path d="M5 5h22M5 10h22M9 22h14M9 27h14M13 14l3 4 3-4"/>',
-    'search': '<circle cx="15" cy="14" r="8"/><path d="m21 20 7 8M9 15l5-5 6 4"/><circle cx="9" cy="15" r="1"/><circle cx="14" cy="10" r="1"/>',
-    'prism': '<path d="m16 3 13 8-4 15H7L3 11zM3 11h26M16 3 7 26l18 0zM16 3l9 23M3 11l13 18 13-18"/>',
-    'chat': '<path d="M4 5h24v17H13l-7 6v-6H4zM10 11h12M10 16h8"/>',
-    'memory': '<rect x="8" y="6" width="18" height="22" rx="2"/><path d="M4 23V3h18M12 12h10M12 17h10M12 22h6"/>',
-    'retrieve': '<path d="M9 7H4v5M4 11a12 12 0 1 1 0 9"/><path d="m12 17 4 4 8-9"/>',
-}
+# Library icons are copyright Lucide/Feather contributors; full notices travel with the assets.
+from functools import lru_cache
+
+@lru_cache(maxsize=1)
+def load_ui_icons():
+    library = json.loads((ROOT/'src/ui-icons.json').read_text())
+    for asset in library['icons'].values():
+        if hashlib.sha256(asset['svg'].encode()).hexdigest() != asset['sha256']:
+            raise ValueError('UI icon source drift')
+        if any('id' in node.attrib for node in ET.fromstring(asset['svg']).iter()):
+            raise ValueError('This static UI subset must not contain IDs')
+    return library
+
 PATTERNS = {'builtin-memory-files':'notes', 'files-and-skills':'files', 'compaction':'compact', 'vector-rag':'search', 'holographic':'prism'}
 INITIALS = {'hindsight':'H', 'honcho':'H', 'mem0':'m0', 'openviking':'OV', 'supermemory':'S', 'byterover':'BR', 'retaindb':'R', 'memori':'M'}
 
 
 def icon(name, css='concept-icon'):
-    return f'<svg class="{css}" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">{ICONS[name]}</svg>'
+    asset = load_ui_icons()['icons'][name]
+    svg = safe_svg(asset['svg'], 'ui-'+name)
+    return svg.replace('class="provider-glyph"', f'class="{escape(css,quote=True)}" data-icon-library="Lucide" data-icon="{escape(asset["name"],quote=True)}"', 1)
 
 
 def safe_svg(source, prefix):
@@ -114,7 +115,7 @@ def badge(ident, placement, assets):
     elif ident in PATTERNS:
         art = icon(PATTERNS[ident])
         kind = 'concept-mark'
-        title = 'Concept illustration, not a provider logo'
+        title = 'Lucide concept icon, not a provider logo'
     else:
         art = '<span class="initial-mark">'+escape(INITIALS[ident])+'</span>'
         kind = 'name-mark'

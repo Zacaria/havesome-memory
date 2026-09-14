@@ -29,6 +29,7 @@ TRACKED_ALLOWLIST = {
     "src/comparison.css",
     "src/comparison.json",
     "src/provider-logos.json",
+    "src/ui-icons.json",
     "scripts/visual_assets.py",
     "scripts/check_site.py",
     "scripts/test_site_browser.py",
