@@ -18,6 +18,8 @@
 !/src/chapter-five.css
 !/src/chapter-five.js
 !/src/comparison.css
+!/src/comparison-interactions.css
+!/src/comparison-interactions.js
 !/src/comparison.json
 !/src/provider-logos.json
 !/src/ui-icons.json
@@ -41,3 +43,4 @@
 !/scripts/story_timeline.py
 !/scripts/test_comparison.py
 !/scripts/test_comparison_browser.py
+!/scripts/test_comparison_interactions.py

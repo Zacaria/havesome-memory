@@ -7,6 +7,35 @@ from build_site import build, ROOT
 import json
 
 class ComparisonTests(unittest.TestCase):
+    def test_descriptive_table_with_one_shared_radar(self):
+        import re
+        from html import escape
+        from build_comparison import render
+        home = render()
+        table = home.split('<table id="memory-comparison-table"', 1)[1].split('</table>', 1)[0]
+        for label in ('Saved information', 'Recall method', 'Published tests', 'Runs on'):
+            self.assertIn(label, table)
+        self.assertNotIn('class="assessment-cell"', table)
+        self.assertNotIn('radar-chart', table)
+        self.assertEqual(home.count('id="shared-radar"'), 1)
+        self.assertEqual(table.count('class="pin-checkbox"'), 13)
+        self.assertEqual(table.count('type="checkbox"'), 13)
+        self.assertEqual(table.count('for comparison" disabled'), 13)
+        self.assertEqual(home.count('class="axis-button"'), 6)
+        self.assertEqual(home.count('class="comparison-series"'), 13)
+        for item in json.loads((ROOT/'src/comparison.json').read_text())['approaches']:
+            for key in ('focus', 'retrieval', 'storage'):
+                self.assertIn(escape(item[key]), table)
+            self.assertIn(escape(item.get('evidence_label') or item['evidence_gap']), table)
+        self.assertGreater(home.index('id="score-rubric"'), home.index('</table>'))
+        self.assertNotRegex(home, r'<details class="citations"[^>]* open')
+        # Every detailed benchmark card, including historical cards, is in its source drawer.
+        for dossier in home.split('<details class="dossier"')[1:]:
+            before, drawer = dossier.split('<details class="citations"', 1)
+            self.assertNotIn('class="claim"', before)
+            self.assertNotIn('class="historical"', before)
+
+
     def test_browser_override_and_playwright_managed_fallback(self):
         # Isolate the pure option builder without importing optional Playwright.
         import ast

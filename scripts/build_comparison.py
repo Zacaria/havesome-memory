@@ -6,7 +6,14 @@ from pathlib import Path
 from visual_assets import badge, emblem, icon, load_assets, load_ui_icons, retained_art
 
 ROOT = Path(__file__).resolve().parents[1]
-COLUMNS = [('Approach', 'Name, type and explanation.', 'approach')]
+COLUMNS = [
+    ('Approach', 'A basic pattern or memory provider.', 'approach'),
+    ('Saved information', 'What is kept for future tasks.', 'memory'),
+    ('Recall method', 'How the agent finds it again.', 'search'),
+    ('Published tests', 'Reported evidence, not a shared ranking.', 'chart'),
+    ('Runs on', 'Device, server, or cloud service.', 'hosting'),
+
+]
 
 
 def e(value):
@@ -18,14 +25,16 @@ def link(source, label=None):
 def render():
     data = json.loads((ROOT / 'src/comparison.json').read_text())
     assessment_data = json.loads((ROOT / 'src/assessment.json').read_text())
-    from approach_assessment import validate_assessment, render_headers, render_cells, render_methodology, render_profile
+    from approach_assessment import validate_assessment, render_comparison_radar, render_methodology, render_profile
     validate_assessment(assessment_data, data)
     assessments = {entry['id']:entry for entry in assessment_data['approaches']}
     criteria = assessment_data['criteria']
     css = (ROOT / 'src/comparison.css').read_text() + '\n' + (ROOT / 'src/assessment.css').read_text()
+    css += '\n' + (ROOT / 'src/comparison-interactions.css').read_text()
+    interactions = (ROOT / 'src/comparison-interactions.js').read_text()
     assets = load_assets()
     ui_library = load_ui_icons()
-    column_headers = ''.join(f'<th scope="col"><span class="column-title">{icon(symbol)}{e(title)}</span><span class="column-help">{e(help_text)}</span></th>' for title,help_text,symbol in COLUMNS[:1]) + render_headers(criteria)
+    column_headers = '<th scope="col" class="pin-heading"><span class="column-title">Pin</span></th>' + ''.join(f'<th scope="col"><span class="column-title">{icon(symbol)}{e(title)}</span><span class="column-help">{e(help_text)}</span></th>' for title,help_text,symbol in COLUMNS)
     rows, dossiers = [], []
     for item in data['approaches']:
         ident = item['id']
@@ -33,9 +42,12 @@ def render():
         direct_link = f'<a class="provider-site" href="{e(website["url"])}" target="_blank" rel="noopener noreferrer" aria-label="{e(item["name"])} (official site, opens in a new tab)">{e(item.get("short_name",item["name"]))}{icon("external","external-icon")}</a>' if website else ''
         name_link = direct_link or f'<a href="#provider-{e(ident)}">{e(item.get("short_name",item["name"]))}</a>'
         summary_name = direct_link or f'<strong>{e(item["name"])}</strong>'
-        rows.append(f'''<tr data-kind="{e(item['kind'])}" data-search="{e((item['name']+' '+item['focus']+' '+item['storage']).lower())}">
+        rows.append(f'''<tr data-kind="{e(item['kind'])}" data-approach="{e(ident)}" data-search="{e((item['name']+' '+item['focus']+' '+item['retrieval']+' '+item['storage']).lower())}">
+<td class="pin-cell"><label class="pin-label"><input type="checkbox" class="pin-checkbox" id="pin-{e(ident)}" aria-label="Pin {e(item['name'])} for comparison" disabled><span aria-hidden="true">Pin</span></label></td>
 <th scope="row"><div class="identity-heading">{badge(ident,"row",assets)}<div>{name_link}<small>{e(item['category'])}</small><span class="assessment-scope-label">{e(assessments[ident]['scope_label'])}</span><a class="approach-details" href="#provider-{e(ident)}">Scores &amp; details <span aria-hidden="true">↓</span></a></div></div></th>
-{render_cells(assessments[ident],criteria)}</tr>''')
+<td data-label="Saved information">{e(item['focus'])}</td><td data-label="Recall method">{e(item['retrieval'])}</td>
+<td data-label="Published tests"><span class="evidence-label">{e(item.get('evidence_label') or item['evidence_gap'])}</span><small>{e(item['evidence_note'])}</small></td>
+<td data-label="Runs on">{e(item['storage'])}</td></tr>''')
         steps = ''.join(f'<li><span class="step-number">0{n}</span><strong>{e(step[0])}</strong><span>{e(step[1])}</span></li>' for n, step in enumerate(item['flow'], 1))
         claims, historical = '', ''
         for claim in item.get('claims', []):
@@ -56,8 +68,8 @@ def render():
 {render_profile(assessments[ident],criteria)}
 <ol class="flow" aria-label="Conceptual {e(item['name'])} memory flow">{steps}</ol>
 <p class="small">Conceptual flow, not a live trace or a measured outcome.</p>
-<div class="detail-grid"><div><h3>What changes</h3><p>{e(item['mechanism'])}</p><h3>What you still own</h3><p>{e(item['tradeoff'])}</p><h3>In Hermes</h3><p>{e(item['hermes'])}</p></div><div><h3>Published evidence, in context</h3>{claims}</div></div>
-<details class="citations"><summary>Primary sources &amp; evidence boundary</summary><ul>{sources}</ul><p class="small">{e(item['evidence_gap'])}</p></details>
+<div class="detail-grid"><div><h3>What changes</h3><p>{e(item['mechanism'])}</p></div><div><h3>What you still own</h3><p>{e(item['tradeoff'])}</p><h3>In Hermes</h3><p>{e(item['hermes'])}</p></div></div>
+<details class="citations"><summary>Primary sources &amp; evidence boundary</summary><h3>Published evidence, in context</h3>{claims}<h3>Primary sources</h3><ul>{sources}</ul><p class="small">{e(item['evidence_gap'])}</p></details>
 <a class="back" href="#comparison">↑ Back to comparison</a></div></details>''')
     credits = ''.join(f'<article id="credit-{e(ident)}"><h3>{e(asset["name"])}</h3><p>{link({"url":asset["source_url"],"title":"Original asset"})} · {link({"url":asset["license_url"],"title":asset["license"]})}</p><p>{e(asset["modifications"])}</p><pre>{e(asset["license_notice"])}</pre></article>' for ident,asset in assets.items())
     cohorts = []
@@ -73,9 +85,11 @@ def render():
 
 <div class="controls" hidden><div class="filters" role="group" aria-label="Filter approaches"><button type="button" data-filter="all" aria-pressed="true">All approaches</button><button type="button" data-filter="basic" aria-pressed="false">Basic patterns</button><button type="button" data-filter="provider" aria-pressed="false">Hermes providers</button></div><label>Find an approach <input type="search" id="search" placeholder="Name, mechanism, hosting…"></label></div>
 <p id="filter-status" class="small" role="status" aria-live="polite" hidden></p>
-<div class="assessment-intro"><p><strong>Six criteria. The same 0–3 scale.</strong> Scores summarize documented features, not measured performance. Check the edition shown in each row. “Unknown” means the evidence is insufficient—not zero. No overall score or winner.</p></div>
+<p class="small">Read across for fit. Radars describe editorial capability levels, not benchmark performance or an overall rank. <a href="#score-rubric">Scoring rubric ↓</a></p>
+<p id="pin-help" class="small" hidden>Check a row to keep it beneath the heading, even when filtered out. Selected rows scroll separately; uncheck to unpin. The rest stay in their original order.</p>
+<noscript><p class="small">Pinning and filters need JavaScript; pin checkboxes are disabled. Descriptions, static radars, Scores &amp; details and source disclosures remain available.</p></noscript>
+<div class="comparison-workspace"><table id="memory-comparison-table" class="descriptive-comparison" role="table" aria-describedby="pin-help"><caption class="table-caption">Provider names open the official site in a new tab. Select Scores &amp; details to explore an approach.</caption><thead role="rowgroup"><tr class="selection-toolbar" role="row" hidden><th colspan="6" role="cell"><div><strong class="mobile-comparison-title">Memory comparison</strong><span id="pin-status" role="status" aria-live="polite">0 selected</span><button type="button" id="clear-selection" disabled>Clear selection</button><a href="#comparison-end" class="leave-comparison">After table ↓</a></div></th></tr><tr class="comparison-columns" role="row">{column_headers}</tr></thead><tbody id="pinned-rows" role="rowgroup" aria-label="Selected approaches; scroll to compare" tabindex="-1" hidden></tbody><tbody id="comparison-rows" role="rowgroup">{''.join(rows)}</tbody></table>{render_comparison_radar(assessment_data, data)}</div><p id="comparison-end" class="scope" tabindex="-1">Four basic patterns · eight bundled Hermes plugins + the separately installed Memori integration. Built-in memory stays active by default alongside one selected external provider. {link(data['hermes_source'], 'Hermes integration scope')}</p>
 {render_methodology(assessment_data)}
-<table id="memory-comparison-table"><caption class="table-caption">Provider names open the official site in a new tab. Select Scores &amp; details to explore an approach.</caption><thead><tr>{column_headers}</tr></thead><tbody>{''.join(rows)}</tbody></table><p class="scope">Four basic patterns · eight bundled Hermes plugins + the separately installed Memori integration. Built-in memory stays active by default alongside one selected external provider. {link(data['hermes_source'], 'Hermes integration scope')}</p>
 <p class="table-note">Read across for fit, not down for rank. Criteria have explicit anchors and assessed scopes; a higher score on one axis can bring trade-offs elsewhere. The published benchmark results below are separate, differently configured experiments.</p></section>
 <p class="logo-note">Provider logos identify their products; muted letter tiles are name markers, not logos. Concept and navigation icons are from Lucide. No affiliation or endorsement.</p><section id="benchmarks"><div class="section-heading"><div><p class="eyebrow"><span class="section-emoji" aria-hidden="true">{icon("chart")}</span> 02 / READ THE TEST, NOT JUST THE NUMBER</p><h2>Same benchmark name ≠ same experiment.</h2></div></div><p class="section-intro">Nine provider perspectives, kept separate. Each panel names its own experiment, metric and limits. These are attributed reports, not our own benchmark runs—and panels are not ranked.</p><div class="cohort-grid">{''.join(cohorts)}</div><div class="rule"><strong>No blended leaderboard.</strong><span>Check dataset revision, history size, system version, answering model, judge, retrieval budget, latency and cost. Unknown conditions remain unknown. A recall score does not test permissions, deletion, reliability or your workflow.</span></div></section>
 <section id="approaches"><div class="section-heading"><div><p class="eyebrow"><span class="section-emoji" aria-hidden="true">{icon("puzzle")}</span> 03 / EACH APPROACH, ON ITS OWN TERMS</p><h2>What is each one trying to solve?</h2></div></div><p class="section-intro">Open an approach for its strengths, limits and six-axis profile. Scores repeat the table exactly; each has a rationale and source. Then follow the memory flow and inspect the separately published benchmark evidence.</p>{''.join(dossiers)}</section>
@@ -86,4 +100,4 @@ def render():
 <p class="small">Authored example, not a provider output. A later timeout change needs an explicit update and a check of which version applies. Specialized memory is optional, not an automatic upgrade.</p></section>
 <section class="story-invitation"><div><p class="eyebrow">WANT THE WHY?</p><h2>See what breaks<br>when knowledge changes.</h2><p>The Morrow Works story follows one company through scattered files, conflicting rules, access boundaries and forgetting. The complete story and its technology deep dive are still here.</p></div><a class="story-link" href="story.html">Read the story <span aria-hidden="true">↗</span></a></section>
 <details class="asset-credits"><summary>Logo &amp; icon sources</summary><p>Logos are used for editorial identification only. Source and license notices are preserved below. These copyright terms do not imply general trademark rights or endorsement.</p>{credits}<article id="credit-lucide"><h3>Lucide interface icons</h3><p>{link({"url":ui_library["website"],"title":"Lucide icon library"})} · {link({"url":ui_library["license_url"],"title":"Pinned ISC / MIT notices"})}</p><p>{e(ui_library["usage"])}</p><pre>{e(ui_library["license_notice"])}</pre></article></details></main><footer><span>HAVESOME MEMORY</span><p>Primary-source desk research. No providers connected or independently benchmarked. No analytics, accounts or runtime API calls. Product evidence reviewed {e(data['reviewed'])}.</p><a href="#comparison">Back to comparison ↑</a></footer>
-<script>(()=>{{'use strict';const oldStoryHashes=new Set(['meet','company','chapter-two','chapter-three','chapter-four','chapter-five','systems','hindsight','mem0','openviking','supermemory','graphrag','failure-cases','cost','selection','final-close']);if(oldStoryHashes.has(location.hash.slice(1)))location.replace('story.html'+location.hash);const rows=[...document.querySelectorAll('#memory-comparison-table tbody tr')];const controls=document.querySelector('.controls');const status=document.querySelector('#filter-status');const input=document.querySelector('#search');let kind='all';function filter(){{let count=0;for(const row of rows){{row.hidden=!((kind==='all'||row.dataset.kind===kind)&&row.dataset.search.includes(input.value.trim().toLowerCase()));if(!row.hidden)count++;}}status.textContent=count+' of '+rows.length+' approaches'+(count?'':' — try another name or clear the search.');}}controls.hidden=false;status.hidden=false;document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{{kind=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));filter();}}));input.addEventListener('input',filter);function openTarget(){{const id=location.hash.slice(1);if(oldStoryHashes.has(id)){{location.replace('story.html'+location.hash);return;}}const target=document.getElementById(id);if(target?.tagName==='DETAILS'){{target.open=true;requestAnimationFrame(()=>target.scrollIntoView({{block:'start'}}));}}}}addEventListener('hashchange',openTarget);openTarget();filter();}})();</script></body></html>'''
+<script>{interactions}</script></body></html>'''

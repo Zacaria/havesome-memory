@@ -1,0 +1,131 @@
+/* One real table; rows move between rowgroups, never cloned. */
+#memory-comparison-table.descriptive-comparison {
+  --columns: 60px minmax(0,1.35fr) minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.15fr) minmax(0,.8fr);
+  --header-height: 0px;
+  --scroll-gutter: 0px;
+  display: block; position: relative; border-collapse: separate;
+  overflow: visible; margin-bottom: 18px;
+}
+.descriptive-comparison caption { display: block; width: 100%; }
+.descriptive-comparison thead { display: block; position: sticky; top: 0; z-index: 4; background: #152b46; }
+.descriptive-comparison tbody { display: block; }
+.descriptive-comparison tr { display: grid; grid-template-columns: var(--columns); width: 100%; }
+#memory-comparison-table.descriptive-comparison th,
+#memory-comparison-table.descriptive-comparison td {
+  display: block; width: auto; min-width: 0; padding: 14px 10px; font-size: 14px; line-height: 1.55;
+}
+#memory-comparison-table.descriptive-comparison thead th:first-child { width: auto; }
+.descriptive-comparison .comparison-columns { padding-right: var(--scroll-gutter); }
+.descriptive-comparison .column-title { font-size: 14px; gap: 5px; }
+.descriptive-comparison .column-title svg { width: 17px; height: 17px; flex-basis: 17px; }
+.descriptive-comparison .column-help { font-size: 13px; margin-top: 7px; line-height: 1.4; }
+.descriptive-comparison .identity-heading { align-items: flex-start; gap: 8px; }
+.descriptive-comparison .identity-heading .identity-badge { width: 29px; height: 29px; }
+.descriptive-comparison small { font-size: 12px; }
+.descriptive-comparison #comparison-rows { padding-right: var(--scroll-gutter); }
+#pinned-rows {
+  position: sticky; top: var(--header-height); z-index: 3;
+  max-height: min(36dvh, max(80px, calc(65dvh - var(--header-height))));
+  overflow: auto; background: #142d48; border-bottom: 2px solid var(--accent);
+  /* Normal scroll chaining deliberately allows leaving the table at either end. */
+  overscroll-behavior: auto;
+}
+#pinned-rows tr { background: #142d48; }
+#pinned-rows:focus-visible { outline-offset: -3px; }
+#memory-comparison-table .selection-toolbar { display: block; }
+#memory-comparison-table.descriptive-comparison .selection-toolbar th { display: block; width: 100%; padding: 7px 10px; }
+.selection-toolbar th > div { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 18px; }
+.selection-toolbar #pin-status { font-size: 13px; color: var(--accent); }
+.selection-toolbar button { background: transparent; color: var(--ink); border: 1px solid var(--line); padding: 5px 10px; min-height: 36px; font-size: 13px; }
+.selection-toolbar button:disabled { opacity: .5; cursor: default; }
+.leave-comparison { font-size: 13px; margin-left: auto; color: var(--blue); }
+.mobile-comparison-title { display: none; }
+.pin-label { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 44px; cursor: pointer; font-size: 11px; color: var(--muted); }
+.pin-label input { display: block; width: 20px; height: 20px; padding: 0; margin: 0; accent-color: var(--accent); cursor: pointer; flex: none; }
+.pin-label:has(:disabled) { cursor: default; opacity: .5; }
+.pin-label input:disabled { cursor: default; }
+#comparison-end { scroll-margin-top: 24px; }
+#radar-tooltip { position: fixed; inset: auto; margin: 0; width: min(300px,calc(100vw - 20px)); padding: 14px; border: 1px solid var(--blue); border-radius: 6px; background: #edf1fa; color: #0a1930; font: 14px/1.5 'Helvetica Neue',Arial,sans-serif; box-shadow: 0 5px 25px #0006; z-index: 100; overflow-wrap: anywhere; }
+#radar-tooltip strong { display: block; margin-bottom: 6px; }
+#radar-tooltip::backdrop { background: transparent; pointer-events: none; }
+@media(max-width:1400px) {
+  #memory-comparison-table.descriptive-comparison { --columns: 60px minmax(0,1.35fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.15fr) minmax(0,.85fr); }
+  #memory-comparison-table.descriptive-comparison th,#memory-comparison-table.descriptive-comparison td { padding: 12px 7px; }
+}
+@media(max-width:1000px) {
+  .descriptive-comparison .comparison-columns { display: none; }
+  .mobile-comparison-title { display: block; font-size: 14px; }
+  #memory-comparison-table .selection-toolbar th { padding: 8px 10px; }
+  .selection-toolbar th > div { gap: 6px 12px; }
+  .selection-toolbar .leave-comparison { margin-left: 0; }
+  .descriptive-comparison tbody tr { grid-template-columns: 42px minmax(0,1fr) minmax(0,1fr); gap: 18px 14px; border: 1px solid var(--line); padding: 16px; margin: 0 0 14px; background: var(--panel); }
+  #memory-comparison-table.descriptive-comparison tbody th { grid-column: 2/-1; display: block; padding: 0 0 12px; border-bottom: 1px solid var(--line); }
+  #memory-comparison-table.descriptive-comparison tbody td { padding: 0; border: 0; grid-column: 2/-1; }
+  #memory-comparison-table.descriptive-comparison .pin-cell { grid-column: 1; grid-row: 1; }
+  .descriptive-comparison td::before { content: attr(data-label); display: block; font: 700 13px/1.4 'Helvetica Neue',Arial,sans-serif; color: var(--blue); margin-bottom: 8px; text-transform: none; }
+  .descriptive-comparison .pin-cell::before { display: none; }
+  .descriptive-comparison .identity-heading small { text-align: left; max-width: none; }
+  #pinned-rows { max-height: min(36dvh, max(80px, calc(65dvh - var(--header-height)))); }
+}
+@media(min-width:601px) and (max-width:1000px) {
+  #memory-comparison-table.descriptive-comparison tbody td:not(.pin-cell) { grid-column: auto; }
+  #memory-comparison-table.descriptive-comparison tbody td:nth-child(odd):not(.pin-cell) { grid-column: 2; }
+}
+.comparison-workspace { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 22px; align-items: start; }
+.citations .claim { min-width: 0; overflow-wrap: anywhere; }
+#shared-radar-panel { position: sticky; top: 12px; border: 1px solid var(--line); background: var(--panel); min-width: 0; }
+#shared-radar-disclosure > summary { padding: 12px; font-size: 14px; font-weight: 700; min-height: 44px; color: var(--blue); }
+#series-count { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; }
+.shared-radar-body { padding: 0 12px 12px; max-height: calc(92dvh - 80px); overflow: auto; }
+.shared-radar-note, #radar-empty, #series-highlight { font-size: 12px; line-height: 1.5; color: var(--muted); margin-bottom: 10px; }
+#radar-empty { color: var(--accent); }
+#shared-radar { display: block; width: 220px; max-width: 100%; margin: 0 auto 10px; }
+.comparison-series .radar-shape { fill: none; stroke: var(--series-color); stroke-width: 2; stroke-dasharray: var(--series-dash); }
+.comparison-series .radar-point { fill: var(--series-color); stroke-width: 1; }
+.comparison-series.is-muted { opacity: .16; }
+.comparison-series.is-highlighted .radar-shape { stroke-width: 4; }
+.comparison-series.is-highlighted .radar-point { r: 5px; }
+.series-letter { display: none; fill: var(--series-color); stroke: var(--bg); stroke-width: 3px; paint-order: stroke; font: bold 15px Arial,sans-serif; }
+.is-highlighted .series-letter { display: block; }
+.radar-axis-target { cursor: pointer; }
+.radar-axis-target circle { fill: var(--bg); stroke: var(--line); }
+.radar-axis-target text { fill: var(--blue); font: 14px Arial,sans-serif; pointer-events: none; }
+.radar-axis-target:focus-visible { outline: none; }
+.radar-axis-target:focus-visible circle { stroke: var(--accent); stroke-width: 3; }
+.axis-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 12px; }
+.axis-button { min-height: 34px; min-width: 0; padding: 4px; background: var(--bg); color: var(--blue); border: 1px solid var(--line); font-size: 12px; }
+.axis-button:focus-visible, .series-legend button:focus-visible { outline-offset: 1px; }
+.series-legend { list-style: none; margin: 0 0 10px; padding: 3px; max-height: 18dvh; overflow: auto; }
+.series-legend li { display: flex; gap: 5px; align-items: center; margin-bottom: 5px; }
+.series-legend button { display: flex; align-items: center; gap: 7px; min-height: 32px; padding: 4px; text-align: left; font-size: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.series-legend [data-highlight] { flex: 1; }
+.series-legend [aria-pressed=true] { border-color: var(--series-color); }
+.series-legend [data-remove] { width: 32px; justify-content: center; font-size: 20px; }
+.series-swatch { display: inline-flex; width: 22px; height: 22px; flex: none; align-items: center; justify-content: center; background: var(--series-color); color: var(--bg); font-weight: 700; border-radius: 3px; }
+#reset-series { background: none; color: var(--blue); border: 1px solid var(--line); font-size: 12px; padding: 5px 8px; min-height: 32px; margin-bottom: 12px; }
+#radar-tooltip { max-height: 60dvh; overflow: auto; }
+#radar-tooltip ul { margin: 10px 0 0; padding: 0; list-style: none; }
+#radar-tooltip li { display: flex; justify-content: space-between; gap: 12px; margin: 4px 0; }
+@media(max-width:1200px) {
+  .comparison-workspace { display: block; padding-bottom: 60px; }
+  #shared-radar-panel { display: none; }
+  #shared-radar-panel.in-table { display: block; position: fixed; z-index: 6; top: auto; bottom: 8px; left: 4%; width: 92%; max-height: 40dvh; box-shadow: 0 0 20px #0008; }
+  #shared-radar-disclosure > summary { padding: 9px 12px; }
+  #series-count { display: inline; margin-left: 10px; }
+  .shared-radar-body { max-height: 30dvh; padding: 5px 12px 12px; }
+  .radar-expanded #pinned-rows { max-height: 22dvh; }
+  .radar-expanded.comparison-workspace { padding-bottom: 42dvh; }
+  #shared-radar { width: 200px; }
+  .shared-chart-display { display: grid; grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr); gap: 8px; align-items: start; }
+  .series-legend { max-height: min(200px,24dvh); margin: 0; }
+  .series-legend [data-highlight] { overflow-wrap: anywhere; min-width: 0; }
+  .series-swatch { width: 17px; height: 20px; }
+  .series-legend [data-remove] { width: 26px; flex: none; }
+  .axis-buttons { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media(forced-colors:active) {
+  #radar-tooltip { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .comparison-series .radar-shape { stroke: CanvasText; }
+  .comparison-series .radar-point { fill: CanvasText; }
+  .radar-axis-target:focus-visible circle { stroke: Highlight; }
+}

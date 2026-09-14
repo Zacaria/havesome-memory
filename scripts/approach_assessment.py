@@ -252,6 +252,60 @@ def _radar(assessment, criteria):
     return ''.join(parts) + '</svg>'
 
 
+def render_comparison_radar(data, catalogue):
+    """One overlay chart; reuse the full renderer's exact grid and point geometry."""
+    import json
+    import xml.etree.ElementTree as ET
+    validate_assessment(data, catalogue)
+    criteria = _criteria(data['criteria'])
+    names = {a['id']: a.get('short_name', a['name']) for a in catalogue['approaches']}
+    colors = ('#8ebcff', '#ffaf83', '#a8df9a', '#d8b3ff', '#ff92bb', '#6ce0d5',
+              '#f6d56f', '#c5d2e8', '#f49379', '#92c969', '#c9a0dc', '#77cce8', '#e0c3a0')
+    parts = ['<aside id="shared-radar-panel" hidden aria-label="Selected capability profiles">'
+             '<details id="shared-radar-disclosure"><summary>Compare profiles <span id="series-count">0 selected</span></summary>'
+             '<div class="shared-radar-body"><p id="radar-empty">Select rows to overlay their capability profiles. No approach is selected by default.</p>'
+             '<div class="shared-chart-display">'
+             '<svg xmlns="http://www.w3.org/2000/svg" id="shared-radar" viewBox="20 20 220 220" role="group" aria-labelledby="shared-radar-title">'
+             '<title id="shared-radar-title">Selected editorial capability profiles. Center 0; rings 1, 2, 3.</title>']
+    legend = []
+    for n, assessment in enumerate(data['approaches']):
+        ident = assessment['id']
+        # Parse only our own validated renderer output, never third-party SVG.
+        root = ET.fromstring(_radar(assessment, criteria).replace(' xmlns="http://www.w3.org/2000/svg"', ''))
+        if n == 0:
+            parts.extend(ET.tostring(el, encoding='unicode') for el in root
+                         if el.get('class') in ('radar-grid', 'radar-axis', 'radar-scale'))
+        values = {axis: assessment['scores'][axis]['value'] for axis in AXES}
+        color = colors[n]
+        dash = ('none', '7 3', '2 3', '9 3 2 3')[n % 4]
+        parts.append(f'<g class="comparison-series" data-series="{ident}" data-name="{escape(names[ident])}" '
+                     f'data-values="{escape(json.dumps(values))}" style="--series-color:{color};--series-dash:{dash}" hidden="hidden">')
+        parts.extend(ET.tostring(el, encoding='unicode') for el in root
+                     if el.get('class') in ('radar-shape', 'radar-point'))
+        known = next((el for el in root if el.get('class') == 'radar-point'), None)
+        if known is not None:
+            parts.append(f'<text class="series-letter" x="{float(known.attrib["cx"])+7:.2f}" y="{float(known.attrib["cy"])-7:.2f}">{chr(65+n)}</text>')
+        parts.append('</g>')
+        partial = ' · partial' if any(v is None for v in values.values()) else ''
+        legend.append(f'<li data-legend="{ident}" style="--series-color:{color}" hidden>'
+                      f'<button type="button" data-highlight="{ident}" aria-pressed="false">'
+                      f'<span class="series-swatch" aria-hidden="true">{chr(65+n)}</span>{escape(names[ident])}{partial}</button>'
+                      f'<button type="button" data-remove="{ident}" aria-label="Unpin {escape(names[ident])}">×</button></li>')
+    for n, criterion in enumerate(criteria):
+        x, y = _point(n, 91)
+        parts.append(f'<g class="radar-axis-target" role="button" tabindex="0" data-axis="{criterion["id"]}" '
+                     f'data-description="{escape(criterion["question"])}" aria-label="{escape(criterion["label"])}">'
+                     f'<circle cx="{x}" cy="{y}" r="13"/><text x="{x}" y="{y}" text-anchor="middle" dominant-baseline="middle">{n+1}</text></g>')
+    parts.append('</svg><ul class="series-legend" aria-label="Selected series; highlight or unpin">'+''.join(legend)+'</ul></div>'
+                 '<p id="series-highlight" role="status">All selected profiles</p><button type="button" id="reset-series">Clear highlight</button>'
+                 '<div class="axis-buttons" role="group" aria-label="Six capability axes">')
+    for n, c in enumerate(criteria, 1):
+        parts.append(f'<button type="button" class="axis-button" data-axis="{c["id"]}" '
+                     f'data-description="{escape(c["question"])}" aria-label="{escape(c["label"])}">{n}. {escape(c["label"])}</button>')
+    parts.append('</div><p class="shared-radar-note">Editorial 0–3, not benchmarks. Unknown ≠ zero. Scroll the legend for all selected names; focus or tap one to highlight its profile. Explore axes 1–6. Letters identify series, not ranks. Arrow keys scroll the score popup. Incomplete profiles show known points only, never a connecting shape. Area is not an overall score.</p></div></details></aside>')
+    return ''.join(parts)
+
+
 def render_profile(assessment, criteria):
     """Render a quick trade-off profile with a compact keyed radar and sourced detail."""
     ident = _assessment(assessment)

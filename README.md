@@ -6,6 +6,8 @@ The complete native-scroll Morrow Works story and its five-technology deep dive 
 
 The story also has a fixed 36-step timeline, chapter jumps and an all-steps overview. The comparison uses a documented six-axis editorial rubric, separate from vendor benchmarks: every approach has an assessed scope, strengths, limits and a radar profile. Unknowns are not scored as zero; there is no overall ranking.
 
+The homepage table prioritizes descriptions: approach, saved information, retrieval, published evidence and storage. Its checkboxes pin the original rows beneath a table-scoped sticky heading and overlay the selected approaches in one shared radar. Selection is unlimited; pinned descriptions and the named series legend scroll independently. Filters retain selections with explicit counts. Stable colors, letter keys and focus/tap highlighting distinguish series; all six axes expose exact scores and rubric questions, including Unknown. On smaller screens the chart is a bounded expandable panel, visible only alongside the table. No-JavaScript reading retains descriptions, full dossier radars and native source disclosures; pin controls are disabled. Detailed claim cards and historical evidence are inside the default-closed source drawers.
+
 Published site: <https://zacaria.github.io/havesome-memory/>
 
 ## What the guide covers
@@ -32,7 +34,7 @@ python3 scripts/test_assessment.py
 
 The deterministic build writes exactly four files to `_site/`: `index.html` (comparison), `story.html` (preserved guide), `404.html`, and `.nojekyll`. The original four-chapter source remains hash-pinned. Major old story fragment links redirect to `story.html`.
 
-Comparison data and citations live in `src/comparison.json`; `scripts/build_comparison.py` renders the self-contained entry point. The `--worktree` audit includes the explicit new-file closure before staging; CI omits the flag and audits the Git index.
+Comparison data and citations live in `src/comparison.json`; `scripts/build_comparison.py` renders the self-contained entry point. `scripts/approach_assessment.py` derives the shared chart's geometry from the same renderer used for the full assessment profiles. `src/comparison-interactions.js` and `.css` provide selection, sticky layout and top-layer score popups without dependencies or runtime requests. The `--worktree` audit includes the explicit new-file closure before staging; CI omits the flag and audits the Git index.
 
 ## Browser verification
 
@@ -44,7 +46,7 @@ python3 -m venv .venv
 .venv/bin/python scripts/test_comparison_browser.py
 ```
 
-On Linux with a system Chromium, the script uses `/usr/bin/chromium`; set `BROWSER_EXECUTABLE` to another Chromium-family executable when needed. Local revision verification used a temporary extracted Brave browser through `BROWSER_EXECUTABLE`. The comparison suite exercises all 13 disclosures at five widths, filtering, search and empty state, keyboard operation, no-JavaScript reading, source drawers, direct provider anchors, an old story anchor, and the round trip to the preserved story. The story release suite exercises all 27 story beats forwards and backwards at five viewport sizes, the five technology sections, direct chapter navigation, source drawers, reduced motion, no-JavaScript fallback, overflow, page errors, and remote requests.
+The comparison and optional assessment browser tests use Playwright-managed Chromium when `BROWSER_EXECUTABLE` is absent or empty; set it explicitly to use another Chromium-family executable. The comparison suite exercises all 13 disclosures at five widths, filtering, search and empty state, keyboard operation, no-JavaScript reading, source drawers, direct provider anchors, an old story anchor, and the round trip to the preserved story. It also runs `scripts/test_comparison_interactions.py`: a nine-viewport selection matrix covering none/one/several/all 13, original-node identity and order, filter retention, bounded scrolling, resize and column geometry, table-end sticky behavior, shared series/legend synchronization, all 78 scores and unknown geometry, touch/keyboard popups and dismissal. Evidence is written under ignored `_verification/`. The unchanged story release suite exercises all 27 story beats forwards and backwards at five viewport sizes, the five technology sections, direct chapter navigation, source drawers, reduced motion, no-JavaScript fallback, overflow, page errors, and remote requests.
 
 ## Publishing
 

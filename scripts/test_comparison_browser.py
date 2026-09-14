@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 from test_site_browser import serve_site
+from test_comparison_interactions import verify_interactions
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = json.loads((ROOT/'src/comparison.json').read_text())
@@ -41,21 +42,22 @@ def main():
                 assert set(page.locator('[data-cohort-provider]').evaluate_all('(nodes)=>nodes.map(n=>n.dataset.cohortProvider)'))=={x['id'] for x in DATA['approaches'] if x['kind']=='provider'}
                 assert page.locator('[data-cohort-provider="holographic"] .bar').count()==0
                 assert page.locator('.historical .claim').count()==3
-                assert page.locator('#filter-status').inner_text()=='13 of 13 approaches'
+                assert page.locator('#filter-status').inner_text()=='13 of 13 approaches match'
                 expected_sites={item['website']['url'] for item in DATA['approaches'] if item['kind']=='provider'}
                 assert set(page.locator('a.provider-site').evaluate_all('(links)=>links.map(a=>a.href)'))==expected_sites
                 assert page.locator('a.provider-site').count()==18
                 assert page.locator('a.provider-site').evaluate_all('(links)=>links.every(a=>a.querySelector("svg") && getComputedStyle(a).borderTopWidth==="0px" && !/Provider website|Plugin docs/.test(a.innerText))')
                 assert page.locator('.assessment-profile').count()==13
                 assert page.locator('.radar-chart').count()==13
+                assert page.locator('#shared-radar').count()==1
                 assert page.locator('a.provider-site').evaluate_all('(links)=>links.every(a=>a.target==="_blank" && a.relList.contains("noopener") && a.relList.contains("noreferrer") && a.getAttribute("aria-label").includes("opens in a new tab"))')
                 label_style=page.locator('#comparison .eyebrow').evaluate('(el)=>({size:parseFloat(getComputedStyle(el).fontSize),weight:parseInt(getComputedStyle(el).fontWeight)})')
                 assert label_style['size']>=13 and label_style['weight']>=600,label_style
-                if width>850:
-                    assert page.locator('#memory-comparison-table thead th:visible').count()==7
+                if width>1000:
+                    assert page.locator('#memory-comparison-table .comparison-columns th:visible').count()==6
                     assert page.locator('.column-title').first.evaluate('(el)=>parseInt(getComputedStyle(el).fontWeight)')>=600
                 else:
-                    assert page.locator('tbody td').first.evaluate('(el)=>parseFloat(getComputedStyle(el,"::before").fontSize)')>=13
+                    assert page.locator('tbody td[data-label]').first.evaluate('(el)=>parseFloat(getComputedStyle(el,"::before").fontSize)')>=13
                 caption=page.locator('#memory-comparison-table caption').bounding_box()
                 matrix=page.locator('#memory-comparison-table').bounding_box()
                 assert caption and matrix and caption['width']>=matrix['width']-2
@@ -116,9 +118,9 @@ def main():
                     assert profile.locator('.radar-chart').is_visible()
                     assert profile.locator('.assessment-tradeoffs').is_visible()
                     expected={axis:'unknown' if rating['value'] is None else str(rating['value']) for axis,rating in RATINGS[ident]['scores'].items()}
-                    cells=page.locator(f'#memory-comparison-table tr:has(.approach-details[href="#provider-{ident}"]) .assessment-cell')
+                    series=page.locator(f'#shared-radar [data-series="{ident}"]')
                     read_scores='els=>Object.fromEntries(els.map(e=>[e.dataset.axis,e.dataset.score]))'
-                    assert cells.evaluate_all(read_scores)==expected
+                    assert series.evaluate('el=>Object.fromEntries(Object.entries(JSON.parse(el.dataset.values)).map(([k,v])=>[k,v===null?"unknown":String(v)]))')==expected
                     assert profile.locator('.radar-legend li').evaluate_all(read_scores)==expected
                     assert profile.locator('.radar-point').evaluate_all(read_scores)=={k:v for k,v in expected.items() if v!='unknown'}
                     assert profile.locator('.radar-shape').count()==int('unknown' not in expected.values())
@@ -130,9 +132,11 @@ def main():
                     assert profile.locator('.assessment-criteria > li').evaluate_all(read_scores)==expected
                     assert profile.locator('.assessment-sources a').first.is_visible()
                     profile.locator('.assessment-rationale > summary').click()
-                    dossier.locator('.citations summary').click()
+                    assert dossier.locator('.citations').get_attribute('open') is None
+                    assert not dossier.locator('.claim:visible').count()
+                    dossier.locator('.citations > summary').click()
                     assert dossier.locator('.citations a').first.is_visible()
-                    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1'),(width,ident)
+                    assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1'),(width,ident,page.evaluate('[...document.querySelectorAll("body *")].filter(e=>e.scrollWidth>e.clientWidth+2).slice(0,25).map(e=>[e.tagName,e.className,e.scrollWidth,e.clientWidth,e.getBoundingClientRect().toJSON()])'))
                     if width in (1440,390) and ident=='hindsight':page.screenshot(path=str(output/f'{width}-comparison-detail.png'))
                     dossier.locator('.back').click()
                     checked+=1
@@ -186,10 +190,12 @@ def main():
             assert p.locator('#provider-memori .thesis').is_visible()
             assert not p.evaluate('document.documentElement.scrollWidth>innerWidth+1')
             ctx.close()
+            interaction_report = verify_interactions(browser, base, output)
         finally:browser.close()
     assert not errors,errors
     assert not remote,remote
     report={'status':'pass','browser':os.environ.get('BROWSER_EXECUTABLE'),'viewports':VIEWPORTS,'approaches':len(IDS),'criteria':len(ASSESSMENTS['criteria']),'scorecards':len(RATINGS),'score_entries':sum(len(x['scores']) for x in RATINGS.values()),'unknown_entries':sum(v['value'] is None for x in RATINGS.values() for v in x['scores'].values()),'matrix_and_radar_agree':True,'disclosure_states':checked,'provider_evidence_panels':9,'historical_evidence_separated':True,'filters':True,'search':True,'keyboard':True,'old_story_hash':True,'story_round_trip':True,'no_js':True,'errors':errors,'remote_requests':remote,'sha256':hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()}
+    report['comparison_interactions'] = interaction_report
     (output/'comparison-browser-verification.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 
