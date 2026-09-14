@@ -75,6 +75,7 @@ def main() -> None:
     story_states = 0
     system_states = 0
     source_dialog_states = 0
+    timeline_jump_states = 0
     direct_intro_anchor_states = 0
 
     with serve_site(args.site.resolve()) as base_url, sync_playwright() as playwright:
@@ -139,6 +140,7 @@ def main() -> None:
                         "index => document.body.dataset.beat === String(index)", arg=index
                     )
                     assert page.locator("#illustration").get_attribute("data-scene") == beats[index]["scene"]
+                    page.wait_for_function('i=>document.querySelector("#story-timeline").dataset.activeStep===String(i)',arg=index)
                     assert not page.evaluate("document.documentElement.scrollWidth > innerWidth + 1")
                     beat_label = page.locator(f'#beat-{index} .beat-number').evaluate('(el)=>({size:parseFloat(getComputedStyle(el).fontSize),weight:parseInt(getComputedStyle(el).fontWeight)})')
                     assert beat_label['size'] >= 13 and beat_label['weight'] >= 600
@@ -233,6 +235,9 @@ def main() -> None:
                     page.screenshot(
                         path=str(args.screenshots / f"{width}-hindsight.png"), full_page=False
                     )
+                from test_story_timeline import check_timeline
+                timeline_jump_states += check_timeline(page,width,height,args.screenshots)
+                assert first_note.input_value() == "Versioned policy sources and their amendments"
                 context.close()
 
             anchor_context = browser.new_context(viewport={"width": 390, "height": 844})
@@ -265,6 +270,11 @@ def main() -> None:
             page.locator("#hindsight .source-drawer summary").click()
             assert page.locator("#hindsight .source-drawer a").first.is_visible()
             assert page.locator("#final-title").inner_text().startswith("Keep the evidence")
+            page.locator("#timeline-overview").click()
+            assert page.locator("#story-map").is_visible()
+            assert page.locator(".timeline-step-link").count() == 36
+            page.locator(".timeline-step-link").nth(14).click()
+            assert page.evaluate("location.hash") == "#heading-14"
             no_js.close()
         finally:
             browser.close()
@@ -280,6 +290,7 @@ def main() -> None:
         "verified_system_cards": system_states,
         "verified_source_dialog_states": source_dialog_states,
         "direct_intro_anchor_states": direct_intro_anchor_states,
+        "timeline_jump_states": timeline_jump_states,
         "shared_story_design": True,
         "visible_system_links": 5,
         "direct_chapter_five_anchor": True,

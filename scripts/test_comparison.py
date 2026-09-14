@@ -3,7 +3,8 @@
 import tempfile
 import unittest
 from pathlib import Path
-from build_site import build
+from build_site import build, ROOT
+import json
 
 class ComparisonTests(unittest.TestCase):
     def test_browser_override_and_playwright_managed_fallback(self):
@@ -64,11 +65,14 @@ class ComparisonTests(unittest.TestCase):
                 if tag=='a': self.links.append(dict(attrs))
         with tempfile.TemporaryDirectory() as tmp:
             build(Path(tmp)); home=(Path(tmp)/'index.html').read_text()
-            for text in ('Saved information','What is kept for future tasks.','Recall method','How the agent finds it again.','Published tests','Reported results—not a shared ranking.','Runs on','Your device, your server, or a cloud service.'):
-                self.assertIn(text,home)
+            from html import escape
+            assessment=json.loads((ROOT/'src/assessment.json').read_text())
+            for criterion in assessment['criteria']:
+                self.assertIn(criterion['label'],home)
+                self.assertIn(escape(criterion['question'],quote=True),home)
             parser=Headers();parser.feed(home)
             links=[x for x in parser.links if x.get('class')=='provider-site']
-            self.assertEqual(len(links),9)
+            self.assertEqual(len(links),18)
             self.assertTrue(all(x.get('target')=='_blank' and set(x.get('rel','').split()) >= {'noopener','noreferrer'} for x in links))
             self.assertIn('data-icon-library="Lucide"',home)
             self.assertIn('Lucide Icons and Contributors',home)
@@ -92,6 +96,21 @@ class ComparisonTests(unittest.TestCase):
                 before=re.search(pattern,raw.decode(),re.S).group(1)
                 after=re.search(pattern,story,re.S).group(1)
                 self.assertEqual(json.loads(before),json.loads(after))
+
+    def test_story_timeline_covers_every_step(self):
+        import re
+        with tempfile.TemporaryDirectory() as tmp:
+            build(Path(tmp))
+            story=(Path(tmp)/'story.html').read_text()
+            self.assertIn('id="story-timeline"',story)
+            targets=re.findall(r'class="timeline-step-link" href="#([^"]+)"',story)
+            self.assertEqual(len(targets),36)
+            self.assertEqual(len(set(targets)),36)
+            self.assertEqual(story.count('class="timeline-group"'),5)
+            for target in targets:
+                self.assertIn(f'id="{target}"',story)
+            self.assertIn('id="timeline-overview"',story)
+            self.assertIn('id="story-map"',story)
 
     def test_visual_identities_are_embedded_and_keep_text_labels(self):
         with tempfile.TemporaryDirectory() as tmp:

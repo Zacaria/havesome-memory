@@ -6,13 +6,7 @@ from pathlib import Path
 from visual_assets import badge, emblem, icon, load_assets, load_ui_icons, retained_art
 
 ROOT = Path(__file__).resolve().parents[1]
-COLUMNS = [
-    ('Approach', 'A basic pattern or a memory provider.', 'approach'),
-    ('Saved information', 'What is kept for future tasks.', 'memory'),
-    ('Recall method', 'How the agent finds it again.', 'search'),
-    ('Published tests', 'Reported results—not a shared ranking.', 'chart'),
-    ('Runs on', 'Your device, your server, or a cloud service.', 'hosting'),
-]
+COLUMNS = [('Approach', 'Name, type and explanation.', 'approach')]
 
 
 def e(value):
@@ -23,21 +17,25 @@ def link(source, label=None):
 
 def render():
     data = json.loads((ROOT / 'src/comparison.json').read_text())
-    css = (ROOT / 'src/comparison.css').read_text()
+    assessment_data = json.loads((ROOT / 'src/assessment.json').read_text())
+    from approach_assessment import validate_assessment, render_headers, render_cells, render_methodology, render_profile
+    validate_assessment(assessment_data, data)
+    assessments = {entry['id']:entry for entry in assessment_data['approaches']}
+    criteria = assessment_data['criteria']
+    css = (ROOT / 'src/comparison.css').read_text() + '\n' + (ROOT / 'src/assessment.css').read_text()
     assets = load_assets()
     ui_library = load_ui_icons()
-    column_headers = ''.join(f'<th scope="col"><span class="column-title">{icon(symbol)}{e(title)}</span><span class="column-help">{e(help_text)}</span></th>' for title,help_text,symbol in COLUMNS)
+    column_headers = ''.join(f'<th scope="col"><span class="column-title">{icon(symbol)}{e(title)}</span><span class="column-help">{e(help_text)}</span></th>' for title,help_text,symbol in COLUMNS[:1]) + render_headers(criteria)
     rows, dossiers = [], []
     for item in data['approaches']:
         ident = item['id']
-        evidence = item['evidence_label']
         website = item.get('website')
-        direct_link = f'<a class="provider-site" href="{e(website["url"])}" target="_blank" rel="noopener noreferrer" aria-label="{e(item["name"])}: {e(website["label"])} (opens in a new tab)">{e(website["label"])}{icon("external","external-icon")}</a>' if website else ''
+        direct_link = f'<a class="provider-site" href="{e(website["url"])}" target="_blank" rel="noopener noreferrer" aria-label="{e(item["name"])} (official site, opens in a new tab)">{e(item.get("short_name",item["name"]))}{icon("external","external-icon")}</a>' if website else ''
+        name_link = direct_link or f'<a href="#provider-{e(ident)}">{e(item.get("short_name",item["name"]))}</a>'
+        summary_name = direct_link or f'<strong>{e(item["name"])}</strong>'
         rows.append(f'''<tr data-kind="{e(item['kind'])}" data-search="{e((item['name']+' '+item['focus']+' '+item['storage']).lower())}">
-<th scope="row"><div class="identity-heading">{badge(ident,"row",assets)}<div><a href="#provider-{e(ident)}">{e(item.get('short_name',item['name']))}<span aria-hidden="true"> ↓</span></a><small>{e(item['category'])}</small>{direct_link}</div></div></th>
-<td data-label="Saved information">{e(item['focus'])}</td><td data-label="Recall method">{e(item['retrieval'])}</td>
-<td data-label="Published tests"><span class="evidence-label">{e(evidence)}</span><small>{e(item['evidence_note'])}</small></td>
-<td data-label="Runs on">{e(item['storage'])}</td></tr>''')
+<th scope="row"><div class="identity-heading">{badge(ident,"row",assets)}<div>{name_link}<small>{e(item['category'])}</small><span class="assessment-scope-label">{e(assessments[ident]['scope_label'])}</span><a class="approach-details" href="#provider-{e(ident)}">Scores &amp; details <span aria-hidden="true">↓</span></a></div></div></th>
+{render_cells(assessments[ident],criteria)}</tr>''')
         steps = ''.join(f'<li><span class="step-number">0{n}</span><strong>{e(step[0])}</strong><span>{e(step[1])}</span></li>' for n, step in enumerate(item['flow'], 1))
         claims, historical = '', ''
         for claim in item.get('claims', []):
@@ -49,11 +47,13 @@ def render():
         if historical:
             claims += '<details class="historical"><summary>Historical report · mixed/ambiguous metric labeling</summary><p class="small">These figures were retrieved from an older report through extraction, not reproduced by this guide. The original URL no longer serves that report. Current SMFS evidence above is a different product and benchmark.</p>' + historical + '</details>'
         if not claims:
-            claims = f'<p class="gap"><strong>No comparable score shown.</strong> {e(item["evidence_gap"])}</p>'
+            claims = f'<p class="gap"><strong>No comparable benchmark result shown.</strong> {e(item["evidence_gap"])}</p>'
         sources = ''.join(f'<li>{link(s)}<small>{e(s["publisher"])}</small></li>' for s in item['sources'])
         voice = 'Why use this pattern' if item['kind'] == 'basic' else 'The provider’s case · paraphrased from its own sources'
-        dossiers.append(f'''<details class="dossier" id="provider-{e(ident)}"><summary><span class="dossier-identity">{badge(ident,"detail",assets)}<span><small>{e(item['category'])}</small><strong>{e(item['name'])}</strong></span></span><span class="dossier-teaser">{e(item['thesis'])}</span><span class="expand" aria-hidden="true">+</span></summary>
+        dossiers.append(f'''<details class="dossier" id="provider-{e(ident)}"><summary><span class="dossier-identity">{badge(ident,"detail",assets)}<span><small>{e(item['category'])}</small>{summary_name}</span></span><span class="dossier-teaser">{e(item['thesis'])}</span><span class="expand" aria-hidden="true">+</span></summary>
 <div class="dossier-body"><p class="eyebrow">{voice}</p><p class="thesis">{e(item['thesis'])}</p>
+<p class="approach-context"><strong>Keeps:</strong> {e(item['focus'])} · <strong>Finds it through:</strong> {e(item['retrieval'])} · <strong>Runs on:</strong> {e(item['storage'])}</p>
+{render_profile(assessments[ident],criteria)}
 <ol class="flow" aria-label="Conceptual {e(item['name'])} memory flow">{steps}</ol>
 <p class="small">Conceptual flow, not a live trace or a measured outcome.</p>
 <div class="detail-grid"><div><h3>What changes</h3><p>{e(item['mechanism'])}</p><h3>What you still own</h3><p>{e(item['tradeoff'])}</p><h3>In Hermes</h3><p>{e(item['hermes'])}</p></div><div><h3>Published evidence, in context</h3>{claims}</div></div>
@@ -73,10 +73,12 @@ def render():
 
 <div class="controls" hidden><div class="filters" role="group" aria-label="Filter approaches"><button type="button" data-filter="all" aria-pressed="true">All approaches</button><button type="button" data-filter="basic" aria-pressed="false">Basic patterns</button><button type="button" data-filter="provider" aria-pressed="false">Hermes providers</button></div><label>Find an approach <input type="search" id="search" placeholder="Name, mechanism, hosting…"></label></div>
 <p id="filter-status" class="small" role="status" aria-live="polite" hidden></p>
-<table id="memory-comparison-table"><caption class="table-caption">Select a name to read our explanation. Provider links open the official website or plugin documentation in a new tab.</caption><thead><tr>{column_headers}</tr></thead><tbody>{''.join(rows)}</tbody></table><p class="scope">Four basic patterns · eight bundled Hermes plugins + the separately installed Memori integration. Built-in memory stays active by default alongside one selected external provider. {link(data['hermes_source'], 'Hermes integration scope')}</p>
-<p class="table-note">Read across for fit, not down for rank. Published scores below come from different tests. “No score” is an evidence gap, not a failure. Hosting modes do not imply equal features, privacy guarantees, or zero operating cost.</p></section>
+<div class="assessment-intro"><p><strong>Six criteria. The same 0–3 scale.</strong> Scores summarize documented features, not measured performance. Check the edition shown in each row. “Unknown” means the evidence is insufficient—not zero. No overall score or winner.</p></div>
+{render_methodology(assessment_data)}
+<table id="memory-comparison-table"><caption class="table-caption">Provider names open the official site in a new tab. Select Scores &amp; details to explore an approach.</caption><thead><tr>{column_headers}</tr></thead><tbody>{''.join(rows)}</tbody></table><p class="scope">Four basic patterns · eight bundled Hermes plugins + the separately installed Memori integration. Built-in memory stays active by default alongside one selected external provider. {link(data['hermes_source'], 'Hermes integration scope')}</p>
+<p class="table-note">Read across for fit, not down for rank. Criteria have explicit anchors and assessed scopes; a higher score on one axis can bring trade-offs elsewhere. The published benchmark results below are separate, differently configured experiments.</p></section>
 <p class="logo-note">Provider logos identify their products; muted letter tiles are name markers, not logos. Concept and navigation icons are from Lucide. No affiliation or endorsement.</p><section id="benchmarks"><div class="section-heading"><div><p class="eyebrow"><span class="section-emoji" aria-hidden="true">{icon("chart")}</span> 02 / READ THE TEST, NOT JUST THE NUMBER</p><h2>Same benchmark name ≠ same experiment.</h2></div></div><p class="section-intro">Nine provider perspectives, kept separate. Each panel names its own experiment, metric and limits. These are attributed reports, not our own benchmark runs—and panels are not ranked.</p><div class="cohort-grid">{''.join(cohorts)}</div><div class="rule"><strong>No blended leaderboard.</strong><span>Check dataset revision, history size, system version, answering model, judge, retrieval budget, latency and cost. Unknown conditions remain unknown. A recall score does not test permissions, deletion, reliability or your workflow.</span></div></section>
-<section id="approaches"><div class="section-heading"><div><p class="eyebrow"><span class="section-emoji" aria-hidden="true">{icon("puzzle")}</span> 03 / EACH APPROACH, ON ITS OWN TERMS</p><h2>What is each one trying to solve?</h2></div></div><p class="section-intro">Open a name. Follow the information from conversation to stored representation to recalled context. Then inspect the evidence and the work left to you.</p>{''.join(dossiers)}</section>
+<section id="approaches"><div class="section-heading"><div><p class="eyebrow"><span class="section-emoji" aria-hidden="true">{icon("puzzle")}</span> 03 / EACH APPROACH, ON ITS OWN TERMS</p><h2>What is each one trying to solve?</h2></div></div><p class="section-intro">Open an approach for its strengths, limits and six-axis profile. Scores repeat the table exactly; each has a rationale and source. Then follow the memory flow and inspect the separately published benchmark evidence.</p>{''.join(dossiers)}</section>
 <section id="how-memory-works"><p class="eyebrow"><span class="section-emoji" aria-hidden="true">{icon("files")}</span> 04 / THE MECHANISM, IN ONE EXAMPLE</p><h2>Keep the information.<br>Change what you carry.</h2><p class="section-intro">Illustrative conversation: “We changed the API timeout to 30 seconds.” Later: “Which timeout should the client use?” Follow the same fact through three choices—not three levels of quality.</p>
 <div class="example-grid"><article>{icon("chat","example-icon")}<span class="example-number">01 / KEEP IN CONTEXT</span><h3>Carry the conversation</h3><div class="context-gauge"><span>Earlier messages</span><span class="fact">timeout = 30 seconds</span><span>More conversation</span><span>Today’s question</span></div><p>The fact is directly available while it remains in the supplied context. More history consumes more of the working window.</p><p class="annotation">Constraint → context is bounded; a summary can omit a detail.</p></article>
 <article>{icon("files","example-icon")}<span class="example-number">02 / WRITE IT DOWN</span><h3>Save a file. Read it back.</h3><div class="example-flow"><span class="fact">timeout = 30 seconds</span><span class="arrow">↓ write</span><span class="file-node">api-decisions.md</span><span class="arrow">↓ find + read</span><span class="context-node">Fact + today’s question</span></div><p>A durable file can be enough. The agent needs a rule for writing it and a way to locate the right passage later.</p><p class="annotation">Work left → maintain the file and its retrieval instructions.</p></article>
@@ -84,4 +86,4 @@ def render():
 <p class="small">Authored example, not a provider output. A later timeout change needs an explicit update and a check of which version applies. Specialized memory is optional, not an automatic upgrade.</p></section>
 <section class="story-invitation"><div><p class="eyebrow">WANT THE WHY?</p><h2>See what breaks<br>when knowledge changes.</h2><p>The Morrow Works story follows one company through scattered files, conflicting rules, access boundaries and forgetting. The complete story and its technology deep dive are still here.</p></div><a class="story-link" href="story.html">Read the story <span aria-hidden="true">↗</span></a></section>
 <details class="asset-credits"><summary>Logo &amp; icon sources</summary><p>Logos are used for editorial identification only. Source and license notices are preserved below. These copyright terms do not imply general trademark rights or endorsement.</p>{credits}<article id="credit-lucide"><h3>Lucide interface icons</h3><p>{link({"url":ui_library["website"],"title":"Lucide icon library"})} · {link({"url":ui_library["license_url"],"title":"Pinned ISC / MIT notices"})}</p><p>{e(ui_library["usage"])}</p><pre>{e(ui_library["license_notice"])}</pre></article></details></main><footer><span>HAVESOME MEMORY</span><p>Primary-source desk research. No providers connected or independently benchmarked. No analytics, accounts or runtime API calls. Product evidence reviewed {e(data['reviewed'])}.</p><a href="#comparison">Back to comparison ↑</a></footer>
-<script>(()=>{{'use strict';const oldStoryHashes=new Set(['meet','company','chapter-two','chapter-three','chapter-four','chapter-five','systems','hindsight','mem0','openviking','supermemory','graphrag','failure-cases','cost','selection','final-close']);if(oldStoryHashes.has(location.hash.slice(1)))location.replace('story.html'+location.hash);const rows=[...document.querySelectorAll('tbody tr')];const controls=document.querySelector('.controls');const status=document.querySelector('#filter-status');const input=document.querySelector('#search');let kind='all';function filter(){{let count=0;for(const row of rows){{row.hidden=!((kind==='all'||row.dataset.kind===kind)&&row.dataset.search.includes(input.value.trim().toLowerCase()));if(!row.hidden)count++;}}status.textContent=count+' of '+rows.length+' approaches'+(count?'':' — try another name or clear the search.');}}controls.hidden=false;status.hidden=false;document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{{kind=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));filter();}}));input.addEventListener('input',filter);function openTarget(){{const id=location.hash.slice(1);if(oldStoryHashes.has(id)){{location.replace('story.html'+location.hash);return;}}const target=document.getElementById(id);if(target?.classList.contains('dossier')){{target.open=true;requestAnimationFrame(()=>target.scrollIntoView({{block:'start'}}));}}}}addEventListener('hashchange',openTarget);openTarget();filter();}})();</script></body></html>'''
+<script>(()=>{{'use strict';const oldStoryHashes=new Set(['meet','company','chapter-two','chapter-three','chapter-four','chapter-five','systems','hindsight','mem0','openviking','supermemory','graphrag','failure-cases','cost','selection','final-close']);if(oldStoryHashes.has(location.hash.slice(1)))location.replace('story.html'+location.hash);const rows=[...document.querySelectorAll('#memory-comparison-table tbody tr')];const controls=document.querySelector('.controls');const status=document.querySelector('#filter-status');const input=document.querySelector('#search');let kind='all';function filter(){{let count=0;for(const row of rows){{row.hidden=!((kind==='all'||row.dataset.kind===kind)&&row.dataset.search.includes(input.value.trim().toLowerCase()));if(!row.hidden)count++;}}status.textContent=count+' of '+rows.length+' approaches'+(count?'':' — try another name or clear the search.');}}controls.hidden=false;status.hidden=false;document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{{kind=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));filter();}}));input.addEventListener('input',filter);function openTarget(){{const id=location.hash.slice(1);if(oldStoryHashes.has(id)){{location.replace('story.html'+location.hash);return;}}const target=document.getElementById(id);if(target?.tagName==='DETAILS'){{target.open=true;requestAnimationFrame(()=>target.scrollIntoView({{block:'start'}}));}}}}addEventListener('hashchange',openTarget);openTarget();filter();}})();</script></body></html>'''

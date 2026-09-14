@@ -4,6 +4,8 @@
 
 The complete native-scroll Morrow Works story and its five-technology deep dive remain available at `story.html`. A separate presentation layer applies the shared branding, stronger labels, Lucide icons, direct system links and pipeline reading guides without rewriting the pinned story, source corpus or interaction scripts.
 
+The story also has a fixed 36-step timeline, chapter jumps and an all-steps overview. The comparison uses a documented six-axis editorial rubric, separate from vendor benchmarks: every approach has an assessed scope, strengths, limits and a radar profile. Unknowns are not scored as zero; there is no overall ranking.
+
 Published site: <https://zacaria.github.io/havesome-memory/>
 
 ## What the guide covers
@@ -25,6 +27,7 @@ This public repository intentionally contains only the production source and ver
 python3 scripts/build_site.py
 python3 scripts/check_site.py --worktree
 python3 scripts/test_comparison.py
+python3 scripts/test_assessment.py
 ```
 
 The deterministic build writes exactly four files to `_site/`: `index.html` (comparison), `story.html` (preserved guide), `404.html`, and `.nojekyll`. The original four-chapter source remains hash-pinned. Major old story fragment links redirect to `story.html`.

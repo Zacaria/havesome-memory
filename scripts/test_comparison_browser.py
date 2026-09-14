@@ -9,6 +9,8 @@ from test_site_browser import serve_site
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = json.loads((ROOT/'src/comparison.json').read_text())
+ASSESSMENTS = json.loads((ROOT/'src/assessment.json').read_text())
+RATINGS = {x['id']:x for x in ASSESSMENTS['approaches']}
 IDS = [x['id'] for x in DATA['approaches']]
 VIEWPORTS = [(1440,900),(1280,720),(768,1024),(390,844),(320,640)]
 
@@ -42,15 +44,21 @@ def main():
                 assert page.locator('#filter-status').inner_text()=='13 of 13 approaches'
                 expected_sites={item['website']['url'] for item in DATA['approaches'] if item['kind']=='provider'}
                 assert set(page.locator('a.provider-site').evaluate_all('(links)=>links.map(a=>a.href)'))==expected_sites
-                assert page.locator('a.provider-site').count()==9
+                assert page.locator('a.provider-site').count()==18
+                assert page.locator('a.provider-site').evaluate_all('(links)=>links.every(a=>a.querySelector("svg") && getComputedStyle(a).borderTopWidth==="0px" && !/Provider website|Plugin docs/.test(a.innerText))')
+                assert page.locator('.assessment-profile').count()==13
+                assert page.locator('.radar-chart').count()==13
                 assert page.locator('a.provider-site').evaluate_all('(links)=>links.every(a=>a.target==="_blank" && a.relList.contains("noopener") && a.relList.contains("noreferrer") && a.getAttribute("aria-label").includes("opens in a new tab"))')
                 label_style=page.locator('#comparison .eyebrow').evaluate('(el)=>({size:parseFloat(getComputedStyle(el).fontSize),weight:parseInt(getComputedStyle(el).fontWeight)})')
                 assert label_style['size']>=13 and label_style['weight']>=600,label_style
                 if width>850:
-                    assert page.locator('.column-help:visible').count()==5
+                    assert page.locator('#memory-comparison-table thead th:visible').count()==7
                     assert page.locator('.column-title').first.evaluate('(el)=>parseInt(getComputedStyle(el).fontWeight)')>=600
                 else:
                     assert page.locator('tbody td').first.evaluate('(el)=>parseFloat(getComputedStyle(el,"::before").fontSize)')>=13
+                caption=page.locator('#memory-comparison-table caption').bounding_box()
+                matrix=page.locator('#memory-comparison-table').bounding_box()
+                assert caption and matrix and caption['width']>=matrix['width']-2
                 assert page.locator('svg[data-icon-library="Lucide"]').count()>0
                 assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
                 # The problem, definition and comparison action precede tool names.
@@ -79,24 +87,49 @@ def main():
                     page.evaluate('scrollTo(0,document.getElementById("comparison").getBoundingClientRect().top+scrollY-24)')
                     page.screenshot(path=str(output/f'{width}-clear-table-and-provider-links.png'))
                     page.locator('[data-filter="all"]').click()
+                if width in (1440,390):
+                    page.evaluate('scrollTo(0,document.querySelector("#memory-comparison-table").getBoundingClientRect().top+scrollY-20)')
+                    page.screenshot(path=str(output/f'{width}-capability-table.png'))
+                page.locator('#score-rubric > summary').click()
+                assert page.locator('#score-rubric .assessment-anchors section').count()==6
+                assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
+                page.locator('#score-rubric > summary').click()
                 page.locator('#search').fill('not-a-provider')
                 assert page.locator('tbody tr:visible').count()==0
                 assert 'try another name' in page.locator('#filter-status').inner_text()
                 page.locator('#search').fill('Hindsight')
                 assert page.locator('tbody tr:visible').count()==1
-                page.locator('tbody tr:visible a[href="#provider-hindsight"]').click()
+                page.locator('tbody tr:visible .approach-details[href="#provider-hindsight"]').click()
                 expect(page.locator('#provider-hindsight')).to_have_attribute('open', '')
                 assert page.locator('#provider-hindsight summary').first.bounding_box()['y']>=0
                 page.locator('#provider-hindsight .back').click()
                 page.locator('#search').fill('')
                 # Real navigation opens each disclosure; all evidence and source links readable.
                 for ident in IDS:
-                    page.locator(f'tbody a[href="#provider-{ident}"]').click()
+                    page.locator(f'tbody .approach-details[href="#provider-{ident}"]').click()
                     dossier=page.locator('#provider-'+ident)
                     page.wait_for_function("id=>document.getElementById(id).open",arg='provider-'+ident)
                     assert dossier.get_attribute('open') is not None
                     assert dossier.locator('.flow li').count()==3
                     assert dossier.locator('.thesis').is_visible()
+                    profile=dossier.locator('.assessment-profile')
+                    assert profile.locator('.radar-chart').is_visible()
+                    assert profile.locator('.assessment-tradeoffs').is_visible()
+                    expected={axis:'unknown' if rating['value'] is None else str(rating['value']) for axis,rating in RATINGS[ident]['scores'].items()}
+                    cells=page.locator(f'#memory-comparison-table tr:has(.approach-details[href="#provider-{ident}"]) .assessment-cell')
+                    read_scores='els=>Object.fromEntries(els.map(e=>[e.dataset.axis,e.dataset.score]))'
+                    assert cells.evaluate_all(read_scores)==expected
+                    assert profile.locator('.radar-legend li').evaluate_all(read_scores)==expected
+                    assert profile.locator('.radar-point').evaluate_all(read_scores)=={k:v for k,v in expected.items() if v!='unknown'}
+                    assert profile.locator('.radar-shape').count()==int('unknown' not in expected.values())
+                    assert profile.locator('.radar-legend li').count()==6
+                    if width in (1440,390) and ident in ('hindsight','vector-rag'):
+                        profile.screenshot(path=str(output/f'{width}-{ident}-capability-profile.png'))
+                    profile.locator('.assessment-rationale > summary').click()
+                    assert profile.locator('.assessment-criteria > li').count()==6
+                    assert profile.locator('.assessment-criteria > li').evaluate_all(read_scores)==expected
+                    assert profile.locator('.assessment-sources a').first.is_visible()
+                    profile.locator('.assessment-rationale > summary').click()
                     dossier.locator('.citations summary').click()
                     assert dossier.locator('.citations a').first.is_visible()
                     assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1'),(width,ident)
@@ -156,7 +189,7 @@ def main():
         finally:browser.close()
     assert not errors,errors
     assert not remote,remote
-    report={'status':'pass','browser':os.environ.get('BROWSER_EXECUTABLE'),'viewports':VIEWPORTS,'approaches':len(IDS),'disclosure_states':checked,'provider_evidence_panels':9,'historical_evidence_separated':True,'filters':True,'search':True,'keyboard':True,'old_story_hash':True,'story_round_trip':True,'no_js':True,'errors':errors,'remote_requests':remote,'sha256':hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()}
+    report={'status':'pass','browser':os.environ.get('BROWSER_EXECUTABLE'),'viewports':VIEWPORTS,'approaches':len(IDS),'criteria':len(ASSESSMENTS['criteria']),'scorecards':len(RATINGS),'score_entries':sum(len(x['scores']) for x in RATINGS.values()),'unknown_entries':sum(v['value'] is None for x in RATINGS.values() for v in x['scores'].values()),'matrix_and_radar_agree':True,'disclosure_states':checked,'provider_evidence_panels':9,'historical_evidence_separated':True,'filters':True,'search':True,'keyboard':True,'old_story_hash':True,'story_round_trip':True,'no_js':True,'errors':errors,'remote_requests':remote,'sha256':hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()}
     (output/'comparison-browser-verification.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 

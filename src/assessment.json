@@ -1,0 +1,874 @@
+{
+  "criteria": [
+    {
+      "id": "retrieval",
+      "label": "Retrieval",
+      "question": "How can an agent find the relevant stored context for a question?",
+      "levels": {
+        "0": "Context is supplied as a whole snapshot or summary; this mechanism does not select stored items for a query.",
+        "1": "Explicit file/item lookup, browsing, or unranked/basic lexical search selects context.",
+        "2": "A documented ranked retrieval pipeline selects query-relevant stored context using similarity, lexical matching, or other explicit relevance signals.",
+        "3": "Documented multi-path retrieval, query-driven reasoning, or staged hierarchy traversal selects context beyond a single ranked lookup."
+      }
+    },
+    {
+      "id": "organization",
+      "label": "Organization",
+      "question": "How is knowledge structured beyond a chronological conversation?",
+      "levels": {
+        "0": "A transcript or rolling summary is the organizing unit, without a durable structured knowledge collection in the assessed mechanism.",
+        "1": "Separate notes, passages, or broad buckets provide lightweight organization.",
+        "2": "Typed records with metadata/scopes or a named topic/file hierarchy organize reusable knowledge.",
+        "3": "Explicit cross-record/entity relationships or synthesized peer/knowledge representations connect information across records."
+      }
+    },
+    {
+      "id": "change",
+      "label": "Change / history",
+      "question": "What mechanisms update knowledge or use its history? 3 means history/time support—not automatic correctness.",
+      "levels": {
+        "0": "Rebuilding a working summary is the change mechanism; it is not a durable fact-editing lifecycle.",
+        "1": "An agent/operator can explicitly add, edit, replace, remove, or rebuild stored content.",
+        "2": "Automatically synthesizes or curates knowledge, reconciles overlapping content beyond exact-duplicate validation, or reprocesses changed source content. Routine index maintenance alone does not qualify.",
+        "3": "Provides explicit historical/versioned state or event-time interpretation beyond creation/update timestamps. This does not establish correct conflict resolution or guarantee an answer valid at a past date."
+      }
+    },
+    {
+      "id": "traceability",
+      "label": "Traceability",
+      "question": "What can you inspect to understand where recalled knowledge came from?",
+      "levels": {
+        "0": "Only a lossy generated representation is exposed in the assessed mechanism, with no retained inspectable record or recovery reference.",
+        "1": "You can inspect memory records/files or follow a general session recovery reference; claim-level source lineage is not established.",
+        "2": "Retrieval identifies original source documents/passages or links a memory to its originating material.",
+        "3": "In addition to source references, documented derivation links, contributing facts, or version history let you follow how knowledge was formed or changed."
+      }
+    },
+    {
+      "id": "portability",
+      "label": "Portability",
+      "question": "What documented path lets you take the stored knowledge into another tool?",
+      "levels": {
+        "0": "The assessed surface explicitly prevents reading or extracting the stored knowledge outside its own interface.",
+        "1": "A documented API/tool reads memory objects or files, but migration requires application-side reconstruction.",
+        "2": "A documented structured export or operator-accessible local database allows bulk possession; schema/index conversion may still be needed.",
+        "3": "The knowledge is natively ordinary reusable files or an open document format, readable by other tools without the provider service."
+      }
+    },
+    {
+      "id": "simplicity",
+      "label": "Simplicity",
+      "question": "Within the stated deployment, how much extra setup and maintenance does this add to an already working agent?",
+      "levels": {
+        "0": "The assessed route requires substantial custom infrastructure or model/pipeline engineering, beyond configuring published components.",
+        "1": "You operate or assemble a memory/retrieval service and its storage/model dependencies.",
+        "2": "You install/configure a client or CLI with credentials/provider choices, or maintain a curated document hierarchy; no separately operated memory server is required in this scope.",
+        "3": "The mechanism is built in or dependency-light local storage, with minimal additional configuration and no separate memory service to operate."
+      }
+    }
+  ],
+  "methodology": {
+    "title": "Editorial capability coverage — not a benchmark ranking",
+    "summary": "Six evidence-grounded ordinal judgments describe documented mechanisms in one explicitly named scope per approach. They measure capability coverage and editorial operating burden, not how well a system performs. Basic patterns are useful low-complexity tradeoffs, not deliberately weakened competitors. There is no total, average, winner, or universal recommendation.",
+    "scale_note": "0–3 are criterion-specific anchors, not equal intervals or measured quantities. null means Unknown: evidence is insufficient or the generic pattern leaves the implementation unspecified. Missing evidence is never zero. Read each score with its rationale, deployment scope and first-party excerpts; larger radar area is not a quality metric.",
+    "scope_note": "A working single-user agent, its normal model access and host are assumed. Simplicity counts the additional setup/maintenance of the named route: managed API rows do not include self-hosted operations; self-hosted/local rows do. Managed convenience is not evidence of local control, privacy, security, latency or monetary savings. Optional enterprise, cloud sync, alternate engines and adapters receive no automatic parity.",
+    "anchor_policy": "Choose the highest anchor directly supported for the assessed mechanism, not a count of marketing features. Levels are descriptive coverage bands rather than an exhaustive absence audit: a 1 or 2 does not prove a provider lacks every higher-band feature. Traceability 3 requires source references as well as a derivation/history path. Explicit historical coexistence earns change coverage, not a claim that contradictions are resolved correctly.",
+    "scope_caveats": [
+      "The first four rows are implementation-bounded patterns: Hermes built-in notes, local skill documents, the default Hermes compressor, and basic dense-passage RAG. These can complement provider services rather than replace them.",
+      "Mem0 means the managed Platform v3 basic memory APIs, not the OSS SDK or self-hosted dashboard; optional reranking is documented but not the Hermes default. No Platform benchmark result is applied to OSS.",
+      "Supermemory means its managed memory/document API. SMFS filesystem behavior, its cache/reconciliation design, and local-binary deployment are separate surfaces and receive no credit here.",
+      "Memori means the separately installed Hermes adapter using Memori Cloud. Tool-aware capture and ranked recall do not establish BYODB parity, database export, or fact-level provenance.",
+      "Hindsight is deliberately assessed as self-hosted API with local PostgreSQL, not Cloud. Honcho is deliberately managed; the two simplicity scores therefore compare named operating routes, not provider-wide ease.",
+      "OpenViking is its self-hosted virtual filesystem/session memory. A viking:// URI is not proof of portable native OS files; optional VikingBot compilation is excluded.",
+      "ByteRover is the catalogue’s local-first CLI/Markdown context-tree workflow (V3 docs plus the 2.0 mechanism description), not V4 Desktop/spaces, cloud collaboration, or a proposed HTML memory format. Conflicting live documentation surfaces are recorded in the evidence.",
+      "Hermes integration documentation is primary evidence for adapter tools/configuration only. A broader provider API capability is not a promise that every Hermes tool exposes its parameters. Built-in notes remain separate and are not silently added to each provider’s scores."
+    ],
+    "excluded_dimensions": [
+      "benchmark accuracy or ranking",
+      "latency or token-efficiency claims",
+      "privacy or security",
+      "monetary cost",
+      "independently measured reliability",
+      "overall score or winner"
+    ],
+    "display_rules": [
+      "Show all six criterion-specific anchors and the assessed scope.",
+      "Use the identical score objects for table and radar views; do not derive a separate chart score.",
+      "Render null as Unknown, never zero; do not fill or connect a polygon across missing values.",
+      "Keep catalogue order, not an aggregate-score sort."
+    ],
+    "evidence_policy": "Primary official docs, provider-owned repositories and the original RAG authors support numerical judgments. Excerpts are verbatim substrings of retrieved text (HTML whitespace may be normalized). Scores/rationales/strengths/limits are editorial synthesis, not source quotations. No benchmark was run or re-scored, and no published benchmark number or caveat was changed.",
+    "limitations": "Documentation is not independent functional verification. Current pages and main-branch files can change; pinned Hermes/Memori sources identify the assessed adapter snapshot. Unknown is preferable to inferring absence or transferability from open-source branding. Simplicity is an explicit editorial estimate, not measured setup time.",
+    "reviewed_at": "2026-09-14"
+  },
+  "approaches": [
+    {
+      "id": "builtin-memory-files",
+      "scope": "Hermes built-in MEMORY.md + USER.md only; profile-local curated text, default bounded stores and session-start snapshot. Separate session_search and external providers are not included.",
+      "scores": {
+        "retrieval": {
+          "value": 0,
+          "rationale": "Both complete note stores are injected at session start; the notes mechanism does not perform query-selective retrieval. This favors always-available essentials, not corpus search.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory.md"
+          ]
+        },
+        "organization": {
+          "value": 1,
+          "rationale": "Two purpose-specific stores separate agent notes from user preferences; entries remain lightweight curated text.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory.md"
+          ]
+        },
+        "change": {
+          "value": 1,
+          "rationale": "The memory tool explicitly adds, replaces and removes entries. Exact-duplicate rejection is useful but is not semantic reconciliation of changing facts.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory.md"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "The actual text entries can be inspected and edited. The documented note format does not establish links back to the conversation that produced each fact.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory.md"
+          ]
+        },
+        "portability": {
+          "value": 3,
+          "rationale": "The knowledge itself is MEMORY.md and USER.md in a named local directory; another text tool can read/copy it without a provider service.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory.md"
+          ]
+        },
+        "simplicity": {
+          "value": 3,
+          "rationale": "These stores are built into Hermes and require no additional memory service; their bounded capacity still calls for occasional curation.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Essential preferences are always in context.",
+        "Ordinary local text is easy to inspect, edit and reuse."
+      ],
+      "limits": [
+        "Capacity is intentionally bounded; the agent must consolidate when full.",
+        "The prompt snapshot is frozen until the next session; tool responses show live edits."
+      ],
+      "scope_label": "Built-in notes"
+    },
+    {
+      "id": "files-and-skills",
+      "scope": "Hermes local SKILL.md documents with referenced text files and progressive disclosure; a curated knowledge/procedure library, not arbitrary executable skill dependencies or automatic event ingestion.",
+      "scores": {
+        "retrieval": {
+          "value": 1,
+          "rationale": "A catalogue names skills; the agent explicitly loads a skill or reference file. Progressive disclosure is targeted lookup, not a documented ranked memory search engine.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/skills.md"
+          ]
+        },
+        "organization": {
+          "value": 2,
+          "rationale": "Named skills, categories and reference directories structure reusable knowledge and procedures.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/skills.md"
+          ]
+        },
+        "change": {
+          "value": 1,
+          "rationale": "The agent can modify or delete a skill and revise files. In this curated-library scope, keeping instructions current remains an explicit authoring task.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/skills.md"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "Knowledge is inspectable in the document that supplies it. A referenced file is not automatically a citation to the original event or a verified derivation history.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/skills.md"
+          ]
+        },
+        "portability": {
+          "value": 3,
+          "rationale": "Local documents follow the Agent Skills open standard; their text and references can be reused without a memory provider.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/skills.md"
+          ]
+        },
+        "simplicity": {
+          "value": 2,
+          "rationale": "Loading is built in, but maintaining useful names, descriptions, references and current procedures adds editorial upkeep beyond two small note files.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/skills.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Loads detailed procedures only when needed.",
+        "Readable, reusable documents support deliberate knowledge curation."
+      ],
+      "limits": [
+        "Usefulness depends on discovery descriptions and maintained instructions.",
+        "Document loading alone does not capture every conversation or reconcile changing facts."
+      ],
+      "scope_label": "Local documents"
+    },
+    {
+      "id": "compaction",
+      "scope": "Hermes default lossy ContextCompressor, including in-place archived-turn recovery through the separate session_search facility; not LCM or a cross-session fact database.",
+      "scores": {
+        "retrieval": {
+          "value": 1,
+          "rationale": "The summary is supplied as working context, while archived original turns remain searchable through session_search. This credits the documented recovery path, not semantic memory retrieval.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/developer-guide/context-compression-and-caching.md"
+          ]
+        },
+        "organization": {
+          "value": 0,
+          "rationale": "The organizing unit remains the current conversation: a summary plus retained turns, not a durable collection of typed knowledge.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/developer-guide/context-compression-and-caching.md"
+          ]
+        },
+        "change": {
+          "value": 0,
+          "rationale": "Compaction rewrites the live message list and swaps in a summarized middle. This refreshes working context, not individual durable facts with a correction lifecycle.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/developer-guide/context-compression-and-caching.md"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "The same session ID retains searchable pre-compaction turns. That provides a recovery route, but not a source link for every statement in the generated summary.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/developer-guide/context-compression-and-caching.md"
+          ]
+        },
+        "portability": {
+          "value": 1,
+          "rationale": "Documented recovery, recall or read tools expose stored content. This is limited portability under level 1: complete enumeration, bulk export and a reliable migration contract are not established in the assessed scope.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/developer-guide/context-compression-and-caching.md"
+          ]
+        },
+        "simplicity": {
+          "value": 3,
+          "rationale": "The lossy engine is the built-in default and fires automatically within an existing agent. Alternate plugin engines and separate memory servers are outside scope.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/developer-guide/context-compression-and-caching.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Keeps an active conversation usable within its context budget.",
+        "Original archived turns remain recoverable rather than being deleted."
+      ],
+      "limits": [
+        "Summarization is lossy; details may require an explicit recovery search.",
+        "It manages working context rather than replacing cross-session curated memory."
+      ],
+      "scope_label": "Default compressor"
+    },
+    {
+      "id": "vector-rag",
+      "scope": "Basic operator-assembled dense-passage RAG: source passages, embeddings/index, top-k retrieval and an existing generator. Original RAG authors anchor the pattern; no specific database, managed stack, model training or added agentic/graph pipeline is assumed.",
+      "scores": {
+        "retrieval": {
+          "value": 2,
+          "rationale": "A neural query retriever selects top-k passages from a dense index; this is ranked retrieval, without assuming hybrid or agentic extensions.",
+          "sources": [
+            "https://arxiv.org/html/2005.11401v4"
+          ]
+        },
+        "organization": {
+          "value": 1,
+          "rationale": "The index organizes knowledge as retrievable document passages; richer categories, entity graphs or lifecycle schemas are not part of this minimal pattern.",
+          "sources": [
+            "https://arxiv.org/html/2005.11401v4"
+          ]
+        },
+        "change": {
+          "value": 1,
+          "rationale": "The authors explicitly describe replacing the non-parametric index to update knowledge. Automatic conversational fact reconciliation is not assumed.",
+          "sources": [
+            "https://arxiv.org/html/2005.11401v4"
+          ]
+        },
+        "traceability": {
+          "value": 2,
+          "rationale": "The generator is conditioned on selected source passages from an explicit document index. Those passages provide inspectable evidence, not a guarantee of faithful answer citations.",
+          "sources": [
+            "https://arxiv.org/html/2005.11401v4"
+          ]
+        },
+        "portability": {
+          "value": null,
+          "rationale": "The generic pattern does not select a storage/export format. Portability depends on the chosen source store, index and embedding implementation.",
+          "sources": [
+            "https://arxiv.org/html/2005.11401v4"
+          ]
+        },
+        "simplicity": {
+          "value": 1,
+          "rationale": "The operator must connect a passage corpus/index, a query retriever and a generator. Existing components can be used, but this is more assembly than configuring a managed memory client.",
+          "sources": [
+            "https://arxiv.org/html/2005.11401v4"
+          ]
+        }
+      },
+      "strengths": [
+        "Retrieves external passages rather than replaying an entire corpus.",
+        "The source index can be replaced without retraining the generator."
+      ],
+      "limits": [
+        "Chunking, indexing and updates remain implementation responsibilities.",
+        "A basic passage retriever is not automatically a user model or temporal fact lifecycle."
+      ],
+      "scope_label": "Basic dense RAG"
+    },
+    {
+      "id": "hindsight",
+      "scope": "Self-hosted Hindsight API with local PostgreSQL and a configured structured-output LLM; current retain/recall API, including optional source-fact/chunk expansion. Hermes adapter is cited separately; Hindsight Cloud is not the simplicity scope.",
+      "scores": {
+        "retrieval": {
+          "value": 3,
+          "rationale": "Recall combines semantic, BM25, graph and temporal strategies, then fuses/reranks them. This is documented retrieval coverage, not evidence of superior answer accuracy.",
+          "sources": [
+            "https://hindsight.vectorize.io/developer/api/recall"
+          ]
+        },
+        "organization": {
+          "value": 3,
+          "rationale": "Retain extracts facts and links entities in a knowledge graph; observations synthesize contributing facts across memories.",
+          "sources": [
+            "https://hindsight.vectorize.io/developer/api/quickstart",
+            "https://hindsight.vectorize.io/developer/api/recall"
+          ]
+        },
+        "change": {
+          "value": 3,
+          "rationale": "Document replacement reprocesses facts; recall also distinguishes event dates from retention time and supports historical query timestamps and temporal windows. Windows influence ranking, not strict date filtering. Replaced document versions are not a complete archive.",
+          "sources": [
+            "https://hindsight.vectorize.io/developer/api/retain",
+            "https://hindsight.vectorize.io/developer/api/recall"
+          ]
+        },
+        "traceability": {
+          "value": 3,
+          "rationale": "Recall can return document/chunk IDs, original chunks and observations’ contributing source facts. This exposes source and derivation paths when the optional expansions are requested.",
+          "sources": [
+            "https://hindsight.vectorize.io/developer/api/recall"
+          ]
+        },
+        "portability": {
+          "value": 2,
+          "rationale": "The assessed local route stores data in operator-controlled PostgreSQL. This provides database possession, not a provider-neutral schema or a verified lossless migration.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "simplicity": {
+          "value": 1,
+          "rationale": "The self-hosted route runs an API/database and requires a structured-output LLM. A packaged local setup reduces assembly but does not remove service/model maintenance.",
+          "sources": [
+            "https://hindsight.vectorize.io/developer/api/quickstart",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Multiple retrieval strategies and linked facts support broad recall workflows.",
+        "Optional original chunks and contributing facts make synthesis inspectable."
+      ],
+      "limits": [
+        "Self-hosted operation adds service, database and model configuration.",
+        "Source expansions are optional; replacing a document reprocesses it rather than preserving that document version."
+      ],
+      "scope_label": "Self-hosted API"
+    },
+    {
+      "id": "honcho",
+      "scope": "Managed Honcho service for peer-centric memory, representations, conclusions and reasoning; Hermes Cloud adapter setup. Self-hosted FastAPI/local-stack operations are explicitly excluded from simplicity.",
+      "scores": {
+        "retrieval": {
+          "value": 3,
+          "rationale": "The documented surface combines semantic search/context with a reasoning query over peer knowledge. This earns the query-driven reasoning anchor, not a benchmark-quality claim.",
+          "sources": [
+            "https://raw.githubusercontent.com/plastic-labs/honcho/main/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "organization": {
+          "value": 3,
+          "rationale": "Workspaces, peers, sessions and messages feed synthesized peer representations; multi-peer perspectives can model what one peer knows about another.",
+          "sources": [
+            "https://raw.githubusercontent.com/plastic-labs/honcho/main/README.md"
+          ]
+        },
+        "change": {
+          "value": 2,
+          "rationale": "Background processing updates peer representations from new messages/events. The inspected evidence does not establish a complete versioned history of every representation.",
+          "sources": [
+            "https://raw.githubusercontent.com/plastic-labs/honcho/main/README.md"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "Conclusions, peer cards, representations and session context are inspectable. This packet does not establish per-conclusion source-message lineage or a derivation audit trail.",
+          "sources": [
+            "https://raw.githubusercontent.com/plastic-labs/honcho/main/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "portability": {
+          "value": 1,
+          "rationale": "Conclusions and representations are exposed through documented APIs. That permits reading reusable knowledge, but does not establish a complete provider-neutral export/import.",
+          "sources": [
+            "https://raw.githubusercontent.com/plastic-labs/honcho/main/README.md"
+          ]
+        },
+        "simplicity": {
+          "value": 2,
+          "rationale": "The managed route uses a client and authentication rather than a user-operated database/server. Cadence and reasoning-depth settings still require application judgment.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Models evolving people and peers rather than only storing isolated chunks.",
+        "Provides both prompt-ready context and explicit reasoning queries."
+      ],
+      "limits": [
+        "Derived representations remain interpretations, not a substitute for checking original messages.",
+        "Managed setup convenience does not describe the separate self-hosted stack."
+      ],
+      "scope_label": "Managed service"
+    },
+    {
+      "id": "mem0",
+      "scope": "Mem0 managed Platform v3 memory add/search/read APIs, with optional managed reranking; no automatic credit for OSS-only explain fields, optional graph editions, or the self-hosted dashboard. Hermes Platform adapter configuration is a separate integration boundary.",
+      "scores": {
+        "retrieval": {
+          "value": 2,
+          "rationale": "Documented Platform search uses embeddings, scoped filters and optional reranking. Time-aware queries are also documented, but this conservative band does not infer a separate multi-path query planner from a feature name.",
+          "sources": [
+            "https://docs.mem0.ai/core-concepts/memory-operations/search"
+          ]
+        },
+        "organization": {
+          "value": 2,
+          "rationale": "LLM-extracted facts use user/agent/app/run identifiers and category metadata, forming scoped structured records rather than an untyped transcript.",
+          "sources": [
+            "https://docs.mem0.ai/core-concepts/memory-operations",
+            "https://docs.mem0.ai/core-concepts/memory-operations/search"
+          ]
+        },
+        "change": {
+          "value": 3,
+          "rationale": "Platform v3 keeps coexisting ADD-only facts and documents event-date interpretation, time-aware ranking and reference_date. These are historical/temporal mechanisms, not a guarantee of automatic correction or contradiction-resolution accuracy; temporal reasoning is not in the OSS SDK.",
+          "sources": [
+            "https://docs.mem0.ai/core-concepts/memory-operations",
+            "https://docs.mem0.ai/core-concepts/memory-operations/search",
+            "https://docs.mem0.ai/platform/features/temporal-reasoning"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "Search returns memory text, metadata and timestamps; the Platform dashboard makes records inspectable. Those fields alone do not establish per-fact source-message lineage.",
+          "sources": [
+            "https://docs.mem0.ai/core-concepts/memory-operations",
+            "https://docs.mem0.ai/core-concepts/memory-operations/search"
+          ]
+        },
+        "portability": {
+          "value": 1,
+          "rationale": "Documented get_all/search surfaces expose stored memory objects. Moving them elsewhere still requires mapping the provider schema; managed API access is not OSS database ownership.",
+          "sources": [
+            "https://docs.mem0.ai/core-concepts/memory-operations",
+            "https://docs.mem0.ai/core-concepts/memory-operations/search"
+          ]
+        },
+        "simplicity": {
+          "value": 2,
+          "rationale": "The assessed route is a managed API with a client, credentials and identity/filter configuration. Operating an LLM/vector store in OSS mode is a different burden.",
+          "sources": [
+            "https://docs.mem0.ai/core-concepts/memory-operations",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Structured facts, scoping and optional reranking provide configurable recall.",
+        "Additive storage preserves earlier facts rather than silently overwriting them during extraction."
+      ],
+      "limits": [
+        "Raw versus inferred inserts can duplicate facts; coexistence is not automatic contradiction resolution.",
+        "Platform behavior and convenience must not be projected onto OSS or self-hosted modes."
+      ],
+      "scope_label": "Platform v3 · managed"
+    },
+    {
+      "id": "openviking",
+      "scope": "Self-hosted OpenViking core context database with viking:// hierarchy, tiered reads and session memory extraction; configured server/model dependencies. Optional VikingBot compilation and hosted Studio convenience are excluded.",
+      "scores": {
+        "retrieval": {
+          "value": 3,
+          "rationale": "Vector search finds candidate directories and explores within them; session-aware search planning and L0/L1/L2 reads provide staged context selection.",
+          "sources": [
+            "https://raw.githubusercontent.com/volcengine/OpenViking/main/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "organization": {
+          "value": 2,
+          "rationale": "Resources, memories and skills live under a named hierarchy with per-directory abstracts/overviews and typed memory categories. Optional compiled knowledge graphs are outside this score.",
+          "sources": [
+            "https://raw.githubusercontent.com/volcengine/OpenViking/main/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "change": {
+          "value": 2,
+          "rationale": "Session commits start extraction; candidates are compared with existing memories for creation, merging or skipping. This is explicit automated curation, not a claim of guaranteed factual consistency.",
+          "sources": [
+            "https://raw.githubusercontent.com/volcengine/OpenViking/main/README.md"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "Stable viking:// URIs and tiered reads expose stored knowledge. The inspected core evidence does not establish a fact-by-fact link to its originating session passage.",
+          "sources": [
+            "https://raw.githubusercontent.com/volcengine/OpenViking/main/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "portability": {
+          "value": 1,
+          "rationale": "Browse/read tools expose knowledge by virtual URI. That supports extraction through the interface, but a virtual filesystem is not evidence of directly reusable native files or a full export.",
+          "sources": [
+            "https://raw.githubusercontent.com/volcengine/OpenViking/main/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "simplicity": {
+          "value": 1,
+          "rationale": "The operator initializes, validates and runs an OpenViking server before connecting Hermes, and maintains its configured processing dependencies.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        }
+      },
+      "strengths": [
+        "A browsable hierarchy makes resources and memories deliberately navigable.",
+        "Session extraction can merge knowledge and support selective tiered loading."
+      ],
+      "limits": [
+        "Self-hosting and derived summaries introduce operational upkeep.",
+        "Virtual paths are not proof of native-file portability or fact-level provenance."
+      ],
+      "scope_label": "Self-hosted core"
+    },
+    {
+      "id": "supermemory",
+      "scope": "Managed Supermemory memory/document API and profiles, including /v4/memories/list history/source fields. Excludes SMFS filesystem/cache reconciliation and the self-hosted local binary; Hermes integration may expose only a subset of API options.",
+      "scores": {
+        "retrieval": {
+          "value": 2,
+          "rationale": "The API offers semantic memory/document search and profile context; the Hermes adapter documents hybrid memory/document selection. This is not credited as a graph-traversal query planner merely because storage is a graph.",
+          "sources": [
+            "https://supermemory.ai/docs/intro",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "organization": {
+          "value": 3,
+          "rationale": "Memory relationships explicitly include updates, extends and derives; container-scoped profiles connect information beyond independent chunks.",
+          "sources": [
+            "https://supermemory.ai/docs/intro",
+            "https://supermemory.ai/docs/api-reference/content-management/list-memory-entries-with-history.md"
+          ]
+        },
+        "change": {
+          "value": 3,
+          "rationale": "Memory entries expose versions, latest/forgotten state, update/extend/derive links and history. This directly supports the versioned/historical-state anchor.",
+          "sources": [
+            "https://supermemory.ai/docs/api-reference/content-management/list-memory-entries-with-history.md"
+          ]
+        },
+        "traceability": {
+          "value": 3,
+          "rationale": "The list API explicitly includes source documents and update history, with memory relation fields. This supports inspecting source references and how a memory changed, without claiming every inferred statement is correct.",
+          "sources": [
+            "https://supermemory.ai/docs/api-reference/content-management/list-memory-entries-with-history.md"
+          ]
+        },
+        "portability": {
+          "value": 1,
+          "rationale": "Paginated document and memory APIs expose records, history and source references. An application can read them for migration; the assessed API is not an ordinary filesystem or a documented neutral export format.",
+          "sources": [
+            "https://supermemory.ai/docs/api-reference/content-management/list-memory-entries-with-history.md",
+            "https://supermemory.ai/docs/ingestion/document-operations.md"
+          ]
+        },
+        "simplicity": {
+          "value": 2,
+          "rationale": "Managed use requires a client, API key and container/profile configuration, not operating a local memory server. SMFS and self-hosted setup are deliberately not blended into this judgment.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Version/history fields and source references expose evolving knowledge.",
+        "Profiles and document retrieval can share one scoped context pool."
+      ],
+      "limits": [
+        "API-visible graph relationships do not alone establish graph-traversal retrieval.",
+        "SMFS behavior and local deployment control are separate from the assessed managed API."
+      ],
+      "scope_label": "Managed API"
+    },
+    {
+      "id": "byterover",
+      "scope": "Catalogue-aligned local-first ByteRover CLI/Markdown context tree: V3 root docs plus the CLI 2.0 curation/retrieval description, BYOK and no cloud sync. Not V4 Desktop/spaces, cloud version control or the later proposed HTML format.",
+      "scores": {
+        "retrieval": {
+          "value": 3,
+          "rationale": "Documented CLI retrieval escalates from cache/full-text lookup to LLM-powered file search, using the structured tree rather than one similarity lookup.",
+          "sources": [
+            "https://www.byterover.dev/blog/introducing-byterover-cli-2.0-reinvent-memory-for-autonomous-agents",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "organization": {
+          "value": 2,
+          "rationale": "LLM curation organizes modular Markdown files by domain, topic and subtopic. This is an explicit reusable hierarchy without assuming a typed knowledge graph.",
+          "sources": [
+            "https://www.byterover.dev/blog/introducing-byterover-cli-2.0-reinvent-memory-for-autonomous-agents"
+          ]
+        },
+        "change": {
+          "value": 2,
+          "rationale": "The curator synthesizes and arranges incoming knowledge into the existing context-tree representation. Cloud version-control history is not credited to this local-only scope.",
+          "sources": [
+            "https://www.byterover.dev/blog/introducing-byterover-cli-2.0-reinvent-memory-for-autonomous-agents"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "The curated Markdown files are human-readable and inspectable. The retrieved evidence does not establish source-event citations for every synthesized statement.",
+          "sources": [
+            "https://docs.byterover.dev/",
+            "https://www.byterover.dev/blog/introducing-byterover-cli-2.0-reinvent-memory-for-autonomous-agents"
+          ]
+        },
+        "portability": {
+          "value": 3,
+          "rationale": "The actual context tree is ordinary local Markdown described as human-readable and git-friendly; its text can be used without the ByteRover service.",
+          "sources": [
+            "https://docs.byterover.dev/"
+          ]
+        },
+        "simplicity": {
+          "value": 2,
+          "rationale": "The CLI and a chosen LLM provider/model must be configured; the local route does not require a ByteRover cloud account or a separately managed memory server.",
+          "sources": [
+            "https://docs.byterover.dev/"
+          ]
+        }
+      },
+      "strengths": [
+        "Local Markdown knowledge is inspectable and reusable with ordinary tools.",
+        "Curation plus tiered file search supports persistent project context."
+      ],
+      "limits": [
+        "Curation still depends on a configured model/provider and maintained knowledge.",
+        "Live docs differ between V3 CLI and V4 Desktop surfaces; these scores apply only to the named CLI scope."
+      ],
+      "scope_label": "Local CLI · V3"
+    },
+    {
+      "id": "retaindb",
+      "scope": "Managed RetainDB user/session/agent/project memory as described by its memory-model docs and pinned Hermes adapter. Hybrid search is integration-documented; Company Brain-wide features and benchmark-only chronological full-context retrieval are not generalized.",
+      "scores": {
+        "retrieval": {
+          "value": 3,
+          "rationale": "The primary Hermes adapter documentation explicitly describes vector + BM25 + reranking. This is documented multi-path coverage, not independently verified backend behavior or the separate benchmark configuration.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "organization": {
+          "value": 2,
+          "rationale": "Official docs separate user, session, agent-task and project knowledge; the adapter adds typed remember operations. These are structured scopes rather than a documented cross-record reasoning graph.",
+          "sources": [
+            "https://retaindb.com/docs/concepts/memory-model",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "change": {
+          "value": 1,
+          "rationale": "Remember/forget and file operations let an agent explicitly store or remove knowledge. The phrase delta compression alone does not establish automatic conflict reconciliation or historical validity.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "Memory/profile context and stored files can be inspected through documented tools. This packet does not establish a source link for every retrieved memory fact.",
+          "sources": [
+            "https://retaindb.com/docs/concepts/memory-model",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "portability": {
+          "value": 1,
+          "rationale": "Documented recovery, recall or read tools expose stored content. This is limited portability under level 1: complete enumeration, bulk export and a reliable migration contract are not established in the assessed scope.",
+          "sources": [
+            "https://retaindb.com/docs/concepts/memory-model",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        },
+        "simplicity": {
+          "value": 2,
+          "rationale": "The managed Hermes route requires an account and API key, with no separate server/database for the user to operate.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Distinct user, session, task and project scopes fit different continuity needs.",
+        "The adapter documents hybrid search alongside memory and file tools."
+      ],
+      "limits": [
+        "Async writes and pending visibility require attention when recalling fresh information.",
+        "Export, fact-level lineage and automatic reconciliation are not established by the inspected memory-model/adapter docs."
+      ],
+      "scope_label": "Managed API"
+    },
+    {
+      "id": "holographic",
+      "scope": "Pinned bundled Hermes Holographic plugin with local SQLite/FTS5, default auto_extract=false, and optional NumPy HRR algebra; no learned embedding service or external memory server.",
+      "scores": {
+        "retrieval": {
+          "value": 2,
+          "rationale": "FTS5/BM25 candidates are reranked with Jaccard similarity, optional HRR similarity and trust weighting. This is scored lexical/compositional retrieval, not learned semantic search or an independently queried graph pipeline.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/retrieval.py",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/holographic.py"
+          ]
+        },
+        "organization": {
+          "value": 3,
+          "rationale": "The schema links multiple facts to explicit entities through fact_entities, alongside categories and tags. This credits cross-record entity organization, not a claim of semantic understanding.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/store.py"
+          ]
+        },
+        "change": {
+          "value": 1,
+          "rationale": "fact_store provides explicit update/remove/contradict operations and feedback changes trust. Default regex extraction is off; these controls do not establish automatic semantic reconciliation or version history.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/store.py"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "Fact IDs, content, categories, tags and timestamps are inspectable locally. The shown fact schema does not carry originating transcript references or a derivation history.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/store.py"
+          ]
+        },
+        "portability": {
+          "value": 2,
+          "rationale": "Facts and entity links reside in a local SQLite database at a configured path. Bulk possession is straightforward, but HRR blobs and the provider schema still need interpretation for another system.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/README.md",
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/store.py"
+          ]
+        },
+        "simplicity": {
+          "value": 3,
+          "rationale": "The bundled plugin uses always-available SQLite with no required extra package/service; NumPy is optional. Enabling the provider is the documented setup.",
+          "sources": [
+            "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/README.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Dependency-light local storage with inspectable facts and entity links.",
+        "Explicit corrections and helpful/unhelpful feedback expose agent control."
+      ],
+      "limits": [
+        "HRR token composition is not learned semantic embedding retrieval.",
+        "Automatic extraction is off by default; timestamps and trust scores do not supply source provenance."
+      ],
+      "scope_label": "Local plugin"
+    },
+    {
+      "id": "memori",
+      "scope": "Memori Cloud through separately installed hermes-memori at the pinned repository snapshot: completed-turn/tool-trace capture and structured recall. Not Memori OSS/BYODB, local database ownership, or benchmark pre-augmented assets.",
+      "scores": {
+        "retrieval": {
+          "value": 2,
+          "rationale": "Recall uses documented multi-dimensional ranking over source/signal, recency, frequency, scope and importance, with explicit query/scoping tools. These ranking factors do not establish independent multi-path retrieval.",
+          "sources": [
+            "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/integrations/hermes/README.md"
+          ]
+        },
+        "organization": {
+          "value": 2,
+          "rationale": "Entity/project/process/session scopes and allowed source/signal pairs organize typed facts, decisions, constraints and outcomes. This adapter schema is not evidence of a traversable knowledge graph.",
+          "sources": [
+            "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/integrations/hermes/README.md"
+          ]
+        },
+        "change": {
+          "value": 2,
+          "rationale": "Completed turns are automatically captured into structured memory and asynchronously refreshed derived context. This credits automatic maintenance, not proven version retention or correctness of contradiction resolution.",
+          "sources": [
+            "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/integrations/hermes/README.md"
+          ]
+        },
+        "traceability": {
+          "value": 1,
+          "rationale": "Structured memories and summaries can be inspected and filtered by source/signal classification. Here source denotes a memory type, not necessarily a link to the originating tool result.",
+          "sources": [
+            "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/integrations/hermes/README.md"
+          ]
+        },
+        "portability": {
+          "value": 1,
+          "rationale": "Documented recovery, recall or read tools expose stored content. This is limited portability under level 1: complete enumeration, bulk export and a reliable migration contract are not established in the assessed scope.",
+          "sources": [
+            "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/integrations/hermes/README.md"
+          ]
+        },
+        "simplicity": {
+          "value": 2,
+          "rationale": "The route requires installing/registering hermes-memori, an API key and an entity ID. No user-operated memory database is required for this Cloud scope.",
+          "sources": [
+            "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/integrations/hermes/README.md"
+          ]
+        }
+      },
+      "strengths": [
+        "Captures completed execution/tool context, not only conversational text.",
+        "Explicit recall and scoped summaries let the agent choose when to use history."
+      ],
+      "limits": [
+        "Capture is asynchronous and limited to completed, non-interrupted turns.",
+        "Cloud recall is not evidence of BYODB control, portable export or per-fact source citations."
+      ],
+      "scope_label": "Cloud adapter"
+    }
+  ]
+}

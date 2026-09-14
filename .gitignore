@@ -22,14 +22,22 @@
 !/src/provider-logos.json
 !/src/ui-icons.json
 !/src/story-design.css
+!/src/story-timeline.css
+!/src/story-timeline.js
+!/src/assessment.css
+!/src/assessment.json
 
 !/scripts/
 /scripts/*
 !/scripts/build_site.py
 !/scripts/check_site.py
 !/scripts/test_site_browser.py
+!/scripts/test_story_timeline.py
+!/scripts/test_assessment.py
+!/scripts/approach_assessment.py
 !/scripts/build_comparison.py
 !/scripts/visual_assets.py
 !/scripts/style_story.py
+!/scripts/story_timeline.py
 !/scripts/test_comparison.py
 !/scripts/test_comparison_browser.py

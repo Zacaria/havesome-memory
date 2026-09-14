@@ -22,7 +22,7 @@ def apply_story_design(page):
     assets = load_assets()
     catalogue = json.loads((ROOT/'src/comparison.json').read_text())
     providers = {item['id']:item for item in catalogue['approaches'] if item['kind']=='provider'}
-    styles = (ROOT/'src/story-design.css').read_text()
+    styles = (ROOT/'src/story-design.css').read_text() + '\n' + (ROOT/'src/story-timeline.css').read_text()
     page = once(page,'</head>',f'<style id="story-design-styles">{styles}</style></head>','head close')
     page = once(page,'<body data-beat="intro">','<body class="story-design" data-beat="intro">','story body')
     old_header = '<header><span class="mark" aria-hidden="true">▰</span> MEMORY ENGINEERING <span class="chapter-name">THE BEGINNING</span></header>'
@@ -65,7 +65,7 @@ def apply_story_design(page):
             url=providers[ident]['website']['url']
             site_label='Provider website'
         old=f'<header class="system-card__header"><p class="system-number">{number}</p>'
-        new=f'<header class="system-card__header"><div class="story-system-identity">{mark}<div><p class="system-number">{number}</p><strong>{escape(name)}</strong></div></div>{external(url,site_label,name)}'
+        new=f'<header class="system-card__header"><div class="story-system-identity">{mark}<div><p class="system-number">{number}</p>{external(url,name,name)}</div></div>'
         main=once(main,old,new,ident+' identity')
 
     # Pair each representation with its source system, not a nameless strip of jargon.
@@ -88,4 +88,5 @@ def apply_story_design(page):
     credits.append(f'<article><h3>Lucide interface icons</h3><p><a href="{escape(library["website"],quote=True)}" rel="noreferrer">Lucide</a> · <a href="{escape(library["license_url"],quote=True)}" rel="noreferrer">Pinned license notices</a></p><pre>{escape(library["license_notice"])}</pre></article>')
     credits_html='<details class="story-asset-credits"><summary>Logo &amp; icon sources</summary><p>Provider marks identify their products; name tiles and concept icons are not replacement logos. No affiliation or endorsement. Original story illustrations are retained; interface icons use Lucide.</p>'+''.join(credits)+'</details>'
     main=once(main,'<footer>',credits_html+'<footer>','story credits placement')
-    return main+'</main>'+remainder
+    from story_timeline import add_timeline
+    return add_timeline(main+'</main>'+remainder)
