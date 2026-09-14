@@ -29,7 +29,7 @@ def apply_story_design(page):
     header = f'<header class="story-site-header"><a class="story-brand" href="index.html">{emblem()}<span>HAVESOME MEMORY</span></a><span class="chapter-name">THE BEGINNING</span></header>'
     page = once(page,old_header,header,'story brand')
 
-    # Change only the static reading markup. Scripts and embedded evidence stay byte-identical.
+    # Edit static reading markup; evidence stays intact and UI literals are handled below.
     main, remainder = page.split('</main>',1)
     nav_items = [('index.html','Compare','approach'),('#meet','Intro','chat'),('#chapter-two','Explore','search'),('#chapter-three','Updates','retrieve'),('#chapter-four','Control','control'),('#chapter-five','Systems','hosting')]
     nav = '<nav class="site-index" aria-label="Chapter index">' + ''.join(f'<a href="{url}">{icon(symbol,"story-nav-icon")}<span>{label}</span></a>' for url,label,symbol in nav_items) + '</nav>'
@@ -49,9 +49,6 @@ def apply_story_design(page):
     main = once(main,'<div class="visual-heading"><span>MORROW WORKS</span>',f'<div class="visual-heading"><span>{icon("notes","story-scene-icon")}MORROW WORKS</span>','scene heading')
     main = once(main,'<button id="sources-open">Source passages</button>',f'<button id="sources-open">{icon("search","story-link-icon")}Read source passages</button>','source control')
 
-    reading = '<p class="flow-reading-guide">Follow the sequence from input to output. <strong>Boxes are information; arrows name the operation.</strong></p>'
-    main,n = re.subn(r'(<div class="architecture-flow" aria-label="[^"]+">)',lambda match:reading+match.group(1),main)
-    if n != 5: raise ValueError('Expected five provider architecture flows')
 
     system_labels = {'hindsight':'Hindsight','mem0':'Mem0 Platform + Dream','openviking':'OpenViking','supermemory':'Supermemory','graphrag':'Microsoft GraphRAG'}
     for ident,name in system_labels.items():
@@ -67,6 +64,35 @@ def apply_story_design(page):
         old=f'<header class="system-card__header"><p class="system-number">{number}</p>'
         new=f'<header class="system-card__header"><div class="story-system-identity">{mark}<div><p class="system-number">{number}</p>{external(url,name,name)}</div></div>'
         main=once(main,old,new,ident+' identity')
+
+    # Reader-facing copy: leave all source passages and embedded fixtures intact.
+    copy_edits = [
+        ('<p class="aside">This is an authored illustration, not a live AI response. Including evidence still does not guarantee that a real model will use it correctly.</p>', ''),
+        ('This saved summary is an authored example, not a real stored record or a claim about how a provider updates memory. The received decision remains S03.', 'The received decision remains S03.'),
+        (' The illustrated correction is authored, not an executed provider update.', ''),
+        (' Public teaching illustration, not a real access-control system; no waiver payload is included in this version.', ''),
+        ('Authored failure example, not a live retrieval or model run. ', ''),
+        (' This is an authored context packet, not an actual provider integration.', ''),
+        ('Illustrated answer and checks, not measured model performance. ', ''),
+        ('In this authored diagram, the instruction has also reached an extracted fact, an overview and an answer cache. Those copies are illustrative—not observed records in a running system. They make the maintenance question visible: which owned representations depend on this source?', 'The instruction has also reached an extracted fact, an overview and an answer cache. Which of these copies depend on the source?'),
+        (' Source inspection throughout this page is a public authoring reference, not a simulated user’s live retrieval.', ''),
+        ('That is the obligation illustrated here, not proof of an executed purge. The public teaching page and authoring corpus retain the invented fixture for inspection. Hiding or changing a diagram is neither physical deletion nor real authorization. ', ''),
+        ('The limit is the modeled owned stores, not every copy in the world. No live storage, access enforcement or deletion operation runs here.', 'The deletion rule covers stores owned by the team.'),
+        ('SUPPORTED EXAMPLE · NOT A MODEL RUN', 'SUPPORTED ANSWER'),
+        ('<div id="trust-model-label">AUTHORED ILLUSTRATION · NOT LIVE ENFORCEMENT</div>', ''),
+        ('Illustrated copies · not live storage', 'Source and dependent copies'),
+        ('documented center of gravity—not an end-to-end guarantee', 'main responsibilities'),
+        ('<p>These are current vendor documents. We did not reproduce Hindsight benchmark claims or test a hosted or self-hosted deployment.</p>', ''),
+        ('Published benchmark scores are vendor-produced. This guide does not rank Mem0 from those results or transfer Platform claims to OSS.', 'Platform and OSS are different products; their results are not interchangeable.'),
+        ('<p>Provider benchmark and pricing claims remain vendor-authored and mutable. This guide did not reproduce them.</p>', ''),
+        ('This guide does not generalize research results into production guarantees or treat community summaries as corpus completeness proofs.', 'Community summaries can omit source details.'),
+        ('Sources and prototype boundaries', 'About the examples'),
+        ('All company material is fictional. Literal searches run locally. The diagrams of authority, scope and context are authored illustrations—not a model response or provider demonstration. The exploration maps, classifications, identity distinctions and overview are authored teaching illustrations, not automated clustering, retrieval or provider output. The changing-knowledge snapshots, revisions and audit history are authored illustrations, not actual stored memories, provider updates or deletion operations. The access boundaries, context packets and owned-copy states are authored illustrations, not live enforcement, retrieval or deletion. Source inspection is the public authoring reference: it retains the invented temporary instruction even when the diagram illustrates a required purge. No data is sent or saved.', 'Morrow Works and its documents are fictional. Search runs locally; answers, memory updates, access rules and deletions are simulated. The source viewer retains all example passages, including expired or deleted ones. Nothing is sent or saved.'),
+        ('This public guide requires no account and sends no data. <strong>havesome-context</strong> is a planned optional companion about what an AI sees for a task—not a prerequisite.', 'No account required. Nothing leaves your browser.'),
+    ]
+    for old, new in copy_edits:
+        main = once(main, old, new, 'reader copy: '+old[:48])
+    main = main.replace('Primary sources and evidence boundary', 'Sources')
 
     # Pair each representation with its source system, not a nameless strip of jargon.
     objects=[('facts → observations','Hindsight'),('memories → entity graph','Mem0'),('L0 → L1 → L2','OpenViking'),('documents → evolving facts','Supermemory'),('text units → communities','GraphRAG')]
@@ -89,4 +115,9 @@ def apply_story_design(page):
     credits_html='<details class="story-asset-credits"><summary>Logo &amp; icon sources</summary><p>Provider marks identify their products; name tiles and concept icons are not replacement logos. No affiliation or endorsement. Original story illustrations are retained; interface icons use Lucide.</p>'+''.join(credits)+'</details>'
     main=once(main,'<footer>',credits_html+'<footer>','story credits placement')
     from story_timeline import add_timeline
+    remainder = once(remainder, 'Original fictional teaching passages. The illustration is not a live provider or AI response.', 'All source passages from the fictional company, including those outside the current scene.', 'source viewer note')
+    # Only these UI literals change; source data and executable logic stay intact.
+    for old, new in [('Modeled obligation · not proof of deletion', 'Source cleared · deletion receipt retained'),
+                     ('Illustrated copies · not live storage', 'Source and dependent copies')]:
+        remainder = once(remainder, old, new, 'lifecycle label')
     return add_timeline(main+'</main>'+remainder)

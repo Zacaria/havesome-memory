@@ -166,7 +166,8 @@ def check_generated(site: Path) -> dict[str, object]:
     story_images = {('img', 'src', raster_data(asset)) for asset in load_assets().values() if asset['format'] == 'png'}
     assert set(parser.subresources) == story_images and len(parser.subresources) == 1, "Unexpected story subresource"
     assert text.count('class="story-provider-site"') == 5
-    assert text.count('class="flow-reading-guide"') == 5
+    assert text.count('class="architecture-flow"') == 5
+    assert 'class="flow-reading-guide"' not in text
     assert 'class="story-site-header"' in text and 'data-icon-library="Lucide"' in text
     assert not parser.network_targets, f"Undeclared network-bearing attributes: {parser.network_targets}"
     assert not parser.meta_refreshes, f"Meta refresh is forbidden: {parser.meta_refreshes}"

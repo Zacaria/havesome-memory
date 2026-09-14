@@ -3,6 +3,7 @@
 from html import escape
 import math
 import re
+import textwrap
 from urllib.parse import urlsplit
 
 AXES = ('retrieval', 'organization', 'change', 'traceability', 'portability', 'simplicity')
@@ -181,21 +182,12 @@ def render_methodology(data):
     method = data['methodology']
     parts = [f'<details id="score-rubric" class="assessment-rubric">'
              f'<summary>{escape(method["title"])}</summary>',
-             '<p>These are editorial, ordinal capability feature profiles, not a performance ranking '
-             'and not our own benchmarks. Scores describe documented features within each stated '
-             'scope, not measured effectiveness. Higher levels are not necessarily a better fit.</p>',
+             '<p>These editorial scores are not our own benchmarks.</p>',
              f'<p>{escape(method["summary"])}</p><p>{escape(method["scale_note"])}</p>',
-             '<p>All profiles use the same six axes and 0–3 scale. Levels are ordered categories, '
-             'not equal measured intervals. We calculate no total, average, or overall rank. '
-             'Radar area is not a total and must not be used to compare overall quality.</p>',
-             '<p>Unknown means insufficient documentation in the assessed scope; it is not zero '
-             'and does not establish absence. Zero is an explicit assessment against the axis’s '
-             'level-0 anchor. Unknown chart points are omitted; any unknown removes the filled '
-             'shape and all connecting edges.</p>',
+             '<p>Unknown is not zero. Unknown points are omitted; incomplete profiles have no '
+             'connecting shape.</p>',
              f'<p><strong>Source scope:</strong> {escape(method["scope_note"])}</p>',
-             '<p>Read each scope before comparing: a general approach, a provider platform, and '
-             'its agent integration are not interchangeable. The linked official sources support '
-             'the editorial rationale; the scores are not vendor-reported test results.</p>',
+
              '<h3>Per-axis level anchors</h3><div class="assessment-anchors">']
     for criterion in _criteria(data['criteria']):
         parts.append(f'<section><h4>{escape(criterion["label"])}</h4>'
@@ -220,13 +212,14 @@ def _radar(assessment, criteria):
     ident = assessment['id']
     values = [assessment['scores'][axis]['value'] for axis in AXES]
     summary = '; '.join(f'{c["label"]}: {_score_text(value)}' for c, value in zip(criteria, values))
-    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" class="radar-chart" viewBox="0 0 260 260" '
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" class="radar-chart" viewBox="-30 -20 320 300" '
              f'role="img" aria-labelledby="radar-title-{ident}" '
-             f'aria-describedby="radar-desc-{ident} radar-caption-{ident}">'
+             f'aria-describedby="radar-desc-{ident}">'
              f'<title id="radar-title-{ident}">Editorial capability profile: {escape(summary)}</title>'
              f'<desc id="radar-desc-{ident}">Clockwise from the top: {escape(", ".join(c["label"] for c in criteria))}. '
-             'Center is 0; rings are 1, 2, 3. Numbered spokes match the criterion list. '
-             'Unknown values have no plotted point.</desc>']
+             'Center is 0; rings are 1, 2, 3. '
+             'Unknown values have no plotted point or connecting shape. '
+             + escape(' '.join(f'{c["label"]}: {c["question"]}' for c in criteria)) + '</desc>']
     for level in range(1, 4):
         points = ' '.join(','.join(_point(i, level * 22)) for i in range(6))
         parts.append(f'<polygon class="radar-grid" points="{points}" fill="none" />')
@@ -245,11 +238,35 @@ def _radar(assessment, criteria):
             parts.append(f'<circle class="radar-point" data-axis="{criterion["id"]}" '
                          f'data-score="{value}" cx="{x}" cy="{y}" r="3.5">'
                          f'<title>{escape(criterion["label"])}: {_score_text(value)}</title></circle>')
-        x, y = _point(i, 99)
-        # Compact numeric key avoids tiny/shrunken or clipped long labels at 320px.
-        parts.append(f'<text class="radar-label" x="{x}" y="{y}" text-anchor="middle" '
-                     f'dominant-baseline="middle">{i + 1}: {"?" if value is None else _score_text(value)}</text>')
+        parts.append(_axis_label(i, criterion, value))
     return ''.join(parts) + '</svg>'
+
+
+def _axis_label(index, criterion, value=None, interactive=False):
+    """Direct labels outside the unchanged plot; wrap names, never shrink type."""
+    x, y, anchor = ((130, 6, 'middle'), (280, 59, 'end'),
+                    (280, 184, 'end'), (130, 247, 'middle'),
+                    (-20, 184, 'start'), (-20, 59, 'start'))[index]
+    lines = textwrap.wrap(criterion['label'], width=12)
+    description = f'{criterion["label"]}: {criterion["question"]}'
+    score_attrs = ''
+    if not interactive:
+        lines.append(_score_text(value))
+        description = f'{criterion["label"]}: {_score_text(value)}. {criterion["question"]}'
+        score_attrs = f' data-score="{_score_key(value)}" aria-label="{escape(description)}"'
+    label = (f'<text class="radar-label" data-axis="{criterion["id"]}"{score_attrs} '
+             f'x="{x}" y="{y}" text-anchor="{anchor}">'
+             + ''.join(f'<tspan x="{x}" dy="{22 if n else 0}">{escape(line)}</tspan>'
+                       for n, line in enumerate(lines)) + '</text>')
+    if not interactive:
+        return label
+    # A full label-sized hit area, independent of the text's painted glyphs.
+    left = x - 132 if anchor == 'end' else x - 66 if anchor == 'middle' else x
+    return (f'<g class="radar-axis-target" role="button" tabindex="0" data-axis="{criterion["id"]}" '
+            f'data-description="{escape(criterion["question"])}" aria-label="{escape(criterion["label"])}">'
+            f'<title>{escape(description)}</title>'
+            f'<rect x="{left}" y="{y - 22}" width="132" height="{max(44, len(lines) * 22)}" rx="4"/>'
+            + label + '</g>')
 
 
 def render_comparison_radar(data, catalogue):
@@ -265,7 +282,7 @@ def render_comparison_radar(data, catalogue):
              '<details id="shared-radar-disclosure"><summary>Compare profiles <span id="series-count">0 selected</span></summary>'
              '<div class="shared-radar-body"><p id="radar-empty">Select rows to overlay their capability profiles. No approach is selected by default.</p>'
              '<div class="shared-chart-display">'
-             '<svg xmlns="http://www.w3.org/2000/svg" id="shared-radar" viewBox="20 20 220 220" role="group" aria-labelledby="shared-radar-title">'
+             '<svg xmlns="http://www.w3.org/2000/svg" id="shared-radar" viewBox="-30 -20 320 300" role="group" aria-labelledby="shared-radar-title">'
              '<title id="shared-radar-title">Selected editorial capability profiles. Center 0; rings 1, 2, 3.</title>']
     legend = []
     for n, assessment in enumerate(data['approaches']):
@@ -292,29 +309,18 @@ def render_comparison_radar(data, catalogue):
                       f'<span class="series-swatch" aria-hidden="true">{chr(65+n)}</span>{escape(names[ident])}{partial}</button>'
                       f'<button type="button" data-remove="{ident}" aria-label="Unpin {escape(names[ident])}">×</button></li>')
     for n, criterion in enumerate(criteria):
-        x, y = _point(n, 91)
-        parts.append(f'<g class="radar-axis-target" role="button" tabindex="0" data-axis="{criterion["id"]}" '
-                     f'data-description="{escape(criterion["question"])}" aria-label="{escape(criterion["label"])}">'
-                     f'<circle cx="{x}" cy="{y}" r="13"/><text x="{x}" y="{y}" text-anchor="middle" dominant-baseline="middle">{n+1}</text></g>')
+        parts.append(_axis_label(n, criterion, interactive=True))
     parts.append('</svg><ul class="series-legend" aria-label="Selected series; highlight or unpin">'+''.join(legend)+'</ul></div>'
                  '<p id="series-highlight" role="status">All selected profiles</p><button type="button" id="reset-series">Clear highlight</button>'
-                 '<div class="axis-buttons" role="group" aria-label="Six capability axes">')
-    for n, c in enumerate(criteria, 1):
-        parts.append(f'<button type="button" class="axis-button" data-axis="{c["id"]}" '
-                     f'data-description="{escape(c["question"])}" aria-label="{escape(c["label"])}">{n}. {escape(c["label"])}</button>')
-    parts.append('</div><p class="shared-radar-note">Editorial 0–3, not benchmarks. Unknown ≠ zero. Scroll the legend for all selected names; focus or tap one to highlight its profile. Explore axes 1–6. Letters identify series, not ranks. Arrow keys scroll the score popup. Incomplete profiles show known points only, never a connecting shape. Area is not an overall score.</p></div></details></aside>')
+                 '<p class="shared-radar-note">Focus or tap an axis for scores; a series name to highlight it.</p></div></details></aside>')
     return ''.join(parts)
 
 
 def render_profile(assessment, criteria):
-    """Render a quick trade-off profile with a compact keyed radar and sourced detail."""
+    """Render a quick trade-off profile with directly named axes and sourced detail."""
     ident = _assessment(assessment)
     criteria = _criteria(criteria)
-    legend = ''.join(
-        f'<li data-axis="{c["id"]}" data-score="{_score_key(assessment["scores"][c["id"]]["value"])}">'
-        f'<span class="radar-key">{n}</span><span>{escape(c["label"])}</span>'
-        f'<strong>{_score_text(assessment["scores"][c["id"]]["value"])}</strong></li>'
-        for n,c in enumerate(criteria,1))
+
     tradeoffs = '<div class="assessment-tradeoffs">' + ''.join(
         f'<div><h4>{title}</h4><ul>' + ''.join(f'<li>{escape(text)}</li>' for text in assessment[key]) + '</ul></div>'
         for key,title in (('strengths','Upsides'),('limits','Limits'))) + '</div>'
@@ -322,14 +328,10 @@ def render_profile(assessment, criteria):
              f'aria-labelledby="assessment-heading-{ident}">'
              f'<h3 id="assessment-heading-{ident}">Editorial capability profile</h3>'
              f'<p class="assessment-scope"><strong>Assessed scope:</strong> {escape(assessment["scope"])}</p>'
-             '<p class="assessment-note">Documented capability levels, not benchmark results or a ranking. '
-             '<a href="#score-rubric">Read the rubric and level anchors</a>.</p>'
+             '<p class="assessment-note"><a href="#score-rubric">Rubric and level anchors</a></p>'
              '<div class="assessment-layout"><figure class="assessment-radar">',
              _radar(assessment, criteria),
-             '<ol class="radar-legend" aria-label="Radar criteria and scores">'+legend+'</ol>',
-             f'<figcaption id="radar-caption-{ident}">Same six axes, same 0–3 scale. Spoke numbers '
-             'match this legend; ? means Unknown, not zero. Missing points disable the connecting '
-             'shape. Radar area is not a total or an overall quality score.</figcaption>'
+
              '</figure>'+tradeoffs+'</div>'
              '<details class="assessment-rationale"><summary>Why these scores? Criteria and sources</summary>'
              '<ol class="assessment-criteria">']

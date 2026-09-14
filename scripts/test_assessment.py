@@ -130,9 +130,14 @@ class AssessmentTests(unittest.TestCase):
         self.assertEqual([p.get('data-score') for p in points], [c.get('data-score') for c in cells])
         self.assertEqual(profile.get('class'), 'assessment-profile')
         self.assertEqual(profile.get('data-assessment-id'), assessment['id'])
-        legend=profile.findall('.//ol[@class="radar-legend"]/li')
-        self.assertEqual([item.get('data-axis') for item in legend],list(AXES))
-        self.assertEqual([item.get('data-score') for item in legend],[c.get('data-score') for c in cells])
+        labels = profile.findall('.//{*}text[@class="radar-label"]')
+        self.assertEqual([item.get('data-axis') for item in labels], list(AXES))
+        self.assertEqual([item.get('data-score') for item in labels], [c.get('data-score') for c in cells])
+        for label, criterion in zip(labels, data['criteria']):
+            self.assertIn(criterion['label'], ' '.join(label.itertext()))
+            self.assertIn(criterion['question'], label.get('aria-label', ''))
+        self.assertIsNone(profile.find('.//ol[@class="radar-legend"]'))
+        self.assertIsNone(profile.find('.//figure/figcaption'))
         for n, (axis, cell, header) in enumerate(zip(AXES, cells, headers)):
             value = assessment['scores'][axis]['value']
             self.assertEqual(cell.get('data-score'), str(value))
@@ -189,11 +194,15 @@ class AssessmentTests(unittest.TestCase):
                 self.assertIsNone(profile.find('.//{*}polyline'))
                 self.assertTrue(all(p.get('fill') == 'none' for p in profile.findall('.//{*}polygon')))
                 cells = ET.fromstring('<tr>' + api.render_cells(sample, data['criteria']) + '</tr>')
+                labels = {label.get('data-axis'): label for label in profile.findall('.//{*}text[@class="radar-label"]')}
                 for axis, cell in zip(AXES, cells):
                     if axis in unknown:
                         self.assertEqual(cell.get('data-score'), 'unknown')
                         self.assertIn('Unknown', ''.join(cell.itertext()))
                         self.assertNotIn('0/3', ''.join(cell.itertext()))
+                        self.assertEqual(labels[axis].get('data-score'), 'unknown')
+                        self.assertIn('Unknown', ''.join(labels[axis].itertext()))
+                        self.assertNotIn('0/3', ''.join(labels[axis].itertext()))
                 if 'retrieval' not in unknown:
                     zero = next(p for p in points if p.get('data-axis') == 'retrieval')
                     self.assertEqual((float(zero.attrib['cx']), float(zero.attrib['cy'])), (130, 130))
@@ -228,16 +237,17 @@ class AssessmentTests(unittest.TestCase):
             self.assertTrue(''.join(ids[ref].itertext()).strip())
         self.assertIn(attack, ''.join(svg.findall('{*}title')[0].itertext()))
         self.assertIn(url, [a.get('href') for a in profile.iter('a')])
-        self.assertIsNotNone(profile.find('.//figure/figcaption'))
+        self.assertIsNone(profile.find('.//figure/figcaption'))
 
     def test_methodology_lists_all_anchors_scopes_and_caveats(self):
         data, _ = synthetic_fixture()
         root = ET.fromstring(self.api().render_methodology(data))
         self.assertEqual((root.tag, root.get('id')), ('details', 'score-rubric'))
         text = ''.join(root.itertext())
-        for word in ('editorial', 'ordinal', 'not our own benchmarks', 'Unknown', 'not zero',
-                     'no total', 'not a performance ranking'):
+        for word in ('editorial', 'not our own benchmarks', 'Unknown', 'not zero', 'no connecting shape'):
             self.assertIn(word, text)
+        for value in data['methodology'].values():
+            self.assertIn(value, text)
         for criterion in data['criteria']:
             for anchor in criterion['levels'].values():
                 self.assertIn(anchor, text)
@@ -277,7 +287,8 @@ class AssessmentTests(unittest.TestCase):
         api = self.api()
         data, _ = synthetic_fixture()
         # Stress long unbroken copy without introducing real provider assertions.
-        data['criteria'][0]['label'] = 'SYNTHETIC-' * 12
+        data['criteria'][0]['question'] = 'SYNTHETIC-' * 12
+        data['criteria'][2]['label'] = 'Change / history'
         data['approaches'][0]['scope'] += ' SYNTHETIC-' * 12
         data['approaches'][1]['scores']['change'].update(value=None, sources=[])
         inner = '<!doctype html><html lang="en"><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>' + css + '</style></head><body><main>'
@@ -296,12 +307,12 @@ class AssessmentTests(unittest.TestCase):
             const labels=[...d.querySelectorAll('.radar-label,.radar-scale,.assessment-profile p,.assessment-profile h4,.column-help,.score-number,#score-rubric dd')];
             const tiny=labels.filter(e=>parseFloat(w.getComputedStyle(e).fontSize)*(e instanceof w.SVGTextElement?e.getScreenCTM().a:1)<13).length;
             const overflow=[...d.querySelectorAll('.assessment-profile,.assessment-rubric,.assessment-cell')].filter(e=>e.scrollWidth>e.clientWidth+1).map(e=>e.className);
-            const clipped=[...d.querySelectorAll('.radar-chart text')].filter(e=>{const b=e.getBBox();return b.x<0||b.y<0||b.x+b.width>260||b.y+b.height>260}).length;
+            const clipped=[...d.querySelectorAll('.radar-chart text,.radar-chart tspan')].filter(e=>{const b=e.getBBox(),v=e.ownerSVGElement.viewBox.baseVal;return b.x<v.x||b.y<v.y||b.x+b.width>v.x+v.width||b.y+b.height>v.y+v.height}).length;
             return {width:w.innerWidth,chartWidth:d.querySelector('.radar-chart').getBoundingClientRect().width,client:d.documentElement.clientWidth,scroll:d.documentElement.scrollWidth,profiles:profiles.length,tiny,overflow,clipped,charts:d.querySelectorAll('.radar-chart').length,shapes:d.querySelectorAll('.radar-shape').length};
           });
           const out=document.createElement('pre');out.id='layout-result';out.textContent=JSON.stringify(results);document.body.append(out);
         }</script>'''
-        html = ('<!doctype html><html><body>' + ''.join(frame.replace('{}', str(w), 1) for w in (320, 850, 1280)) + script + '</body></html>').encode()
+        html = ('<!doctype html><html><body>' + ''.join(frame.replace('{}', str(w), 1) for w in (320, 390, 850, 1280)) + script + '</body></html>').encode()
 
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):
@@ -329,7 +340,7 @@ class AssessmentTests(unittest.TestCase):
                     results = json.loads(result.inner_text())
                 finally:
                     browser.close()
-            self.assertEqual([r['width'] for r in results], [320, 850, 1280])
+            self.assertEqual([r['width'] for r in results], [320, 390, 850, 1280])
             for result in results:
                 with self.subTest(viewport=result['width']):
                     self.assertEqual(result['scroll'], result['client'], result)

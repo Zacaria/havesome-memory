@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 from test_site_browser import serve_site
-from test_comparison_interactions import verify_interactions
+from test_comparison_interactions import verify_interactions, verify_radar_geometry
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = json.loads((ROOT/'src/comparison.json').read_text())
@@ -22,10 +22,12 @@ def browser_options(environment):
     return options
 
 def main():
+    site_sha = hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()
     output = ROOT/'_verification'
     output.mkdir(exist_ok=True)
     errors, remote = [], []
     checked=0
+    radar_geometry=[]
     with serve_site(ROOT/'_site') as base, sync_playwright() as pw:
         browser = pw.chromium.launch(**browser_options(os.environ))
         try:
@@ -121,11 +123,19 @@ def main():
                     series=page.locator(f'#shared-radar [data-series="{ident}"]')
                     read_scores='els=>Object.fromEntries(els.map(e=>[e.dataset.axis,e.dataset.score]))'
                     assert series.evaluate('el=>Object.fromEntries(Object.entries(JSON.parse(el.dataset.values)).map(([k,v])=>[k,v===null?"unknown":String(v)]))')==expected
-                    assert profile.locator('.radar-legend li').evaluate_all(read_scores)==expected
+                    assert profile.locator('.radar-label').evaluate_all(read_scores)==expected
                     assert profile.locator('.radar-point').evaluate_all(read_scores)=={k:v for k,v in expected.items() if v!='unknown'}
                     assert profile.locator('.radar-shape').count()==int('unknown' not in expected.values())
-                    assert profile.locator('.radar-legend li').count()==6
-                    if width in (1440,390) and ident in ('hindsight','vector-rag'):
+                    assert profile.locator('.radar-label').count()==6
+                    assert profile.locator('.radar-legend,figure figcaption').count()==0
+                    for criterion in ASSESSMENTS['criteria']:
+                        label=profile.locator(f'.radar-label[data-axis="{criterion["id"]}"]')
+                        lines=label.locator('tspan').all_text_contents()
+                        assert ' '.join(lines[:-1])==criterion['label']
+                        assert lines[-1]==('Unknown' if expected[criterion['id']]=='unknown' else expected[criterion['id']]+'/3')
+                        assert criterion['question'] in label.get_attribute('aria-label')
+                    radar_geometry.append({'viewport':width,'approach':ident,**verify_radar_geometry(profile.locator('.radar-chart'))})
+                    if width in (1440,390,320) and ident in ('hindsight','vector-rag'):
                         profile.screenshot(path=str(output/f'{width}-{ident}-capability-profile.png'))
                     profile.locator('.assessment-rationale > summary').click()
                     assert profile.locator('.assessment-criteria > li').count()==6
@@ -194,8 +204,10 @@ def main():
         finally:browser.close()
     assert not errors,errors
     assert not remote,remote
+    assert hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()==site_sha, 'Site changed during browser verification; rebuild and rerun against a stable artifact'
     report={'status':'pass','browser':os.environ.get('BROWSER_EXECUTABLE'),'viewports':VIEWPORTS,'approaches':len(IDS),'criteria':len(ASSESSMENTS['criteria']),'scorecards':len(RATINGS),'score_entries':sum(len(x['scores']) for x in RATINGS.values()),'unknown_entries':sum(v['value'] is None for x in RATINGS.values() for v in x['scores'].values()),'matrix_and_radar_agree':True,'disclosure_states':checked,'provider_evidence_panels':9,'historical_evidence_separated':True,'filters':True,'search':True,'keyboard':True,'old_story_hash':True,'story_round_trip':True,'no_js':True,'errors':errors,'remote_requests':remote,'sha256':hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()}
     report['comparison_interactions'] = interaction_report
+    report['radar_geometry'] = radar_geometry
     (output/'comparison-browser-verification.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 

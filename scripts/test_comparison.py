@@ -21,7 +21,7 @@ class ComparisonTests(unittest.TestCase):
         self.assertEqual(table.count('class="pin-checkbox"'), 13)
         self.assertEqual(table.count('type="checkbox"'), 13)
         self.assertEqual(table.count('for comparison" disabled'), 13)
-        self.assertEqual(home.count('class="axis-button"'), 6)
+        self.assertEqual(home.count('class="radar-axis-target"'), 6)
         self.assertEqual(home.count('class="comparison-series"'), 13)
         for item in json.loads((ROOT/'src/comparison.json').read_text())['approaches']:
             for key in ('focus', 'retrieval', 'storage'):
@@ -35,6 +35,31 @@ class ComparisonTests(unittest.TestCase):
             self.assertNotIn('class="claim"', before)
             self.assertNotIn('class="historical"', before)
 
+
+    def test_reader_copy_omits_process_commentary(self):
+        import re
+        from html import unescape
+        with tempfile.TemporaryDirectory() as tmp:
+            build(Path(tmp))
+            for name in ('index.html', 'story.html'):
+                raw=(Path(tmp)/name).read_text()
+                reading=re.sub(r'<(script|style)\b[^>]*>.*?</\1>', '', raw, flags=re.S)
+                reading=unescape(re.sub(r'<[^>]+>', ' ', reading))
+                for phrase in ('Conceptual flow, not a live trace',
+                               'Illustrative example, not a live agent response',
+                               'Authored example, not a provider output',
+                               'Scores repeat the table exactly',
+                               'This is an authored illustration, not a live AI response',
+                               'not a real stored record',
+                               'not proof of an executed purge',
+                               'Sources and prototype boundaries',
+                               'AUTHORED ILLUSTRATION · NOT LIVE ENFORCEMENT',
+                               'Illustrated copies · not live storage'):
+                    with self.subTest(page=name, phrase=phrase):
+                        self.assertNotIn(phrase, reading)
+            story=(Path(tmp)/'story.html').read_text()
+            self.assertIn('Morrow Works and its documents are fictional.', story)
+            self.assertIn('answers, memory updates, access rules and deletions are simulated', story)
 
     def test_browser_override_and_playwright_managed_fallback(self):
         # Isolate the pure option builder without importing optional Playwright.
@@ -118,13 +143,19 @@ class ComparisonTests(unittest.TestCase):
             self.assertIn('class="story-site-header"',story)
             self.assertIn('data-icon-library="Lucide"',story)
             self.assertEqual(story.count('class="story-provider-site"'),5)
-            self.assertEqual(story.count('class="flow-reading-guide"'),5)
+            self.assertEqual(story.count('class="architecture-flow"'),5)
+            self.assertNotIn('class="flow-reading-guide"',story)
             self.assertIn('Lucide Icons and Contributors',story)
             for ident in ['beats-data','corpus-data']:
                 pattern=rf'<script id="{ident}" type="application/json">(.*?)</script>'
                 before=re.search(pattern,raw.decode(),re.S).group(1)
                 after=re.search(pattern,story,re.S).group(1)
                 self.assertEqual(json.loads(before),json.loads(after))
+            # Runtime logic is unchanged; only two lifecycle UI literals are shorter.
+            for script in re.findall(r'<script\b[^>]*>(.*?)</script>',raw.decode(),re.S):
+                script=script.replace('Modeled obligation · not proof of deletion', 'Source cleared · deletion receipt retained')
+                script=script.replace('Illustrated copies · not live storage', 'Source and dependent copies')
+                self.assertIn(script,story)
 
     def test_story_timeline_covers_every_step(self):
         import re
@@ -164,7 +195,7 @@ class ComparisonTests(unittest.TestCase):
             self.assertIn('not automatically every past conversation', home)
             self.assertIn('Memory means keeping useful information', home)
             self.assertIn('Use a 30-second timeout.', home)
-            self.assertIn('Illustrative example, not a live agent response.', home)
+            self.assertIn('Saved is not enough. It must be found—and still apply.', home)
             self.assertIn('class="hero-compare" href="#comparison"', home)
             self.assertLess(home.index('id="memory-introduction"'), home.index('id="comparison"'))
             self.assertNotIn('Meet Morrow Works.', home)

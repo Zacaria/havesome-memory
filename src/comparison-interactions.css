@@ -79,7 +79,7 @@
 .shared-radar-body { padding: 0 12px 12px; max-height: calc(92dvh - 80px); overflow: auto; }
 .shared-radar-note, #radar-empty, #series-highlight { font-size: 12px; line-height: 1.5; color: var(--muted); margin-bottom: 10px; }
 #radar-empty { color: var(--accent); }
-#shared-radar { display: block; width: 220px; max-width: 100%; margin: 0 auto 10px; }
+#shared-radar { display: block; width: 320px; max-width: 100%; margin: 0 auto 10px; }
 .comparison-series .radar-shape { fill: none; stroke: var(--series-color); stroke-width: 2; stroke-dasharray: var(--series-dash); }
 .comparison-series .radar-point { fill: var(--series-color); stroke-width: 1; }
 .comparison-series.is-muted { opacity: .16; }
@@ -88,13 +88,11 @@
 .series-letter { display: none; fill: var(--series-color); stroke: var(--bg); stroke-width: 3px; paint-order: stroke; font: bold 15px Arial,sans-serif; }
 .is-highlighted .series-letter { display: block; }
 .radar-axis-target { cursor: pointer; }
-.radar-axis-target circle { fill: var(--bg); stroke: var(--line); }
-.radar-axis-target text { fill: var(--blue); font: 14px Arial,sans-serif; pointer-events: none; }
+.radar-axis-target rect { fill: transparent; stroke: transparent; }
+.radar-axis-target text { fill: var(--blue); pointer-events: none; }
 .radar-axis-target:focus-visible { outline: none; }
-.radar-axis-target:focus-visible circle { stroke: var(--accent); stroke-width: 3; }
-.axis-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 12px; }
-.axis-button { min-height: 34px; min-width: 0; padding: 4px; background: var(--bg); color: var(--blue); border: 1px solid var(--line); font-size: 12px; }
-.axis-button:focus-visible, .series-legend button:focus-visible { outline-offset: 1px; }
+.radar-axis-target:hover rect, .radar-axis-target:focus-visible rect { stroke: var(--accent); stroke-width: 2; }
+.series-legend button:focus-visible { outline-offset: 1px; }
 .series-legend { list-style: none; margin: 0 0 10px; padding: 3px; max-height: 18dvh; overflow: auto; }
 .series-legend li { display: flex; gap: 5px; align-items: center; margin-bottom: 5px; }
 .series-legend button { display: flex; align-items: center; gap: 7px; min-height: 32px; padding: 4px; text-align: left; font-size: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
@@ -115,17 +113,20 @@
   .shared-radar-body { max-height: 30dvh; padding: 5px 12px 12px; }
   .radar-expanded #pinned-rows { max-height: 22dvh; }
   .radar-expanded.comparison-workspace { padding-bottom: 42dvh; }
-  #shared-radar { width: 200px; }
+
   .shared-chart-display { display: grid; grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr); gap: 8px; align-items: start; }
   .series-legend { max-height: min(200px,24dvh); margin: 0; }
   .series-legend [data-highlight] { overflow-wrap: anywhere; min-width: 0; }
   .series-swatch { width: 17px; height: 20px; }
   .series-legend [data-remove] { width: 26px; flex: none; }
-  .axis-buttons { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media(max-width:600px) {
+  /* Give named axes a readable width; the existing panel scrolls vertically. */
+  .shared-chart-display { grid-template-columns: minmax(0,1fr); }
 }
 @media(forced-colors:active) {
   #radar-tooltip { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .comparison-series .radar-shape { stroke: CanvasText; }
   .comparison-series .radar-point { fill: CanvasText; }
-  .radar-axis-target:focus-visible circle { stroke: Highlight; }
+  .radar-axis-target:focus-visible rect { stroke: Highlight; }
 }

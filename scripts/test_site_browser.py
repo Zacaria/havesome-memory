@@ -110,7 +110,8 @@ def main() -> None:
                 assert page.locator("textarea").count() == 10
                 assert page.locator('.story-site-header .memory-emblem').count() == 1
                 assert page.locator('.story-provider-site').count() == 5
-                assert page.locator('.flow-reading-guide').count() == 5
+                assert page.locator('.architecture-flow').count() == 5
+                assert page.locator('.flow-reading-guide').count() == 0
                 assert page.locator('svg[data-icon-library="Lucide"]').count() > 0
                 assert page.locator('.story-provider-site').evaluate_all('(links)=>links.every(a=>a.target==="_blank" && a.relList.contains("noopener") && a.relList.contains("noreferrer"))')
                 nav_box = page.locator('.site-index').bounding_box()
@@ -202,7 +203,7 @@ def main() -> None:
                     assert card.is_visible()
                     assert card.locator(".architecture-flow").is_visible()
                     assert card.locator('.story-provider-site').is_visible()
-                    assert card.locator('.flow-reading-guide').is_visible()
+                    assert card.locator('.architecture-flow').is_visible()
                     assert card.locator('.architecture-flow').evaluate('(el)=>el.scrollWidth<=el.clientWidth+1')
                     assert card.locator('.system-number').evaluate('(el)=>parseFloat(getComputedStyle(el).fontSize)>=13 && parseInt(getComputedStyle(el).fontWeight)>=600')
                     assert card.locator(".morrow-test").is_visible()

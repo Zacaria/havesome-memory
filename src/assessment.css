@@ -28,23 +28,20 @@
 }
 .assessment-profile .assessment-note, .assessment-profile .assessment-question,
 .assessment-profile .assessment-sources { font-size: 13px; color: var(--muted, #b1c2db); }
-.assessment-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 24px; align-items: start; }
+.assessment-layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: start; }
 .assessment-radar { margin: 0; max-width: 100%; }
 
-.radar-legend{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:7px}
-.radar-legend li{display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:7px;font-size:13px;line-height:1.4;align-items:baseline}
-.radar-key{font-weight:700;color:var(--blue)}
-.radar-legend strong{font-size:13px;font-variant-numeric:tabular-nums}
+
 .assessment-rationale{margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
 .assessment-rationale>summary{min-height:44px;padding:8px 0;font-size:15px;font-weight:600;color:var(--blue);cursor:pointer}
 .assessment-rationale[open]>summary{margin-bottom:18px}
 
-.assessment-radar figcaption { color: var(--muted, #b1c2db); font-size: 13px; line-height: 1.55; }
-.radar-chart { display: block; width: 260px; max-width: 100%; height: auto; margin: 0 auto 12px; }
+.radar-chart { display: block; width: 320px; max-width: 100%; height: auto; margin: 0 auto; }
 .radar-grid, .radar-axis { stroke: var(--muted, #b1c2db); stroke-opacity: .45; stroke-width: 1; fill: none; }
 .radar-shape { fill: var(--blue, #8ebcff); fill-opacity: .12; stroke: var(--blue, #8ebcff); stroke-width: 2; }
 .radar-point { fill: var(--accent, #ffaf83); stroke: var(--bg, #0a1930); stroke-width: 1.5; }
-.radar-label, .radar-scale { fill: var(--ink, #edf1fa); font: 16px 'Helvetica Neue', Arial, sans-serif; }
+.radar-label, .radar-scale { fill: var(--ink, #edf1fa); font: 20px 'Helvetica Neue', Arial, sans-serif; }
+.radar-label { font-weight: 500; }
 .radar-scale { fill: var(--muted, #b1c2db); }
 .assessment-criteria { margin: 0; padding: 0 0 0 24px; }
 .assessment-criteria > li { padding: 0 0 14px 4px; margin: 0 0 14px; border-bottom: 1px solid var(--line, #7895c444); }
@@ -77,7 +74,7 @@ td.assessment-cell { min-width: 0; overflow-wrap: anywhere; vertical-align: midd
 @media (max-width: 850px) {
   .assessment-layout, .assessment-tradeoffs, .assessment-anchors { grid-template-columns: minmax(0, 1fr); }
   .assessment-radar { width: 100%; }
-  .assessment-radar figcaption { max-width: 540px; margin: 0 auto 12px; }
+
   td.assessment-cell { width: 100%; }
 }
 @media (max-width: 400px) {

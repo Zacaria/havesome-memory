@@ -13,7 +13,29 @@ IDS = [a['id'] for a in DATA['approaches']]
 WIDTHS = [(1440,900),(1280,720),(1001,720),(1000,720),(851,800),(850,800),(768,1024),(390,844),(320,640)]
 
 
+def verify_radar_geometry(chart):
+    """Measure actual SVG text AND each wrapped line, not just the SVG box."""
+    geometry = chart.evaluate('''svg=>{
+      const v=svg.viewBox.baseVal;
+      const labels=[...svg.querySelectorAll('.radar-label')];
+      const text=[...svg.querySelectorAll('.radar-label,.radar-label tspan,.radar-scale')];
+      const clipped=text.filter(e=>{const b=e.getBBox();return b.x<v.x || b.y<v.y || b.x+b.width>v.x+v.width || b.y+b.height>v.y+v.height}).map(e=>e.textContent);
+      const sizes=text.map(e=>parseFloat(getComputedStyle(e).fontSize)*Math.hypot(e.getScreenCTM().a,e.getScreenCTM().b));
+      const overlap=[];
+      labels.forEach((a,i)=>labels.slice(i+1).forEach(b=>{
+        const x=a.getBBox(),y=b.getBBox();
+        if(x.x<y.x+y.width && x.x+x.width>y.x && x.y<y.y+y.height && x.y+x.height>y.y)overlap.push([a.textContent,b.textContent]);
+      }));
+      return {width:svg.getBoundingClientRect().width,labels:labels.length,lines:svg.querySelectorAll('.radar-label tspan').length,minFont:Math.min(...sizes),clipped,overlap};
+    }''')
+    assert geometry['labels']==len(SCORES['criteria']), geometry
+    assert not geometry['clipped'] and not geometry['overlap'], geometry
+    assert geometry['minFont']>=13, geometry
+    return geometry
+
+
 def verify_interactions(browser, base, output):
+    site_sha = hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()
     results, errors, remote = [], [], []
     for width, height in WIDTHS:
         print('Interaction viewport', width, height, flush=True)
@@ -119,8 +141,13 @@ def verify_interactions(browser, base, output):
         disclosure=page.locator('#shared-radar-disclosure')
         if disclosure.get_attribute('open') is None: disclosure.locator('summary').click()
         page.wait_for_timeout(50)
+        assert page.locator('.axis-buttons,.axis-button').count()==0
+        assert page.locator('.radar-axis-target[role="button"][tabindex="0"]').count()==len(SCORES['criteria'])
+        radar_geometry = verify_radar_geometry(page.locator('#shared-radar'))
         for criterion in SCORES['criteria']:
-            button=page.locator(f'.axis-button[data-axis="{criterion["id"]}"]')
+            button=page.locator(f'.radar-axis-target[data-axis="{criterion["id"]}"]')
+            assert ' '.join(button.locator('tspan').all_text_contents())==criterion['label']
+            expect(button).to_have_accessible_name(criterion['label'])
             button.scroll_into_view_if_needed();button.focus();page.keyboard.press('Enter')
             expect(page.locator('#radar-tooltip')).to_be_visible()
             assert page.locator('#radar-tooltip').evaluate('e=>e.matches(":popover-open")')
@@ -136,6 +163,15 @@ def verify_interactions(browser, base, output):
             assert page.locator('#radar-tooltip').evaluate('e=>{const r=e.getBoundingClientRect();return e.contains(document.elementFromPoint(r.x+5,r.y+5))}')
             if width in (1440,390) and criterion==SCORES['criteria'][-1]:page.screenshot(path=str(output/f'{width}-shared-radar-tooltip.png'))
             page.keyboard.press('Escape');expect(page.locator('#radar-tooltip')).to_be_hidden()
+            page.keyboard.press('Space');expect(page.locator('#radar-tooltip')).to_be_visible()
+            page.keyboard.press('Escape')
+        # Native Tab traversal reaches each SVG control, not a duplicated HTML key.
+        page.locator('.radar-axis-target').first.focus()
+        for criterion in SCORES['criteria'][1:]:
+            page.keyboard.press('Tab')
+            expect(page.locator(f'.radar-axis-target[data-axis="{criterion["id"]}"]')).to_be_focused()
+            expect(page.locator('#radar-tooltip')).to_be_visible()
+        page.keyboard.press('Escape')
         for assessment in SCORES['approaches']:
             series=page.locator('#shared-radar [data-series="'+assessment['id']+'"]')
             profile=page.locator('#provider-'+assessment['id'])
@@ -156,7 +192,7 @@ def verify_interactions(browser, base, output):
         assert page.locator('.comparison-series.is-muted').count()==0
         page.locator('[data-remove="'+IDS[-1]+'"]').click();integrity(set(IDS[:-1]))
         # Hover/focus/touch, blur/Escape, filtering, and scrolling away all dismiss cleanly.
-        target=page.locator('.axis-button').first
+        target=page.locator('.radar-axis-target').first
 
         target.scroll_into_view_if_needed()
         if width<=1000:target.tap()
@@ -186,7 +222,7 @@ def verify_interactions(browser, base, output):
         if width<=1200:disclosure.locator('summary').click()
         page.locator('#clear-selection').click();integrity(set())
         if width in (1440,390):page.screenshot(path=str(output/f'{width}-descriptive-table.png'))
-        results.append({'viewport':[width,height],'selection_counts':[0,1,2,3,12,13],'axis_inspections':78,'same_nodes':True,'bounded_pins':True,'sticky_end':True,'aligned_columns':width>1000,'retained_filter':True})
+        results.append({'viewport':[width,height],'selection_counts':[0,1,2,3,12,13],'axis_inspections':sum(len(a['scores']) for a in SCORES['approaches']),'radar_geometry':radar_geometry,'same_nodes':True,'bounded_pins':True,'sticky_end':True,'aligned_columns':width>1000,'retained_filter':True})
         ctx.close()
     # No-JS: native sources/details and disabled pins, without a dead toolbar.
     ctx=browser.new_context(java_script_enabled=False,viewport={'width':320,'height':640})
@@ -203,7 +239,8 @@ def verify_interactions(browser, base, output):
     ctx.close()
     assert not errors,errors
     assert not remote,remote
-    report={'status':'pass','matrix':results,'errors':errors,'remote_requests':remote,'no_js':True,'sha256':hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()}
+    assert hashlib.sha256((ROOT/'_site/index.html').read_bytes()).hexdigest()==site_sha, 'Site changed during browser verification; rebuild and rerun against a stable artifact'
+    report={'status':'pass','matrix':results,'errors':errors,'remote_requests':remote,'no_js':True,'sha256':site_sha}
     (output/'comparison-interactions-verification.json').write_text(json.dumps(report,indent=2)+'\n')
     return report
 
