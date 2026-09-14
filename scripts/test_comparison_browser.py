@@ -32,7 +32,7 @@ def main():
                 page.on('pageerror',lambda error:errors.append(str(error)))
                 page.on('request',lambda request:remote.append(request.url) if request.url.startswith(('http:','https:')) and not request.url.startswith(base) else None)
                 assert page.goto(base).status==200
-                assert page.locator('h1').inner_text()=='Choose how your agent remembers.'
+                assert page.locator('h1').inner_text()=='You told your AI yesterday. Will it know today?'
                 assert page.locator('tbody tr').count()==len(IDS)
                 assert page.locator('.dossier').count()==len(IDS)
                 assert page.locator('[data-cohort-provider]').count()==9
@@ -41,9 +41,23 @@ def main():
                 assert page.locator('.historical .claim').count()==3
                 assert page.locator('#filter-status').inner_text()=='13 of 13 approaches'
                 assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
+                # The problem, definition and comparison action precede tool names.
+                hero = page.locator('#memory-introduction')
+                assert 'not automatically every past conversation' in hero.inner_text()
+                assert 'Memory means keeping useful information' in hero.inner_text()
+                assert hero.locator('.hero-sequence li').count()==3
+                cta = hero.locator('.hero-compare')
+                rect = cta.bounding_box()
+                assert rect and rect['y'] >= 0 and rect['y'] + rect['height'] <= height, ('hero CTA below fold',width,rect)
+                cta.click()
+                expect(page.locator('#comparison-title')).to_be_in_viewport()
+                assert page.locator('#comparison-title').bounding_box()['y'] >= 0
+                page.evaluate('scrollTo(0,0)')
                 if width in (1440,390):page.screenshot(path=str(output/f'{width}-comparison-opening.png'))
-                # All comparisons are present in the first reading section.
-                if width>=1280:assert page.locator('tbody tr').first.bounding_box()['y']<height
+                # The new explanatory hero keeps the comparison entrance in view.
+                if width>=1280:
+                    comparison_rect = page.locator('#comparison-title').bounding_box()
+                    assert comparison_rect and comparison_rect['y'] < height
                 for kind,n in [('basic',4),('provider',9),('all',13)]:
                     page.locator(f'[data-filter="{kind}"]').click()
                     assert page.locator('tbody tr:visible').count()==n

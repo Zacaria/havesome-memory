@@ -190,7 +190,7 @@ def check_generated(site: Path) -> dict[str, object]:
     assert not home_parser.subresources and not home_parser.network_targets and not home_parser.meta_refreshes
     assert all(urlparse(href).scheme == "https" and "noreferrer" in rel.split() for href, rel in home_parser.external_links)
     assert '<link rel="canonical" href="https://zacaria.github.io/havesome-memory/">' in homepage
-    assert '<h1>Choose how your agent remembers.</h1>' in homepage
+    assert '<h1 id="memory-title">You told your AI yesterday. Will it know today?</h1>' in homepage
     assert 'Evidence reviewed 14 September 2026' in homepage
     assert 'href="story.html"' in homepage and 'story.html'+chr(39)+'+location.hash' in homepage
     catalogue = json.loads((ROOT / 'src/comparison.json').read_text())
