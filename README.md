@@ -17,7 +17,7 @@ The Morrow Works organization and all its records are fictional. The comparison 
 
 ## Repository boundary
 
-This public repository intentionally contains only the production source and verification scripts. Research-page snapshots, third-party reference screenshots, historical prototypes, generated screenshots, and packaged evidence archives are excluded. The generated site embeds no third-party runtime assets, analytics, network calls, or credentials.
+This public repository intentionally contains only the production source and verification scripts. Research-page snapshots, third-party reference screenshots, historical prototypes, generated screenshots, and packaged evidence archives are excluded. The generated site embeds a small, source-attributed collection of provider marks and original illustrations. It makes no external runtime requests and includes no analytics or credentials. Logo origins and complete license notices are recorded in `src/provider-logos.json`, `THIRD_PARTY_NOTICES.md`, and the page’s credits.
 
 ## Build
 

@@ -86,6 +86,19 @@ def main():
                     if width in (1440,390) and ident=='hindsight':page.screenshot(path=str(output/f'{width}-comparison-detail.png'))
                     dossier.locator('.back').click()
                     checked+=1
+                assert page.locator('.identity-badge').count()==35
+                assert page.locator('.provider-logo').count()==12
+                assert page.locator('.memory-emblem').count()==1
+                assert page.locator('[data-art="retained-decision"]').count()==1
+                for mark in page.locator('.identity-badge').all():
+                    box=mark.bounding_box()
+                    assert box and box['width']>=28 and box['height']>=28
+                assert page.locator('img.provider-glyph').evaluate_all('(imgs)=>imgs.length===3 && imgs.every(img=>img.complete && img.naturalWidth>0)')
+                page.locator('.asset-credits > summary').click()
+                assert page.locator('.asset-credits article').count()==4
+                assert page.locator('.asset-credits pre').first.is_visible()
+                assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
+                page.locator('.asset-credits > summary').click()
                 page.locator('#how-memory-works').scroll_into_view_if_needed()
                 if width==1440:page.locator('.cohort-grid').screenshot(path=str(output/'1440-provider-evidence-panels.png'))
                 for cohort in page.locator('[data-cohort-provider]').all():

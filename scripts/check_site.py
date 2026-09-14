@@ -28,6 +28,8 @@ TRACKED_ALLOWLIST = {
     "scripts/test_comparison_browser.py",
     "src/comparison.css",
     "src/comparison.json",
+    "src/provider-logos.json",
+    "scripts/visual_assets.py",
     "scripts/check_site.py",
     "scripts/test_site_browser.py",
     "src/chapter-five.css",
@@ -187,7 +189,18 @@ def check_generated(site: Path) -> dict[str, object]:
     home_parser.feed(homepage)
     assert len(home_parser.ids) == len(set(home_parser.ids)), "Duplicate comparison IDs"
     assert all(fragment in home_parser.ids for fragment in home_parser.fragment_links), "Broken homepage fragment"
-    assert not home_parser.subresources and not home_parser.network_targets and not home_parser.meta_refreshes
+    from visual_assets import load_assets, raster_data
+    logos = load_assets()
+    assert set(logos) == {'hindsight','mem0','supermemory','byterover'}
+    allowed_images = {('img','src',raster_data(asset)) for asset in logos.values() if asset['format'] == 'png'}
+    assert set(home_parser.subresources) == allowed_images and len(home_parser.subresources) == 3
+    assert not home_parser.network_targets and not home_parser.meta_refreshes
+    assert homepage.count('class="identity-badge ') == 35
+    assert homepage.count('class="identity-badge provider-logo ') == 12
+    for ident, asset in logos.items():
+        assert all(asset.get(field) for field in ('source_url','source_sha256','license_url','license_notice','modifications'))
+        assert asset['source_url'].startswith('https://raw.githubusercontent.com/')
+        assert 'id="credit-'+ident+'"' in homepage
     assert all(urlparse(href).scheme == "https" and "noreferrer" in rel.split() for href, rel in home_parser.external_links)
     assert '<link rel="canonical" href="https://zacaria.github.io/havesome-memory/">' in homepage
     assert '<h1 id="memory-title">You told your AI yesterday. Will it know today?</h1>' in homepage

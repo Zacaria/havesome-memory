@@ -19,6 +19,7 @@
 !/src/chapter-five.js
 !/src/comparison.css
 !/src/comparison.json
+!/src/provider-logos.json
 
 !/scripts/
 /scripts/*
@@ -26,5 +27,6 @@
 !/scripts/check_site.py
 !/scripts/test_site_browser.py
 !/scripts/build_comparison.py
+!/scripts/visual_assets.py
 !/scripts/test_comparison.py
 !/scripts/test_comparison_browser.py
