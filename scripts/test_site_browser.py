@@ -74,6 +74,8 @@ def main() -> None:
     remote_requests: list[str] = []
     story_states = 0
     system_states = 0
+    source_dialog_states = 0
+    direct_intro_anchor_states = 0
 
     with serve_site(args.site.resolve()) as base_url, sync_playwright() as playwright:
         base_url += "story.html"
@@ -105,6 +107,18 @@ def main() -> None:
                 assert page.locator(".system-card").count() == 9
                 assert page.locator(".source-drawer").count() == 5
                 assert page.locator("textarea").count() == 10
+                assert page.locator('.story-site-header .memory-emblem').count() == 1
+                assert page.locator('.story-provider-site').count() == 5
+                assert page.locator('.flow-reading-guide').count() == 5
+                assert page.locator('svg[data-icon-library="Lucide"]').count() > 0
+                assert page.locator('.story-provider-site').evaluate_all('(links)=>links.every(a=>a.target==="_blank" && a.relList.contains("noopener") && a.relList.contains("noreferrer"))')
+                nav_box = page.locator('.site-index').bounding_box()
+                title_box = page.locator('#opening-title').bounding_box()
+                assert nav_box and title_box and nav_box['y']+nav_box['height'] <= title_box['y']
+                label = page.locator('#meet .eyebrow').evaluate('(el)=>({size:parseFloat(getComputedStyle(el).fontSize),weight:parseInt(getComputedStyle(el).fontWeight)})')
+                assert label['size'] >= 13 and label['weight'] >= 600
+                if width in {1440,390}:
+                    page.screenshot(path=str(args.screenshots/f'{width}-story-opening.png'))
 
                 page.mouse.wheel(0, 300)
                 page.wait_for_function("scrollY > 0")
@@ -112,8 +126,10 @@ def main() -> None:
                     page.evaluate(
                         """index => {
                             const heading = document.querySelector('#heading-' + index);
+                            const label = document.querySelector('#beat-'+index+' .beat-number');
+                            const labelGap = heading.getBoundingClientRect().top-label.getBoundingClientRect().top;
                             const target = innerWidth <= 800
-                                ? document.getElementById('illustration').offsetHeight + 32
+                                ? document.getElementById('illustration').offsetHeight + 16 + labelGap
                                 : innerHeight * .28;
                             scrollTo(0, heading.getBoundingClientRect().top + scrollY - target);
                         }""",
@@ -124,12 +140,44 @@ def main() -> None:
                     )
                     assert page.locator("#illustration").get_attribute("data-scene") == beats[index]["scene"]
                     assert not page.evaluate("document.documentElement.scrollWidth > innerWidth + 1")
+                    beat_label = page.locator(f'#beat-{index} .beat-number').evaluate('(el)=>({size:parseFloat(getComputedStyle(el).fontSize),weight:parseInt(getComputedStyle(el).fontWeight)})')
+                    assert beat_label['size'] >= 13 and beat_label['weight'] >= 600
+                    if story_states % (len(beats)*2) < len(beats):
+                        button = page.locator('#sources-open').bounding_box()
+                        assert button and button['y'] >= 0 and button['y']+button['height'] <= height
+                        page.locator('#sources-open').click()
+                        assert page.locator('#source-dialog').is_visible()
+                        assert page.locator('#source-content article').count() == len(beats[index]['refs'])
+                        page.locator('#sources-close').click()
+                        assert page.locator('#sources-open').evaluate('(el)=>el===document.activeElement')
+                        assert page.locator('body').get_attribute('data-beat') == str(index)
+                        source_dialog_states += 1
+                        if width in {1440,390} and index in {0,8,14,21,26}:
+                            page.screenshot(path=str(args.screenshots/f'{width}-story-beat-{index}.png'))
                     if width <= 800:
                         heading = page.locator(f"#heading-{index}").bounding_box()
                         figure = page.locator("#illustration").bounding_box()
                         assert heading and figure
                         assert heading["y"] >= figure["y"] + figure["height"]
+                        number = page.locator(f'#beat-{index} .beat-number').bounding_box()
+                        assert number and number['y'] >= figure['y'] + figure['height'] + 8
+                        if index in {21,22}:
+                            zone_label = page.locator('#packet-area>span').bounding_box()
+                            source_card = page.locator('#packet-original').bounding_box()
+                            assert zone_label and source_card and zone_label['y']+zone_label['height']+4 <= source_card['y'], (width,index,zone_label,source_card)
                     story_states += 1
+
+                for ident in ['chapter-two','chapter-three','chapter-four']:
+                    page.goto(base_url+'#'+ident,wait_until='load')
+                    page.evaluate('()=>new Promise(requestAnimationFrame)')
+                    heading = page.locator('#'+ident).bounding_box()
+                    figure = page.locator('#illustration').bounding_box()
+                    assert heading and figure and heading['y'] < height-20
+                    if width <= 800:
+                        assert heading['y'] >= figure['y']+figure['height']+16
+                        label = page.locator('#'+ident).evaluate('(el)=>el.previousElementSibling.getBoundingClientRect().top')
+                        assert label >= figure['y']+figure['height']
+                    direct_intro_anchor_states += 1
 
                 page.locator("#chapter-five").scroll_into_view_if_needed()
                 assert page.locator("#systems-title").is_visible()
@@ -151,6 +199,10 @@ def main() -> None:
                     )
                     assert card.is_visible()
                     assert card.locator(".architecture-flow").is_visible()
+                    assert card.locator('.story-provider-site').is_visible()
+                    assert card.locator('.flow-reading-guide').is_visible()
+                    assert card.locator('.architecture-flow').evaluate('(el)=>el.scrollWidth<=el.clientWidth+1')
+                    assert card.locator('.system-number').evaluate('(el)=>parseFloat(getComputedStyle(el).fontSize)>=13 && parseInt(getComputedStyle(el).fontWeight)>=600')
                     assert card.locator(".morrow-test").is_visible()
                     drawer = card.locator(".source-drawer")
                     drawer.locator("summary").click()
@@ -158,6 +210,12 @@ def main() -> None:
                     drawer.locator("summary").click()
                     assert not page.evaluate("document.documentElement.scrollWidth > innerWidth + 1")
                     system_states += 1
+
+                page.locator('.story-asset-credits summary').click()
+                assert page.locator('.story-asset-credits article').count() == 4
+                assert page.locator('.story-asset-credits pre').first.is_visible()
+                assert not page.evaluate('document.documentElement.scrollWidth > innerWidth+1')
+                page.locator('.story-asset-credits summary').click()
 
                 page.locator("#selection").scroll_into_view_if_needed()
                 first_note = page.locator("textarea").first
@@ -220,6 +278,10 @@ def main() -> None:
         "viewports": [f"{width}x{height}" for width, height in VIEWPORTS],
         "verified_story_scroll_states": story_states,
         "verified_system_cards": system_states,
+        "verified_source_dialog_states": source_dialog_states,
+        "direct_intro_anchor_states": direct_intro_anchor_states,
+        "shared_story_design": True,
+        "visible_system_links": 5,
         "direct_chapter_five_anchor": True,
         "project_subpath_http": True,
         "custom_404_status_and_home_link": True,

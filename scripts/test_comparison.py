@@ -73,6 +73,26 @@ class ComparisonTests(unittest.TestCase):
             self.assertIn('data-icon-library="Lucide"',home)
             self.assertIn('Lucide Icons and Contributors',home)
 
+    def test_story_uses_the_shared_design_without_changing_its_corpus(self):
+        import json,re
+        from build_site import STORY, STORY_SHA256
+        import hashlib
+        raw=STORY.read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(),STORY_SHA256)
+        with tempfile.TemporaryDirectory() as tmp:
+            build(Path(tmp))
+            story=(Path(tmp)/'story.html').read_text()
+            self.assertIn('class="story-site-header"',story)
+            self.assertIn('data-icon-library="Lucide"',story)
+            self.assertEqual(story.count('class="story-provider-site"'),5)
+            self.assertEqual(story.count('class="flow-reading-guide"'),5)
+            self.assertIn('Lucide Icons and Contributors',story)
+            for ident in ['beats-data','corpus-data']:
+                pattern=rf'<script id="{ident}" type="application/json">(.*?)</script>'
+                before=re.search(pattern,raw.decode(),re.S).group(1)
+                after=re.search(pattern,story,re.S).group(1)
+                self.assertEqual(json.loads(before),json.loads(after))
+
     def test_visual_identities_are_embedded_and_keep_text_labels(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp)

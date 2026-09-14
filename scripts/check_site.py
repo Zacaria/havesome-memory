@@ -31,6 +31,8 @@ TRACKED_ALLOWLIST = {
     "src/provider-logos.json",
     "src/ui-icons.json",
     "scripts/visual_assets.py",
+    "scripts/style_story.py",
+    "src/story-design.css",
     "scripts/check_site.py",
     "scripts/test_site_browser.py",
     "src/chapter-five.css",
@@ -149,7 +151,12 @@ def check_generated(site: Path) -> dict[str, object]:
     assert not missing_ids, f"Missing required IDs: {missing_ids}"
     missing_fragments = sorted({target for target in parser.fragment_links if target not in parser.ids})
     assert not missing_fragments, f"Broken fragment links: {missing_fragments}"
-    assert not parser.subresources, f"External or file subresources found: {parser.subresources}"
+    from visual_assets import load_assets, raster_data
+    story_images = {('img', 'src', raster_data(asset)) for asset in load_assets().values() if asset['format'] == 'png'}
+    assert set(parser.subresources) == story_images and len(parser.subresources) == 1, "Unexpected story subresource"
+    assert text.count('class="story-provider-site"') == 5
+    assert text.count('class="flow-reading-guide"') == 5
+    assert 'class="story-site-header"' in text and 'data-icon-library="Lucide"' in text
     assert not parser.network_targets, f"Undeclared network-bearing attributes: {parser.network_targets}"
     assert not parser.meta_refreshes, f"Meta refresh is forbidden: {parser.meta_refreshes}"
     assert parser.scripts_without_src >= 4, "Expected embedded data and application scripts"

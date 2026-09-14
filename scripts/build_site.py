@@ -59,12 +59,10 @@ def build(output: Path) -> Path:
 
     output.mkdir(parents=True, exist_ok=True)
     index = output / "index.html"
-    (output / "story.html").write_text(
-        page.replace('href="https://zacaria.github.io/havesome-memory/"', 'href="https://zacaria.github.io/havesome-memory/story.html"')
-            .replace('content="https://zacaria.github.io/havesome-memory/"', 'content="https://zacaria.github.io/havesome-memory/story.html"')
-            .replace('<nav class="site-index" aria-label="Chapter index">', '<nav class="site-index" aria-label="Chapter index"><a href="index.html">Compare</a>'),
-        encoding="utf-8",
-    )
+    story_page = page.replace('href="https://zacaria.github.io/havesome-memory/"', 'href="https://zacaria.github.io/havesome-memory/story.html"')
+    story_page = story_page.replace('content="https://zacaria.github.io/havesome-memory/"', 'content="https://zacaria.github.io/havesome-memory/story.html"')
+    from style_story import apply_story_design
+    (output / "story.html").write_text(apply_story_design(story_page), encoding="utf-8")
     from build_comparison import render
     index.write_text(render(), encoding="utf-8")
     (output / ".nojekyll").write_text("", encoding="utf-8")

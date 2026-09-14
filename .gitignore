@@ -21,6 +21,7 @@
 !/src/comparison.json
 !/src/provider-logos.json
 !/src/ui-icons.json
+!/src/story-design.css
 
 !/scripts/
 /scripts/*
@@ -29,5 +30,6 @@
 !/scripts/test_site_browser.py
 !/scripts/build_comparison.py
 !/scripts/visual_assets.py
+!/scripts/style_story.py
 !/scripts/test_comparison.py
 !/scripts/test_comparison_browser.py

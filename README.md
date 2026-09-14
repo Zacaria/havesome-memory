@@ -2,7 +2,7 @@
 
 **Havesome Memory** opens with a source-backed comparison of four basic memory patterns and all nine integrations documented on the Hermes memory-provider page (eight bundled plugins plus the separately installed Memori integration). Provider positions and benchmark results are attributed to their own sources, with test conditions, gaps and disagreements visible. No universal leaderboard.
 
-The complete native-scroll Morrow Works story and its five-technology deep dive remain available at `story.html`.
+The complete native-scroll Morrow Works story and its five-technology deep dive remain available at `story.html`. A separate presentation layer applies the shared branding, stronger labels, Lucide icons, direct system links and pipeline reading guides without rewriting the pinned story, source corpus or interaction scripts.
 
 Published site: <https://zacaria.github.io/havesome-memory/>
 
