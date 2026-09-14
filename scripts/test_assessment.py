@@ -10,6 +10,15 @@ import xml.etree.ElementTree as ET
 AXES = ('retrieval', 'organization', 'change', 'traceability', 'portability', 'simplicity')
 
 
+def fixture_browser_options(environment):
+    """Use Playwright's installed browser unless explicitly overridden."""
+    options = {'headless': True}
+    override = environment.get('BROWSER_EXECUTABLE')
+    if override:
+        options['executable_path'] = override
+    return options
+
+
 def synthetic_fixture() -> tuple[dict[str, Any], dict[str, Any]]:
     """Deliberately invented names/evidence on reserved example.invalid hosts."""
     criteria = [dict(id=axis, label=axis.title(), question=f'Synthetic {axis} question?',
@@ -28,6 +37,12 @@ def synthetic_fixture() -> tuple[dict[str, Any], dict[str, Any]]:
 
 
 class AssessmentTests(unittest.TestCase):
+    def test_fixture_uses_managed_browser_unless_explicitly_overridden(self):
+        self.assertEqual(fixture_browser_options({}), {'headless': True})
+        self.assertEqual(fixture_browser_options({'BROWSER_EXECUTABLE': ''}), {'headless': True})
+        self.assertEqual(fixture_browser_options({'BROWSER_EXECUTABLE': '/explicit/brave'}),
+                         {'headless': True, 'executable_path': '/explicit/brave'})
+
     def api(self):
         path = Path(__file__).with_name('approach_assessment.py')
         self.assertTrue(path.exists(), 'Standalone assessment renderer must exist')
@@ -246,17 +261,16 @@ class AssessmentTests(unittest.TestCase):
 
     def test_browser_layout_with_host_css_at_320_and_desktop(self):
         """Optional real Chromium check; fixture served in memory, no generated site files."""
-        from html import escape, unescape
+        from html import escape
         from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
         import json
         import re
-        import shutil
-        import subprocess
-        import tempfile
+        import os
         import threading
-        browser = shutil.which('chromium')
-        if not browser:
-            self.skipTest('Chromium is not installed; pure renderer tests still run')
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            self.skipTest('Playwright is not installed; run with the browser-test environment for this fixture')
         css_path = Path(__file__).resolve().parents[1] / 'src' / 'assessment.css'
         self.assertTrue(css_path.exists(), 'Matching assessment CSS must exist')
         css = css_path.with_name('comparison.css').read_text() + '\n' + css_path.read_text()
@@ -303,16 +317,18 @@ class AssessmentTests(unittest.TestCase):
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:
-            with tempfile.TemporaryDirectory(prefix='synthetic-assessment-browser-') as temp:
-                run = subprocess.run([browser, '--headless', '--no-sandbox', '--disable-gpu',
-                    '--disable-dev-shm-usage', '--disable-background-networking', '--no-first-run',
-                    '--user-data-dir=' + temp, '--dump-dom', '--virtual-time-budget=1500',
-                    f'http://127.0.0.1:{server.server_port}'], capture_output=True, text=True, timeout=45)
-            self.assertEqual(run.returncode, 0, run.stderr[-2000:])
-            match = re.search(r'<pre id="layout-result">(.*?)</pre>', run.stdout, re.S)
-            self.assertIsNotNone(match, run.stderr[-2000:])
-            assert match is not None
-            results = json.loads(unescape(match.group(1)))
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch(**fixture_browser_options(os.environ))
+                try:
+                    page = browser.new_page()
+                    response = page.goto(f'http://127.0.0.1:{server.server_port}', wait_until='load')
+                    self.assertIsNotNone(response)
+                    self.assertEqual(response.status, 200)
+                    result = page.locator('#layout-result')
+                    result.wait_for(state='attached')
+                    results = json.loads(result.inner_text())
+                finally:
+                    browser.close()
             self.assertEqual([r['width'] for r in results], [320, 850, 1280])
             for result in results:
                 with self.subTest(viewport=result['width']):
