@@ -59,7 +59,14 @@ def build(output: Path) -> Path:
 
     output.mkdir(parents=True, exist_ok=True)
     index = output / "index.html"
-    index.write_text(page, encoding="utf-8")
+    (output / "story.html").write_text(
+        page.replace('href="https://zacaria.github.io/havesome-memory/"', 'href="https://zacaria.github.io/havesome-memory/story.html"')
+            .replace('content="https://zacaria.github.io/havesome-memory/"', 'content="https://zacaria.github.io/havesome-memory/story.html"')
+            .replace('<nav class="site-index" aria-label="Chapter index">', '<nav class="site-index" aria-label="Chapter index"><a href="index.html">Compare</a>'),
+        encoding="utf-8",
+    )
+    from build_comparison import render
+    index.write_text(render(), encoding="utf-8")
     (output / ".nojekyll").write_text("", encoding="utf-8")
     (output / "404.html").write_text(
         """<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex\"><link rel=\"canonical\" href=\"https://zacaria.github.io/havesome-memory/\"><title>Page not found · Memory Engineering</title><style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:8vw;background:#0a1930;color:#edf1fa;font:18px/1.6 Arial,sans-serif}main{max-width:760px;border-top:1px solid #ffaf83;padding-top:28px}p:first-child{color:#ffaf83;font-size:12px;letter-spacing:.12em}h1{font-size:clamp(44px,9vw,94px);line-height:.95;letter-spacing:-.055em;font-weight:500}a{color:#ffaf83;text-underline-offset:4px}</style></head><body><main><p>404 / OUTSIDE THE COLLECTION</p><h1>This page was not retained.</h1><p>The Memory Engineering story still starts in one place.</p><p><a href=\"https://zacaria.github.io/havesome-memory/\">Return to Havesome Memory →</a></p></main></body></html>""",

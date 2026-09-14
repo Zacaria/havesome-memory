@@ -1,6 +1,8 @@
 # Havesome Memory
 
-**Memory Engineering** is a source-backed, native-scroll guide for engineers and AI-initiated readers. A fictional company story makes memory failures concrete; a final chapter maps those problems to five current technology approaches without declaring a universal winner.
+**Havesome Memory** opens with a source-backed comparison of four basic memory patterns and all nine integrations documented on the Hermes memory-provider page (eight bundled plugins plus the separately installed Memori integration). Provider positions and benchmark results are attributed to their own sources, with test conditions, gaps and disagreements visible. No universal leaderboard.
+
+The complete native-scroll Morrow Works story and its five-technology deep dive remain available at `story.html`.
 
 Published site: <https://zacaria.github.io/havesome-memory/>
 
@@ -11,7 +13,7 @@ Published site: <https://zacaria.github.io/havesome-memory/>
 - the documented centers of gravity of Hindsight, Mem0 Platform and Dream, OpenViking, Supermemory, and Microsoft GraphRAG;
 - tests an engineering team should run before choosing or building a memory layer.
 
-The Morrow Works organization and all its records are fictional. Provider material is primary-source desk research reviewed on 13 September 2026. The project has not deployed or independently benchmarked those providers.
+The Morrow Works organization and all its records are fictional. The comparison evidence was reviewed on 14 September 2026; the preserved story deep dive retains its 13 September 2026 review. The project has not deployed or independently benchmarked those providers.
 
 ## Repository boundary
 
@@ -21,10 +23,13 @@ This public repository intentionally contains only the production source and ver
 
 ```sh
 python3 scripts/build_site.py
-python3 scripts/check_site.py
+python3 scripts/check_site.py --worktree
+python3 scripts/test_comparison.py
 ```
 
-The deterministic build writes exactly three files to `_site/`: `index.html`, `404.html`, and `.nojekyll`.
+The deterministic build writes exactly four files to `_site/`: `index.html` (comparison), `story.html` (preserved guide), `404.html`, and `.nojekyll`. The original four-chapter source remains hash-pinned. Major old story fragment links redirect to `story.html`.
+
+Comparison data and citations live in `src/comparison.json`; `scripts/build_comparison.py` renders the self-contained entry point. The `--worktree` audit includes the explicit new-file closure before staging; CI omits the flag and audits the Git index.
 
 ## Browser verification
 
@@ -33,9 +38,10 @@ python3 -m venv .venv
 .venv/bin/python -m pip install playwright==1.62.0
 .venv/bin/python -m playwright install chromium
 .venv/bin/python scripts/test_site_browser.py
+.venv/bin/python scripts/test_comparison_browser.py
 ```
 
-On Linux with a system Chromium, the script uses `/usr/bin/chromium`; set `BROWSER_EXECUTABLE` to another Chromium-family executable when needed. The release suite exercises all 27 story beats forwards and backwards at five viewport sizes, the five technology sections, direct chapter navigation, source drawers, reduced motion, no-JavaScript fallback, overflow, page errors, and remote requests.
+On Linux with a system Chromium, the script uses `/usr/bin/chromium`; set `BROWSER_EXECUTABLE` to another Chromium-family executable when needed. Local revision verification used a temporary extracted Brave browser through `BROWSER_EXECUTABLE`. The comparison suite exercises all 13 disclosures at five widths, filtering, search and empty state, keyboard operation, no-JavaScript reading, source drawers, direct provider anchors, an old story anchor, and the round trip to the preserved story. The story release suite exercises all 27 story beats forwards and backwards at five viewport sizes, the five technology sections, direct chapter navigation, source drawers, reduced motion, no-JavaScript fallback, overflow, page errors, and remote requests.
 
 ## Publishing
 

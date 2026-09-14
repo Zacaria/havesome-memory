@@ -1,0 +1,1063 @@
+{
+  "reviewed": "14 September 2026",
+  "hermes_source": {
+    "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/memory-providers",
+    "title": "Memory Providers",
+    "publisher": "Nous Research"
+  },
+  "approaches": [
+    {
+      "id": "builtin-memory-files",
+      "name": "Built-in MEMORY.md + USER.md",
+      "kind": "basic",
+      "category": "Always-on notes",
+      "focus": "Stable facts and user preferences",
+      "retrieval": "Session-start prompt snapshot",
+      "storage": "Local files",
+      "evidence_label": "No standardized score",
+      "evidence_note": "A pattern, not a tested product",
+      "flow": [
+        [
+          "Write",
+          "Keep a small set of durable notes."
+        ],
+        [
+          "Store",
+          "MEMORY.md and USER.md remain readable files."
+        ],
+        [
+          "Supply",
+          "A session-start snapshot enters the prompt."
+        ]
+      ],
+      "thesis": "A small set of durable notes and user preferences stays always available.",
+      "mechanism": "Profile-local text files, agent-managed add/replace/remove, frozen session-start prompt snapshot; documented defaults 2,200 / 1,375 characters.",
+      "tradeoff": "Readable and correctable, but capacity forces curation. Writes persist immediately while prompt snapshot stays frozen. Not a full archive.",
+      "hermes": "Profile-local text files, agent-managed add/replace/remove, frozen session-start prompt snapshot; documented defaults 2,200 / 1,375 characters.",
+      "evidence_gap": "Conceptual baseline, not benchmarked here. Provider overview says always active, but detailed configuration allows disabling both built-in stores while retaining an external provider; additive is the default, not an absolute constraint.",
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory.md",
+          "title": "Persistent Memory",
+          "publisher": "Nous Research / Hermes Agent contributors"
+        }
+      ],
+      "claims": [],
+      "short_name": "Built-in notes"
+    },
+    {
+      "id": "files-and-skills",
+      "name": "Files + skills",
+      "kind": "basic",
+      "category": "On-demand files",
+      "focus": "Knowledge and reusable procedures",
+      "retrieval": "Find → read the relevant file",
+      "storage": "Local / your storage",
+      "evidence_label": "No standardized score",
+      "evidence_note": "Discovery and upkeep are application work",
+      "flow": [
+        [
+          "Codify",
+          "Turn a useful method into a file or skill."
+        ],
+        [
+          "Organize",
+          "Keep a small catalogue with inspectable references."
+        ],
+        [
+          "Load",
+          "Read the relevant procedure when needed."
+        ]
+      ],
+      "thesis": "Explicit, inspectable knowledge and procedures loaded on demand.",
+      "mechanism": "Documents and SKILL.md plus references; small catalog, full skills and individual files loaded when relevant. Procedural/curated knowledge rather than an automatic event store.",
+      "tradeoff": "Supports browsing and correction, but requires organization, discovery and upkeep; stale procedures can persist.",
+      "hermes": "Documents and SKILL.md plus references; small catalog, full skills and individual files loaded when relevant. Procedural/curated knowledge rather than an automatic event store.",
+      "evidence_gap": "Conceptual baseline; no universal tested score or standardized implementation.",
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/skills.md",
+          "title": "Skills System",
+          "publisher": "Nous Research / Hermes Agent contributors"
+        }
+      ],
+      "claims": [],
+      "short_name": "Files + skills"
+    },
+    {
+      "id": "compaction",
+      "name": "Context compaction / summarization",
+      "kind": "basic",
+      "category": "Working context",
+      "focus": "A summary of earlier conversation",
+      "retrieval": "Retained summary + recent messages",
+      "storage": "Agent / model stack",
+      "evidence_label": "No standardized score",
+      "evidence_note": "Not automatically cross-session memory",
+      "flow": [
+        [
+          "Accumulate",
+          "A conversation fills the working window."
+        ],
+        [
+          "Summarize",
+          "Compress old content; retain a recent tail."
+        ],
+        [
+          "Continue",
+          "Work from the summary and recover sources if needed."
+        ]
+      ],
+      "thesis": "Keep a long active conversation within a useful context budget.",
+      "mechanism": "Default lossy summary engine reduces old context while retaining a recent tail, identifiers and recovery pointers; pluggable engines may differ. Working-context management, not automatically a cross-session fact database.",
+      "tradeoff": "Summary omission/distortion and repeated summarization costs; transcript recovery is separate and still requires retrieval.",
+      "hermes": "Default lossy summary engine reduces old context while retaining a recent tail, identifiers and recovery pointers; pluggable engines may differ. Working-context management, not automatically a cross-session fact database.",
+      "evidence_gap": "Conceptual baseline; no universal tested score or standardized implementation.",
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/developer-guide/context-compression-and-caching.md",
+          "title": "Context Compression and Caching",
+          "publisher": "Nous Research / Hermes Agent contributors"
+        }
+      ],
+      "claims": [],
+      "short_name": "Compaction"
+    },
+    {
+      "id": "vector-rag",
+      "name": "Vector retrieval-augmented generation (RAG)",
+      "kind": "basic",
+      "category": "Retrieval pattern",
+      "focus": "Embedded source passages",
+      "retrieval": "Query → nearest passages",
+      "storage": "Your index / service",
+      "evidence_label": "No universal RAG score",
+      "evidence_note": "Do not inherit a vendor’s RAG-baseline score",
+      "flow": [
+        [
+          "Index",
+          "Split sources into passages and embed them."
+        ],
+        [
+          "Retrieve",
+          "Find relevant passages for a query."
+        ],
+        [
+          "Ground",
+          "Supply selected passages with the question."
+        ]
+      ],
+      "thesis": "Retrieve external evidence for a query instead of replaying a whole corpus.",
+      "mechanism": "Conceptual baseline: passage embeddings in an index, query embedding, top-k retrieval and context-conditioned generation. Original RAG combines a neural retriever/dense Wikipedia index with parametric generation.",
+      "tradeoff": "Known-question lookup and source inspection depend on chunking, embeddings/ranking and budget. Basic vector retrieval alone does not specify temporal updates, contradictions, user modeling, synthesis or exploration navigation.",
+      "hermes": "Conceptual baseline: passage embeddings in an index, query embedding, top-k retrieval and context-conditioned generation. Original RAG combines a neural retriever/dense Wikipedia index with parametric generation.",
+      "evidence_gap": "Conceptual baseline; no universal tested score or standardized implementation.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/html/2005.11401v4",
+          "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+          "publisher": "Patrick Lewis et al.; Facebook AI Research, UCL, NYU; arXiv"
+        }
+      ],
+      "claims": [],
+      "short_name": "Vector RAG"
+    },
+    {
+      "id": "hindsight",
+      "name": "Hindsight",
+      "kind": "provider",
+      "category": "Structured memory",
+      "focus": "Facts, entities, time and observations",
+      "retrieval": "Semantic + lexical + graph + temporal",
+      "storage": "Cloud / local service",
+      "evidence_label": "BEAM 10M · 64.1 / 100",
+      "evidence_note": "Mean rubric score · April 2026 report",
+      "flow": [
+        [
+          "Retain",
+          "Extract facts, entities and temporal links."
+        ],
+        [
+          "Connect",
+          "Keep structured memories and derived observations."
+        ],
+        [
+          "Recall / reflect",
+          "Retrieve with several strategies; synthesize if requested."
+        ]
+      ],
+      "thesis": "Memory should retrieve structured knowledge and higher-order observations from histories too large to put in a context window; BEAM at 10M is its chosen proof point.",
+      "mechanism": "Retain structured facts, resolve entities and temporal information; recall with semantic search, BM25, graph traversal and temporal retrieval, fuse and cross-encoder rerank. Reflect generates responses over recalled memory.",
+      "tradeoff": "A richer retention/retrieval pipeline brings an LLM and service/database operation requirement. Local storage does not establish that inference is local: the quickstart requires a structured-output LLM and illustrates hosted API keys. The benchmark article does not disclose enough run-level configuration to isolate architecture from model and token budgets.",
+      "hermes": "Cloud or local embedded PostgreSQL; retain/recall/reflect tools; automatic full-turn retention includes tool calls and session document tracking. Default hybrid mode, recall_budget mid, auto_retain/auto_recall enabled, retain_async enabled.",
+      "evidence_gap": "Exact model, judge model, model revision, ingestion settings, retrieval budget, dataset subset IDs and run commit for the April BEAM scores were not established from retrieved article pages. Null fields are intentional, not a claim that the vendor has never published them. The live Agent Memory Benchmark landing view is mutable, defaults to 100K and now shows additional Hindsight RAG results. It does not validate a matched multi-provider 10M rerun. No Hermes end-to-end benchmark, latency/cost test, security audit or unfamiliar-corpus exploration test was performed.",
+      "sources": [
+        {
+          "url": "https://hindsight.vectorize.io/guides/2026/04/21/comparison-agent-memory-benchmark-hindsight-vs-alternatives",
+          "title": "The Agent Memory Benchmark: Hindsight vs Alternatives | Hindsight",
+          "publisher": "Vectorize / Hindsight"
+        },
+        {
+          "url": "https://hindsight.vectorize.io/blog/2026/04/02/beam-sota",
+          "title": "Hindsight Is #1 on BEAM — the Benchmark That Tests Memory at 10 Million Tokens",
+          "publisher": "Vectorize / Hindsight"
+        },
+        {
+          "url": "https://hindsight.vectorize.io/developer/api/quickstart",
+          "title": "Quick Start | Hindsight",
+          "publisher": "Vectorize / Hindsight"
+        },
+        {
+          "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/memory-providers",
+          "title": "Memory Providers | Hermes Agent",
+          "publisher": "Nous Research / Hermes Agent"
+        }
+      ],
+      "claims": [
+        {
+          "benchmark": "BEAM",
+          "metric": "mean rubric score, presented on a 0–100 scale (not binary pass rate)",
+          "value": "64.1 / 100",
+          "conditions": "Tier: 10M · Edition: Hindsight; exact run edition/version unresolved · Model: not reported · Judge model: not reported · Configuration: not reported · Comparability: Article compiles published results, not proof of identical model/judge/harness budgets. Compare only with matched configuration and subset; do not promote as universal best.",
+          "publisher": "Vectorize / Hindsight",
+          "url": "https://hindsight.vectorize.io/guides/2026/04/21/comparison-agent-memory-benchmark-hindsight-vs-alternatives",
+          "quote": "| 10M | **64.1%** | 40.6% | 26.6% | 24.9% |"
+        }
+      ]
+    },
+    {
+      "id": "honcho",
+      "name": "Honcho",
+      "kind": "provider",
+      "category": "Peer / user modeling",
+      "focus": "Peer representations and conclusions",
+      "retrieval": "Context + semantic search + reasoning",
+      "storage": "Cloud / self-hosted",
+      "evidence_label": "BEAM 10M · 0.406 / 1",
+      "evidence_note": "Own dashboard: 0.409; not an identity-modeling test",
+      "flow": [
+        [
+          "Observe",
+          "Ingest messages exchanged by peers."
+        ],
+        [
+          "Model",
+          "Derive representations and conclusions."
+        ],
+        [
+          "Reason",
+          "Use context, search or the chat reasoning endpoint."
+        ]
+      ],
+      "thesis": "Recall is a means to continual identity modeling: infer what a person or other peer wants, believes and may do, rather than merely replaying stored facts.",
+      "mechanism": "A server ingests peer messages, derives representations, optionally dreams over prior messages/reasoning to form conclusions, and exposes a tool-using research agent through its chat endpoint. Peers can represent humans, agents or other entities.",
+      "tradeoff": "Reasoning and tool overhead may consume as many or more tokens than full context on small datasets. Honcho explicitly says a few thousand tokens are usually better served directly in the context window. Temporal reasoning remains a weak point, and conventional recall benchmarks do not test the intended identity-modeling outcome.",
+      "hermes": "Cloud or self-hosted. Base context includes session summary, representation and peer card; a separately paced dialectic adds reasoning. Default hybrid recall, asynchronous writes, contextCadence 1, dialecticCadence 2, dialecticDepth 1 and low base reasoning level.",
+      "evidence_gap": "Own article and own eval dashboard disagree on 500K, 1M and 10M BEAM scores; record both rather than resolving silently. The Hindsight table matches Honcho’s article, not its dashboard. Exact BEAM judge model and dashboard run-to-commit mapping were not established. Blog links results folder a1d689b; individual configuration/result files were not inspected. The eval dashboard shows a LoCoMo Haiku baseline of 75.6 while the own blog states 83.9. Do not compute comparative uplift from these incompatible source views. Published benchmark configuration uses public models for reproducibility; managed Honcho uses a variety of models and tuning. No benchmark validates the exact Hermes defaults or broad identity-modeling thesis.",
+      "sources": [
+        {
+          "url": "https://honcho.dev/blog/blog/benchmarking-honcho",
+          "title": "Benchmarking Honcho",
+          "publisher": "Plastic Labs / Honcho"
+        },
+        {
+          "url": "https://evals.honcho.dev",
+          "title": "Honcho Memory Benchmarks",
+          "publisher": "Plastic Labs / Honcho"
+        },
+        {
+          "url": "https://github.com/plastic-labs/honcho-benchmarks",
+          "title": "GitHub - plastic-labs/honcho-benchmarks: Honcho scores on Longmem, LoCoMo, and BEAM · GitHub",
+          "publisher": "Plastic Labs / Honcho"
+        },
+        {
+          "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/memory-providers",
+          "title": "Memory Providers | Hermes Agent",
+          "publisher": "Nous Research / Hermes Agent"
+        }
+      ],
+      "claims": [
+        {
+          "benchmark": "BEAM",
+          "metric": "mean per-question rubric score (0–1)",
+          "value": "0.406 / 1",
+          "conditions": "Tier: 10M · Edition: published reproducibility configuration; result folder a1d689b · Model: claude-haiku-4-5 (chat endpoint, spelling as blog) · Ingestion model: gemini-2.5-flash-lite · Judge model: not reported · Judge protocol: BEAM paper rubric; per-question scores averaged, not binary pass rate · Configuration: {\"dreaming\": false, \"message_batch_tokens\": 4096} · Comparability: Historical own-blog series. Dashboard differs at larger tiers. Public reproducibility model stack is not managed-service stack.",
+          "publisher": "Plastic Labs / Honcho",
+          "url": "https://honcho.dev/blog/blog/benchmarking-honcho",
+          "quote": "10M\t0.266\t0.406\tOFF\t4,096"
+        },
+        {
+          "benchmark": "BEAM",
+          "metric": "mean per-question rubric score (0–1)",
+          "value": "0.409 / 1",
+          "conditions": "Tier: 10M · Edition: eval dashboard; footer updated December 2025 · Model: claude-haiku-4.5 (dialectic) · Ingestion model: gemini-2.5-flash-lite · Dreamer model: claude-haiku-4.5 · Judge model: not reported · Configuration: Dashboard says unless otherwise stated; exact run mapping and per-tier settings unresolved. Do not automatically apply blog settings to discrepant dashboard scores. · Comparability: Own dashboard series, preserved separately from own blog and Hindsight comparison. Not a new independent run.",
+          "publisher": "Plastic Labs / Honcho",
+          "url": "https://evals.honcho.dev",
+          "quote": "BEAM 10M\n0.409"
+        },
+        {
+          "benchmark": "LoCoMo",
+          "metric": "LLM-as-judge correct-answer percentage",
+          "value": "89.9%",
+          "conditions": "Tier: 1,540 questions; average context about 16,000 tokens as described by Honcho · Model: claude-haiku-4-5 · Ingestion model: gemini-2.5-flash-lite · Judge model: not reported · Configuration: {\"message_batch_tokens\": 128, \"dreaming\": true} · Comparability: Uses LLM judging, not original LoCoMo token F1; category naming/distribution must be aligned before comparing with Mem0.",
+          "publisher": "Plastic Labs / Honcho",
+          "url": "https://honcho.dev/blog/blog/benchmarking-honcho",
+          "quote": "We score 89.9% on the full LoCoMo benchmark."
+        }
+      ]
+    },
+    {
+      "id": "mem0",
+      "name": "Mem0",
+      "kind": "provider",
+      "category": "Fact memory",
+      "focus": "Compact facts, scoped to identities",
+      "retrieval": "Retrieve and rank relevant facts",
+      "storage": "Platform / HTTP / OSS",
+      "evidence_label": "LoCoMo · 92.5%",
+      "evidence_note": "Managed platform; not the OSS/Hermes score",
+      "flow": [
+        [
+          "Extract",
+          "Distill messages into compact memories."
+        ],
+        [
+          "Scope",
+          "Associate facts with users, agents or runs."
+        ],
+        [
+          "Retrieve",
+          "Return relevant facts under a chosen budget."
+        ]
+      ],
+      "thesis": "Persistent memory should balance answer quality, context-token cost and latency, distilling compact facts rather than resending the whole conversation.",
+      "mechanism": "The April 2026 algorithm uses single-pass ADD-only extraction with deduplication and entity linking, then fuses semantic, keyword and entity signals. Current docs also describe asynchronously extracted temporal metadata and temporal scoring during retrieval. Old and new facts coexist instead of automatic replacement by extraction.",
+      "tradeoff": "Preserving history avoids destructive consolidation but leaves similar old/new facts competing at retrieval. Mem0 acknowledges long-range temporal reasoning, event ordering and multi-session reasoning weaknesses at 10M. Its published 2026 scores are managed-platform results with proprietary optimizations, not guaranteed OSS or Hermes scores.",
+      "hermes": "Platform, HTTP self-hosted dashboard and in-process OSS modes; search/add/update/delete tools. Platform search reranking is off by default. OSS setup supports OpenAI/Ollama inference and embedding plus Qdrant/pgvector choices.",
+      "evidence_gap": "Managed-platform answerer, judge and extraction model revisions are not identified for the headline runs in the retrieved pages. The runner README’s gpt-4o answerer/judge defaults are not evidence that headline runs used them; do not borrow the separate OSS table’s GPT-5 configuration. Live docs show LoCoMo category values 91.2/91.3/72.7/92.0; repository labels those averages across top_10/20/50/200, not the top_200 overall run. April article/research page instead display 94.6/95.4/82.3/92.5. Do not place these category rows under one supposedly matched score without checking run files. Own April 28 comparison article still reports LoCoMo 91.6 and LongMemEval 93.4, whereas current docs/research/runner report 92.5 and 94.4. Historical 66.88 and graph 68.44 from the 2025 paper are different algorithms and experimental setups, not current managed performance. Current product may include features introduced after the April algorithm; this bounded packet establishes that algorithm and retrieved current evaluation docs, not a complete latest feature audit. No independent reproduction or Hermes end-to-end testing was done.",
+      "sources": [
+        {
+          "url": "https://docs.mem0.ai/core-concepts/memory-evaluation",
+          "title": "Memory Evaluation - Mem0",
+          "publisher": "Mem0"
+        },
+        {
+          "url": "https://mem0.ai/blog/mem0-the-token-efficient-memory-algorithm",
+          "title": "Introducing The Token-Efficient Memory Algorithm",
+          "publisher": "Mem0"
+        },
+        {
+          "url": "https://mem0.ai/research",
+          "title": "Mem0 Research: LoCoMo, LongMemEval & BEAM Benchmarks",
+          "publisher": "Mem0"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md",
+          "title": "Memory Benchmarks — mem0ai/memory-benchmarks README",
+          "publisher": "Mem0"
+        },
+        {
+          "url": "https://arxiv.org/html/2504.19413v1",
+          "title": "Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory",
+          "publisher": "Mem0 authors / arXiv"
+        },
+        {
+          "url": "https://mem0.ai/blog/zep-vs-mem0-which-ai-memory-layer-should-you-choose",
+          "title": "Zep vs Mem0: Which AI Memory Layer Should You Choose?",
+          "publisher": "Mem0"
+        },
+        {
+          "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/memory-providers",
+          "title": "Memory Providers | Hermes Agent",
+          "publisher": "Nous Research / Hermes Agent"
+        }
+      ],
+      "claims": [
+        {
+          "benchmark": "LoCoMo",
+          "metric": "LLM-judged accuracy percentage",
+          "value": "92.5%",
+          "conditions": "Tier: 1,540 questions, 10 dialogues · Edition: Mem0 managed platform, v3 memory pipeline; April 2026 algorithm series · Model: not reported · Judge model: not reported · Ingestion model: not reported · Configuration: {\"retrieval_top_k\": 200, \"retrieval_calls\": 1, \"answers_per_query\": 1, \"agentic_loops\": false, \"mean_retrieval_context_tokens\": 6956} · Methodology sources: [\"https://docs.mem0.ai/core-concepts/memory-evaluation\", \"https://mem0.ai/blog/mem0-the-token-efficient-memory-algorithm\", \"https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md\"] · Uncertainty: Vendor states ±1 point confidence interval due to judge inconsistency; statistical construction not established here. · Comparability: Managed != OSS. Headline models/run revisions unresolved. BEAM 0.641/0.486 are average scores, while the same rows report pass rates 70.1%/50.5%.",
+          "publisher": "Mem0",
+          "url": "https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md",
+          "quote": "| **Overall** | **92.5%** (1425/1540) | **91.8%** (1414/1540) |"
+        },
+        {
+          "benchmark": "LongMemEval",
+          "metric": "LLM-judged accuracy percentage",
+          "value": "94.4%",
+          "conditions": "Tier: 500 questions · Edition: Mem0 managed platform, v3 memory pipeline; April 2026 algorithm series · Model: not reported · Judge model: not reported · Ingestion model: not reported · Configuration: {\"retrieval_top_k\": 200, \"retrieval_calls\": 1, \"answers_per_query\": 1, \"agentic_loops\": false, \"mean_retrieval_context_tokens\": 6787} · Methodology sources: [\"https://docs.mem0.ai/core-concepts/memory-evaluation\", \"https://mem0.ai/blog/mem0-the-token-efficient-memory-algorithm\", \"https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md\"] · Uncertainty: Vendor states ±1 point confidence interval due to judge inconsistency; statistical construction not established here. · Comparability: Managed != OSS. Headline models/run revisions unresolved. BEAM 0.641/0.486 are average scores, while the same rows report pass rates 70.1%/50.5%.",
+          "publisher": "Mem0",
+          "url": "https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md",
+          "quote": "| **Overall** | **94.4%** (472/500) | **94.8%** (474/500) |"
+        },
+        {
+          "benchmark": "BEAM",
+          "metric": "mean rubric score (0–1), not pass rate",
+          "value": "0.486 / 1",
+          "conditions": "Tier: 10M; 200 questions · Edition: Mem0 managed platform, v3 memory pipeline; April 2026 algorithm series · Model: not reported · Judge model: not reported · Ingestion model: not reported · Configuration: {\"retrieval_top_k\": 200, \"retrieval_calls\": 1, \"answers_per_query\": 1, \"agentic_loops\": false, \"mean_retrieval_context_tokens\": 6914} · Methodology sources: [\"https://docs.mem0.ai/core-concepts/memory-evaluation\", \"https://mem0.ai/blog/mem0-the-token-efficient-memory-algorithm\", \"https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md\"] · Uncertainty: Vendor states ±1 point confidence interval due to judge inconsistency; statistical construction not established here. · Comparability: Managed != OSS. Headline models/run revisions unresolved. BEAM 0.641/0.486 are average scores, while the same rows report pass rates 70.1%/50.5%.",
+          "publisher": "Mem0",
+          "url": "https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md",
+          "quote": "| **BEAM 10M** (200 questions) | **50.5%** (101/200) | 0.486 | **45.5%** (91/200) | 0.413 |"
+        }
+      ]
+    },
+    {
+      "id": "openviking",
+      "name": "OpenViking",
+      "kind": "provider",
+      "category": "Context filesystem",
+      "focus": "Resources, memories and skills",
+      "retrieval": "Hierarchy + semantic search; tiered reads",
+      "storage": "Self-hosted server",
+      "evidence_label": "Hermes LoCoMo · 82.86%",
+      "evidence_note": "Vendor reports 33.38% native baseline",
+      "flow": [
+        [
+          "Ingest",
+          "Unify resources, memories and reusable experience."
+        ],
+        [
+          "Organize",
+          "L0 abstracts → L1 overviews → L2 full content."
+        ],
+        [
+          "Explore",
+          "Locate a directory, then selectively read its contents."
+        ]
+      ],
+      "thesis": "Treat agent context as a browsable context database: resources, user memories and reusable experience belong in one filesystem-shaped hierarchy, loaded only when relevant.",
+      "mechanism": "A virtual viking:// filesystem unifies resources, memories and skills. L0 abstracts and L1 overviews guide selective L2 reads. Vector search locates directories then explores within their scope. Session commits trigger background extraction; candidate memories can be created, merged or skipped.",
+      "tradeoff": "Analyst inference: inspectable hierarchy and selective loading buy control at the cost of operating a context server plus embedding/VLM dependencies and maintaining derived summaries. Vendor HotpotQA results expose a budget tradeoff: higher top-K increases both reported accuracy and returned tokens; that is not a universal free accuracy improvement.",
+      "hermes": "Self-hosted server connection; semantic search, tiered read, hierarchical browse, explicit remember/forget and resource ingestion.",
+      "evidence_gap": "No benchmark was run independently. Published Hermes LoCoMo answer model, judge, precise subset, suite, context budget, repetitions and run date remain unresolved. Current README supplies VLM/embedding names and version, but was not pinned to the May report. Report has some inconsistent secondary percentage claims (for example ClawWork hourly token reduction); those were not promoted to comparison claims. Provider documentation describes capabilities beyond the Hermes adapter. License, hosting cost, privacy and deployment suitability were not audited.",
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/volcengine/OpenViking/main/README.md",
+          "title": "raw.githubusercontent.com",
+          "publisher": "OpenViking / Volcengine"
+        },
+        {
+          "url": "https://blog.openviking.ai/post/openviking-benchmark-results/",
+          "title": "OpenViking Benchmark Update: User Memory, Agent Memory, and Knowledge Base QA | OpenViking Blog",
+          "publisher": "OpenViking Team"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/volcengine/OpenViking/main/benchmark/locomo/hermes/README.md",
+          "title": "Readme",
+          "publisher": "OpenViking / Volcengine"
+        },
+        {
+          "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/memory-providers",
+          "title": "Memory Providers | Hermes Agent",
+          "publisher": "Nous Research / Hermes Agent"
+        }
+      ],
+      "claims": [
+        {
+          "benchmark": "LoCoMo",
+          "metric": "Hermes + OpenViking accuracy (%)",
+          "value": "82.86%",
+          "conditions": "Publication date: 2026-05-29 · Run date: not reported · Edition: OpenViking 0.3.22 (version and memory models from current README; not commit-pinned to report) · Dataset: LoCoMo; exact scored subset not specified in report. Current Hermes runner references locomo10.json. · Agent: Hermes Agent · Answer model: not reported · Memory model: Doubao 2.0 Pro VLM · Embedding model: Doubao-embedding-vision-251215 · Judge model: not reported · Baseline: Hermes native memory · Retrieval budget: not reported · Repetitions: not reported · Warning: Report does not identify whether Hermes OpenViking result used e2e or preingest path. Current runner documents both; do not infer either.",
+          "publisher": "OpenViking Team",
+          "url": "https://blog.openviking.ai/post/openviking-benchmark-results/",
+          "quote": "| **Hermes + OpenViking** | **82.86%** | **27.9s** | **52,026,755** |"
+        },
+        {
+          "benchmark": "LoCoMo",
+          "metric": "Hermes native memory accuracy (%)",
+          "value": "33.38%",
+          "conditions": "Publication date: 2026-05-29 · Run date: not reported · Edition: OpenViking 0.3.22 (version and memory models from current README; not commit-pinned to report) · Dataset: LoCoMo; exact scored subset not specified in report. Current Hermes runner references locomo10.json. · Agent: Hermes Agent · Answer model: not reported · Memory model: Doubao 2.0 Pro VLM · Embedding model: Doubao-embedding-vision-251215 · Judge model: not reported · Baseline: Hermes native memory · Retrieval budget: not reported · Repetitions: not reported · Warning: Report does not identify whether Hermes OpenViking result used e2e or preingest path. Current runner documents both; do not infer either.",
+          "publisher": "OpenViking Team",
+          "url": "https://blog.openviking.ai/post/openviking-benchmark-results/",
+          "quote": "| Hermes native memory | 33.38% | 82.4s | 79,228,398 |"
+        }
+      ]
+    },
+    {
+      "id": "supermemory",
+      "name": "Supermemory",
+      "kind": "provider",
+      "category": "Evolving memory graph",
+      "focus": "Facts, relationships and profiles",
+      "retrieval": "Semantic recall + profile context",
+      "storage": "Cloud / configured endpoint",
+      "evidence_label": "xAFS · SMFS tradeoff",
+      "evidence_note": "53.8% fewer tokens; pass rate 92.7→91.4%. SMFS ≠ Hermes API adapter.",
+      "flow": [
+        [
+          "Ingest",
+          "Extract memories from new information."
+        ],
+        [
+          "Evolve",
+          "Relate, update and extend facts and profiles."
+        ],
+        [
+          "Recall",
+          "Retrieve relevant memories for the answer model."
+        ]
+      ],
+      "thesis": "Make memory an evolving understanding of users and entities, not a pile of retrieved chunks: track changing facts and relationships while retaining source context, independently of the answer model.",
+      "mechanism": "Contextual atomic memories retain links to raw chunks, temporal grounding and update/extend/derive relationships. Profiles summarize durable and recent knowledge. The broader SMFS product exposes a Supermemory container as a filesystem with semantic path search, a local cache and asynchronous cloud reconciliation.",
+      "tradeoff": "Analyst inference: automated extraction, profiles and inferred relations reduce manual organization but require inspection of derived facts and update semantics. The newer SMFS report itself records a token-efficiency/accuracy tradeoff: lower aggregate pass rate despite gains at the largest corpus. Filesystem writes and cloud search visibility are eventually consistent; a local-looking mount is not proof of local-only processing.",
+      "hermes": "Graph API integration with semantic recall, profiles, explicit memory tools and session-boundary /v4/conversations ingest; cloud or configured self-hosted endpoint. No claim that this mounts SMFS.",
+      "evidence_gap": "LongMemEval publication/run dates absent, report URL now redirects, and 95% is labeled differently in narrative versus judge table; preserve all model-specific rows rather than a single score. xAFS report says 440 trials per condition while its figure caption says 220; dataset family counts and displayed rounded deltas also need reconciliation before downstream recomputation. xAFS is vendor-authored synthetic evidence, not independent validation; personas change with corpus size, so it is not a fully controlled scaling experiment. SMFS and Hermes graph-API plugin are different integration surfaces. Do not apply filesystem benchmark gains to Hermes by default.",
+      "sources": [
+        {
+          "url": "https://supermemory.ai/docs/intro",
+          "title": "What is Supermemory? - supermemory | Memory API for the AI era",
+          "publisher": "Supermemory"
+        },
+        {
+          "url": "https://supermemory.ai/research/longmembench/",
+          "title": "LongMemEval — Supermemory Research",
+          "publisher": "Supermemory Research"
+        },
+        {
+          "url": "https://smfs.ai/research/memory-as-a-filesystem/",
+          "title": "Memory as a Filesystem | smfs research",
+          "publisher": "Supermemory Research"
+        },
+        {
+          "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/memory-providers",
+          "title": "Memory Providers | Hermes Agent",
+          "publisher": "Nous Research / Hermes Agent"
+        }
+      ],
+      "claims": [
+        {
+          "benchmark": "LongMemEval_s",
+          "metric": "Overall score in LLM-as-Judge table (%)",
+          "value": "95%",
+          "conditions": "Historical report; mixed/ambiguous metric labeling. Original URL now redirects and extraction versions disagree. The report calls its headline “95% overall Recall@15” but labels the table “LLM-as-Judge Evaluation”; we do not resolve that contradiction. Publication date: not reported · Run date: not reported · Dataset: LongMemEval_s, 500 questions; 115k+ token histories · Ingestion: Session-by-session rather than the paper’s round-by-round ingestion · Answer model: gpt-4o · Judge model: gpt-4o, question-specific prompts from LongMemEval · Retrieval budget: Recall@15 with aggregation; report says about 720 mean tokens · Repetitions: not reported · Source status: Extraction returned full report, but isolated live browser redirects this URL to https://supermemory.ai/#research. Treat as previously published vendor report of unresolved currency, not current live benchmark page. · Metric warning: Narrative calls 95% Recall@15 while table is headed LLM-as-Judge Evaluation. Metric equivalence is not established.",
+          "publisher": "Supermemory Research",
+          "url": "https://supermemory.ai/research/longmembench/",
+          "quote": "| Supermemory gpt-4o | 97% | 100% | 90% | 99% | 91% | 93% | 95% |",
+          "historical": true
+        },
+        {
+          "benchmark": "LongMemEval_s",
+          "metric": "Overall score in LLM-as-Judge table (%)",
+          "value": "84.6%",
+          "conditions": "Historical report; mixed/ambiguous metric labeling. Original URL now redirects and extraction versions disagree. The report calls its headline “95% overall Recall@15” but labels the table “LLM-as-Judge Evaluation”; we do not resolve that contradiction. Publication date: not reported · Run date: not reported · Dataset: LongMemEval_s, 500 questions; 115k+ token histories · Ingestion: Session-by-session rather than the paper’s round-by-round ingestion · Answer model: gpt-5 · Judge model: gpt-4o, question-specific prompts from LongMemEval · Retrieval budget: Recall@15 with aggregation; report says about 720 mean tokens · Repetitions: not reported · Source status: Extraction returned full report, but isolated live browser redirects this URL to https://supermemory.ai/#research. Treat as previously published vendor report of unresolved currency, not current live benchmark page. · Metric warning: Narrative calls 95% Recall@15 while table is headed LLM-as-Judge Evaluation. Metric equivalence is not established.",
+          "publisher": "Supermemory Research",
+          "url": "https://supermemory.ai/research/longmembench/",
+          "quote": "| Supermemory gpt-5 | 97.14% | 100% | 76.67% | 87.18% | 81.20% | 75.19% | 84.6% |",
+          "historical": true
+        },
+        {
+          "benchmark": "LongMemEval_s",
+          "metric": "Overall score in LLM-as-Judge table (%)",
+          "value": "85.2%",
+          "conditions": "Historical report; mixed/ambiguous metric labeling. Original URL now redirects and extraction versions disagree. The report calls its headline “95% overall Recall@15” but labels the table “LLM-as-Judge Evaluation”; we do not resolve that contradiction. Publication date: not reported · Run date: not reported · Dataset: LongMemEval_s, 500 questions; 115k+ token histories · Ingestion: Session-by-session rather than the paper’s round-by-round ingestion · Answer model: gemini-3-pro · Judge model: gpt-4o, question-specific prompts from LongMemEval · Retrieval budget: Recall@15 with aggregation; report says about 720 mean tokens · Repetitions: not reported · Source status: Extraction returned full report, but isolated live browser redirects this URL to https://supermemory.ai/#research. Treat as previously published vendor report of unresolved currency, not current live benchmark page. · Metric warning: Narrative calls 95% Recall@15 while table is headed LLM-as-Judge Evaluation. Metric equivalence is not established.",
+          "publisher": "Supermemory Research",
+          "url": "https://supermemory.ai/research/longmembench/",
+          "quote": "| Supermemory gemini-3-pro | 98.57% | 98.21% | 70.00% | 89.74% | 81.95% | 76.69% | 85.2% |",
+          "historical": true
+        },
+        {
+          "benchmark": "xAFS",
+          "metric": "Total-token reduction versus filesystem-only (%)",
+          "value": "53.8%",
+          "conditions": "Publication date: 2026-05 · Run date: not reported · Date precision: month, from report BibTeX · Dataset: xAFS, vendor-created synthetic cross-context personal corpora; 110 questions, 13 corpora, 5–9,988 files as reported · Models: [\"Claude Code / claude-opus-4.7 [max]\", \"Codex CLI / gpt-5.5 [xhigh]\"] · Judge model: Gemini 2.5 Pro, temperature 0, semantic-equivalence judging · Protocol: Same base prompt; filesystem-only shell vs SMFS mount plus semantic smfs grep and tool-discovery hint in CLAUDE.md / AGENTS.md · Repetitions: Report says each harness run twice; 440 trials per condition. Figure caption instead says 220 per condition; unresolved. · Cost scope: Agent input/output tokens across answering turns including tool payloads; full ingestion/subscription infrastructure cost not established · Integration scope: SMFS filesystem product evaluation, not Hermes Supermemory plugin · Retrieval budget: Interactive tool use; fixed top-K/context cap not given in retrieved protocol",
+          "publisher": "Supermemory Research",
+          "url": "https://smfs.ai/research/memory-as-a-filesystem/",
+          "quote": "| Total tokens (M) | 156 | 72 | -53.8% |"
+        },
+        {
+          "benchmark": "xAFS",
+          "metric": "Aggregate pass rate (%)",
+          "value": "filesystem only 92.7% / SMFS 91.4%",
+          "conditions": "Publication date: 2026-05 · Run date: not reported · Date precision: month, from report BibTeX · Dataset: xAFS, vendor-created synthetic cross-context personal corpora; 110 questions, 13 corpora, 5–9,988 files as reported · Models: [\"Claude Code / claude-opus-4.7 [max]\", \"Codex CLI / gpt-5.5 [xhigh]\"] · Judge model: Gemini 2.5 Pro, temperature 0, semantic-equivalence judging · Protocol: Same base prompt; filesystem-only shell vs SMFS mount plus semantic smfs grep and tool-discovery hint in CLAUDE.md / AGENTS.md · Repetitions: Report says each harness run twice; 440 trials per condition. Figure caption instead says 220 per condition; unresolved. · Cost scope: Agent input/output tokens across answering turns including tool payloads; full ingestion/subscription infrastructure cost not established · Integration scope: SMFS filesystem product evaluation, not Hermes Supermemory plugin · Retrieval budget: Interactive tool use; fixed top-K/context cap not given in retrieved protocol · Rounding note: Preserve displayed rates; vendor reports -1.4pp, which is not the subtraction of displayed rounded values.",
+          "publisher": "Supermemory Research",
+          "url": "https://smfs.ai/research/memory-as-a-filesystem/",
+          "quote": "| Pass rate (%) | 92.7 | 91.4 | -1.4pp |"
+        }
+      ]
+    },
+    {
+      "id": "byterover",
+      "name": "ByteRover",
+      "kind": "provider",
+      "category": "Curated knowledge tree",
+      "focus": "Portable project knowledge",
+      "retrieval": "Query a curated context tree",
+      "storage": "Local CLI / optional sync",
+      "evidence_label": "LoCoMo · format experiment",
+      "evidence_note": "HTML 90.77% / Markdown 90.51%",
+      "flow": [
+        [
+          "Curate",
+          "Extract useful project knowledge upfront."
+        ],
+        [
+          "Keep",
+          "Maintain a local, inspectable knowledge tree."
+        ],
+        [
+          "Query",
+          "Load curated context; inspect original sources as needed."
+        ]
+      ],
+      "thesis": "Pay the cost of understanding once: curate persistent, inspectable project knowledge before storage, then reuse and share the structured context instead of reconstructing it from raw files every turn.",
+      "mechanism": "LLM-enabled curation synthesizes a domain → topic → subtopic context tree. The CLI searches structured files using cache/full-text paths before LLM search when needed. Vendor docs describe local Markdown storage, BYOK or built-in LLM use, and optional cloud collaboration/version control. A separate later experiment proposes HTML typed memory elements.",
+      "tradeoff": "Analyst inference: portable, editable files and optional cloud sync improve owner control, but curation quality and freshness become dependencies and local storage does not imply local LLM inference. The HTML experiment improves average reported accuracy/cost yet substantially worsens p95 query latency; a format experiment is not proof of current release behavior.",
+      "hermes": "brv CLI adapter with query/curate/status, profile-scoped local tree and extraction before context compression; optional vendor cloud sync.",
+      "evidence_gap": "CLI 2.0 release advertises 92.19% overall retrieval accuracy, 95.4% single-hop, 94.4% temporal and 85.1% multi-hop, but retrieved text does not identify the benchmark, models or protocol. Kept as an underspecified vendor headline, not a comparable result and not a zero. The fuller HTML/Markdown LoCoMo experiment provides numbers and dataset size, but not answer/curation/judge models, run date, repetitions or exact cost boundary. Current docs describe Markdown, while May HTML experiment says a default change is forthcoming. Actual shipped default was not verified. Custom Next.js evaluation is a four-query author-run workflow comparison, not a standardized memory benchmark. Headline 83% is token reduction, not 83% API-cost savings. No retrieved benchmark evaluates ByteRover through the Hermes adapter.",
+      "sources": [
+        {
+          "url": "https://www.byterover.dev/blog/introducing-byterover-cli-2.0-reinvent-memory-for-autonomous-agents",
+          "title": "Introducing ByteRover CLI 2.0: Reinvent memory for autonomous agents",
+          "publisher": "ByteRover"
+        },
+        {
+          "url": "https://www.byterover.dev/blog/html-vs-markdown-for-agent-memory-a-full-scale-benchmark-on-accuracy-latency-and-cost",
+          "title": "HTML vs Markdown for Agent Memory: A Full-Scale Benchmark on Accuracy, Latency and Cost",
+          "publisher": "ByteRover"
+        },
+        {
+          "url": "https://byterover.dev/blog/reducing-token-usage-by-83-benchmarking-cursor-s-file-context-vs.-byterover-s-memory-layer",
+          "title": "Reducing Token Usage by 83%: File-based vs. ByteRover",
+          "publisher": "ByteRover"
+        },
+        {
+          "url": "https://docs.byterover.dev/",
+          "title": "Overview - Byterover",
+          "publisher": "ByteRover"
+        },
+        {
+          "url": "https://hermes-agent.nousresearch.com/docs/user-guide/features/memory-providers",
+          "title": "Memory Providers | Hermes Agent",
+          "publisher": "Nous Research / Hermes Agent"
+        }
+      ],
+      "claims": [
+        {
+          "benchmark": "LoCoMo (ByteRover HTML vs Markdown format experiment)",
+          "metric": "Accuracy (%)",
+          "value": "HTML 90.77% / Markdown 90.51%",
+          "conditions": "Publication date: 2026-05-29 · Run date: not reported · Dataset: LoCoMo; vendor reports 1,982 questions across 11 conversations, every category · Answer model: not reported · Curation model: not reported · Judge model: not reported · Protocol: Same agent queries two isolated context trees, HTML versus Markdown · Retrieval budget: not reported · Repetitions: not reported · Edition: HTML-format experiment; post says HTML default will be released soon, not evidence it is already default · Integration scope: Vendor format comparison, not Hermes plugin benchmark · Warning: Model, judge and exact dataset revision not disclosed in retrieved article; no variance.",
+          "publisher": "ByteRover",
+          "url": "https://www.byterover.dev/blog/html-vs-markdown-for-agent-memory-a-full-scale-benchmark-on-accuracy-latency-and-cost",
+          "quote": "The result: HTML scored 90.77% accuracy at a total cost of $4.11, while Markdown scored 90.51% at $8.30."
+        },
+        {
+          "benchmark": "LoCoMo (ByteRover HTML vs Markdown format experiment)",
+          "metric": "p95 query latency (milliseconds)",
+          "value": "HTML 4311 ms / Markdown 259 ms",
+          "conditions": "Publication date: 2026-05-29 · Run date: not reported · Dataset: LoCoMo; vendor reports 1,982 questions across 11 conversations, every category · Answer model: not reported · Curation model: not reported · Judge model: not reported · Protocol: Same agent queries two isolated context trees, HTML versus Markdown · Retrieval budget: not reported · Repetitions: not reported · Edition: HTML-format experiment; post says HTML default will be released soon, not evidence it is already default · Integration scope: Vendor format comparison, not Hermes plugin benchmark · Warning: Model, judge and exact dataset revision not disclosed in retrieved article; no variance.",
+          "publisher": "ByteRover",
+          "url": "https://www.byterover.dev/blog/html-vs-markdown-for-agent-memory-a-full-scale-benchmark-on-accuracy-latency-and-cost",
+          "quote": "For latency: HTML's slowest queries (p95) are much slower than Markdown's (4,311 ms versus 259 ms)."
+        }
+      ]
+    },
+    {
+      "id": "retaindb",
+      "name": "RetainDB",
+      "kind": "provider",
+      "category": "Managed memory API",
+      "focus": "User, session, task and project records",
+      "retrieval": "Hybrid search + reranking",
+      "storage": "Cloud service",
+      "evidence_label": "LongMemEval · 79%",
+      "evidence_note": "Oracle input + full timeline; in-progress report",
+      "flow": [
+        [
+          "Remember",
+          "Send scoped messages, records or files."
+        ],
+        [
+          "Maintain",
+          "Organize durable memory for the project."
+        ],
+        [
+          "Retrieve",
+          "Search or build context; benchmark instead dumps all memories."
+        ]
+      ],
+      "thesis": "Persistent user/agent memory can grow into an askable company brain backed by connected source material.",
+      "mechanism": "Vendor docs separate user, session, agent-task memory and project knowledge. Hermes plugin advertises hybrid vector + BM25 + reranking, seven memory types and delta compression, with profile/search/context/remember/forget/file tools. Published LongMemEval run instead passes all extracted memories chronologically.",
+      "tradeoff": "Managed infrastructure reduces integration work but adds API, governance and plan dependencies. Oracle/full-memory-dump results do not establish production top-k recall or low-context cost.",
+      "hermes": "Bundled cloud adapter with profile, hybrid search, context, remember, forget and file tools. Published oracle evaluation does not test these retrieval defaults.",
+      "evidence_gap": "No independent reproduction or Hermes-specific evaluation. Six categories stated, five named categories displayed; up-to-50-per-category and in-progress wording prevent treating 79% as a verified complete standard 500-question run. Official extractor model conflicts: gpt-5.4 vs gpt-5.4-mini. Other vendors appearing on RetainDB comparison pages are not represented by those second-hand scores here. Delta compression entitlement differs between pricing cards and table; confirm desired plan.",
+      "sources": [
+        {
+          "url": "https://retaindb.com",
+          "title": "RetainDB — Persistent Memory for AI Agents | SOTA on LongMemEval",
+          "publisher": "RetainDB / Bad theory Labs Inc."
+        },
+        {
+          "url": "https://retaindb.com/docs/concepts/memory-model",
+          "title": "Memory Model - RetainDB Docs",
+          "publisher": "RetainDB / Bad theory Labs Inc."
+        },
+        {
+          "url": "https://retaindb.com/benchmark",
+          "title": "LongMemEval benchmark results | RetainDB",
+          "publisher": "RetainDB / Bad theory Labs Inc."
+        },
+        {
+          "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/website/docs/user-guide/features/memory-providers.md",
+          "title": "Memory Providers",
+          "publisher": "Nous Research / Hermes Agent contributors"
+        }
+      ],
+      "claims": [
+        {
+          "benchmark": "LongMemEval",
+          "metric": "overall accuracy",
+          "value": "79%",
+          "conditions": "LongMemEval oracle split; up to 50 questions per category, six categories stated but five named categories displayed; overall labeled Published / in progress. March 2026. gpt-5.4 answer, temperature 0, full chronological memory dump; gpt-5.4-mini judge. Extractor conflict: methodology says gpt-5.4, pipeline says gpt-5.4-mini. Not a Hermes integration benchmark.",
+          "publisher": "RetainDB / Bad theory Labs Inc.",
+          "url": "https://retaindb.com/benchmark",
+          "quote": "Overall\nPublished / in progress\n79%"
+        }
+      ]
+    },
+    {
+      "id": "holographic",
+      "name": "Holographic (Hermes plugin)",
+      "kind": "provider",
+      "category": "Local Hermes plugin",
+      "focus": "Facts, entities and feedback trust",
+      "retrieval": "FTS5 + lexical / optional HRR ranking",
+      "storage": "Local SQLite",
+      "evidence_label": "No comparable score found",
+      "evidence_note": "Reviewed plugin source; not a separate vendor",
+      "flow": [
+        [
+          "Store",
+          "Keep local facts with entities and metadata."
+        ],
+        [
+          "Rank",
+          "FTS5 candidates, lexical / optional HRR similarity, trust."
+        ],
+        [
+          "Use / rate",
+          "Recall facts and feed back usefulness."
+        ]
+      ],
+      "thesis": "Local structured recall through facts, entities, algebraic combinations and feedback-trained trust complements always-on notes.",
+      "mechanism": "SQLite facts with FTS5/BM25 candidates, Jaccard + optional HRR similarity and trust weighting. HRR encodes deterministic token atoms, not learned semantic embeddings. fact_store and fact_feedback tools; optional session-end regex extraction defaults off; built-in add writes can be mirrored.",
+      "tradeoff": "Inspectable local data and no memory-service API; quality depends on lexical/entity representation and trust hygiene. NumPy is needed for HRR algebra but keyword fallback remains. HRR and named reason/contradict actions are not evidence of general semantic reasoning. Retrieved local facts may still be sent to a remote main model.",
+      "hermes": "Bundled local plugin. fact_store and fact_feedback tools; optional session-end regex extraction defaults off. HRR uses deterministic token atoms, not learned semantic embeddings.",
+      "evidence_gap": "No numerical LoCoMo, LongMemEval or comparable accuracy benchmark found in reviewed plugin README/source. This is not a standalone vendor: Hermes plugin source is the primary voice and credits original work to dusterbloom. No independent accuracy, scale or latency test performed.",
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/README.md",
+          "title": "Holographic Memory Provider",
+          "publisher": "Nous Research / Hermes Agent contributors"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/__init__.py",
+          "title": "Holographic provider lifecycle and tools",
+          "publisher": "Nous Research / Hermes Agent contributors"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/retrieval.py",
+          "title": "Holographic FactRetriever implementation",
+          "publisher": "Nous Research / Hermes Agent contributors"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/holographic.py",
+          "title": "Holographic representation implementation",
+          "publisher": "Nous Research / Hermes Agent contributors"
+        }
+      ],
+      "claims": []
+    },
+    {
+      "id": "memori",
+      "name": "Memori",
+      "kind": "provider",
+      "category": "Agent execution memory",
+      "focus": "Semantic triples, summaries and traces",
+      "retrieval": "Explicit recall of structured context",
+      "storage": "Hermes Cloud plugin",
+      "evidence_label": "LoCoMo · 87.0%",
+      "evidence_note": "721 mean context tokens; pre-generated assets",
+      "flow": [
+        [
+          "Capture",
+          "Ingest completed turns and available tool context."
+        ],
+        [
+          "Augment",
+          "Build structured memories and summaries."
+        ],
+        [
+          "Recall",
+          "Agent explicitly requests memory within a chosen scope."
+        ]
+      ],
+      "thesis": "Remember what agents do, not just what they say; structure history into compact assets for intentional recall.",
+      "mechanism": "Advanced Augmentation creates semantic triples and summaries. Hermes integration captures completed, non-interrupted turns with available execution/tool context asynchronously and scopes by entity/project/process/session. Agent-controlled recall uses explicit tools; integration describes proprietary multi-dimensional ranking. Generic SDK/BYODB offerings are distinct from Hermes Cloud integration.",
+      "tradeoff": "Compact structured recall can reduce prompt size but extraction can omit/misclassify evidence. Background writes are not immediate, and agent-selected recall can be skipped. Cloud trace storage requires scope and privacy controls. Offline benchmark does not validate live tool-execution capture.",
+      "hermes": "Separately installed hermes-memori plugin for Memori Cloud. Completed turns sync asynchronously; recall is agent-controlled. Its own README says it does not mirror or modify MEMORY.md / USER.md. Generic BYODB offerings are a different product surface.",
+      "evidence_gap": "Not independently reproduced; public notebooks start from pre-generated augmented assets, not an audited from-scratch extraction pipeline. Mean-context-token result excludes extraction, memory service and output-token costs. web_extract returned older 81.95% / 1,294-token text; direct origin HTML and pinned repository agree on 87.0% / 721. Retrieval discrepancy recorded; cause unknown. Hermes guide lists five tools; current integration README additionally lists memori_compaction. No installation performed to settle runtime version. Generic Hermes provider lifecycle mentions mirrored writes, but Memori explicitly says it does not mirror or modify MEMORY.md / USER.md. Plugin-specific docs govern.",
+      "sources": [
+        {
+          "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/integrations/hermes/README.md",
+          "title": "Memori for Hermes Agent",
+          "publisher": "Memori Labs"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/docs/memori-cloud/benchmark/overview.mdx",
+          "title": "LoCoMo Benchmark Overview",
+          "publisher": "Memori Labs"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/docs/memori-cloud/benchmark/results.mdx",
+          "title": "LoCoMo Benchmark Results",
+          "publisher": "Memori Labs"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/benchmarks/README.md",
+          "title": "Memori Benchmarks — LoCoMo Evaluation",
+          "publisher": "Memori Labs"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/benchmarks/02_run_benchmark.ipynb",
+          "title": "Memori RAG Evaluation — LoCoMo Benchmark notebook",
+          "publisher": "Memori Labs"
+        },
+        {
+          "url": "https://memorilabs.ai/benchmark/",
+          "title": "Benchmark | Memori – Agent-native memory infrastructure",
+          "publisher": "Memori Labs"
+        }
+      ],
+      "claims": [
+        {
+          "benchmark": "LoCoMo",
+          "metric": "overall LLM-judge accuracy",
+          "value": "87.0%",
+          "conditions": "LoCoMo categories 1–4, adversarial excluded; average of three rounds per results page. Notebook defaults: GPT-4.1-mini answer and judge, temperature 0, EmbeddingGemma-300M, FAISS + BM25 with RRF, top_k 10. Pre-generated augmented memories and summaries. Not a Hermes execution benchmark; not run by this research.",
+          "publisher": "Memori Labs",
+          "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/docs/memori-cloud/benchmark/results.mdx",
+          "quote": "| Memori | 88.5 | 83.7 | 72.9 | 90.3 | 87.0 |"
+        },
+        {
+          "benchmark": "LoCoMo",
+          "metric": "mean tokens added to context",
+          "value": "721 tokens",
+          "conditions": "LoCoMo categories 1–4, adversarial excluded; average of three rounds per results page. Notebook defaults: GPT-4.1-mini answer and judge, temperature 0, EmbeddingGemma-300M, FAISS + BM25 with RRF, top_k 10. Pre-generated augmented memories and summaries. Not a Hermes execution benchmark; not run by this research. Full-context baseline: 26,031 tokens. Excludes ingestion, extraction, answer output and hosting costs.",
+          "publisher": "Memori Labs",
+          "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/docs/memori-cloud/benchmark/results.mdx",
+          "quote": "| **Memori** | **721** | **0.000577** | **2.8** |"
+        }
+      ]
+    }
+  ],
+  "cohorts": [
+    {
+      "publisher": "Hindsight / Vectorize",
+      "date": "21 April 2026",
+      "title": "BEAM · 10 million-token histories",
+      "description": "The linked article compiles this published 10M comparison. Values are mean rubric scores on a 0–100 scale, not percentages of questions answered correctly.",
+      "rows": [
+        {
+          "name": "RAG baseline",
+          "score": 24.9
+        },
+        {
+          "name": "LIGHT baseline",
+          "score": 26.6
+        },
+        {
+          "name": "Honcho",
+          "score": 40.6
+        },
+        {
+          "name": "Hindsight",
+          "score": 64.1
+        }
+      ],
+      "conditions": "This is Hindsight’s published comparison, not a new matched rerun. Exact answer model, judge, system versions and retrieval budgets are unresolved. Baseline labels refer to the tested implementations, not every RAG or lightweight-memory system.",
+      "source": {
+        "url": "https://hindsight.vectorize.io/guides/2026/04/21/comparison-agent-memory-benchmark-hindsight-vs-alternatives",
+        "title": "Hindsight BEAM comparison"
+      },
+      "metric_label": "BEAM mean rubric score · 0–100 scale, not pass rate",
+      "provider_id": "hindsight"
+    },
+    {
+      "publisher": "Honcho / Plastic Labs",
+      "date": "19 December 2025",
+      "title": "BEAM · Honcho’s own report",
+      "description": "Honcho frames recall as one part of modeling identity. Its article reports these mean rubric scores (converted from 0–1 to 0–100); tiers are different workloads, not competing systems.",
+      "rows": [
+        {
+          "name": "100K",
+          "score": 63.0
+        },
+        {
+          "name": "500K",
+          "score": 64.9
+        },
+        {
+          "name": "1M",
+          "score": 63.1
+        },
+        {
+          "name": "10M",
+          "score": 40.6
+        }
+      ],
+      "conditions": "Gemini 2.5 Flash Lite deriver; Claude Haiku 4.5 chat. Dreaming ON / 8,192-token batches at 100K; OFF / 4,096 at larger tiers. Judge model unresolved. Its dashboard instead reports 0.646 / 0.618 / 0.409 at 500K / 1M / 10M. The discrepancy remains unresolved.",
+      "source": {
+        "url": "https://honcho.dev/blog/blog/benchmarking-honcho",
+        "title": "Honcho benchmark report"
+      },
+      "metric_label": "BEAM mean rubric score · 0–100 scale, not pass rate",
+      "provider_id": "honcho"
+    },
+    {
+      "provider_id": "mem0",
+      "publisher": "Mem0",
+      "date": "Reviewed 14 September 2026",
+      "title": "LoCoMo · Mem0 Platform",
+      "description": "The same managed-platform experiment, with two retrieval budgets. This is not the OSS library or a Hermes integration benchmark.",
+      "metric_label": "LLM-judged accuracy · %",
+      "rows": [
+        {
+          "name": "Top 50",
+          "score": 91.8
+        },
+        {
+          "name": "Top 200",
+          "score": 92.5
+        }
+      ],
+      "conditions": "1,540 questions / 10 dialogues; one retrieval call, no agentic loop. Answer and judge models unresolved in the selected result. Separately, the same README reports LongMemEval 94.4% (Top 200) and 94.8% (Top 50). Do not mix datasets into one score.",
+      "source": {
+        "url": "https://raw.githubusercontent.com/mem0ai/memory-benchmarks/main/README.md",
+        "title": "Mem0 primary evaluation"
+      }
+    },
+    {
+      "provider_id": "openviking",
+      "publisher": "OpenViking",
+      "date": "Reviewed 14 September 2026",
+      "title": "LoCoMo · inside Hermes",
+      "description": "OpenViking compares native Hermes memory with its own integration. This is an implementation-specific baseline, not a verdict on every file-based memory setup.",
+      "metric_label": "Reported task success · %",
+      "rows": [
+        {
+          "name": "Hermes native",
+          "score": 33.38
+        },
+        {
+          "name": "+ OpenViking",
+          "score": 82.86
+        }
+      ],
+      "conditions": "Same publisher experiment. Exact answer model, judge and suite details unresolved in the report. The source also reports lower latency and token use; this guide has not reproduced the run.",
+      "source": {
+        "url": "https://blog.openviking.ai/post/openviking-benchmark-results/",
+        "title": "OpenViking primary evaluation"
+      }
+    },
+    {
+      "provider_id": "supermemory",
+      "publisher": "Supermemory",
+      "date": "Reviewed 14 September 2026",
+      "title": "xAFS · the SMFS tradeoff",
+      "description": "Supermemory’s filesystem product reduces token consumption, but its aggregate pass rate is slightly lower. SMFS is not the Hermes Supermemory API adapter.",
+      "metric_label": "Aggregate benchmark pass rate · %",
+      "rows": [
+        {
+          "name": "Filesystem only",
+          "score": 92.7
+        },
+        {
+          "name": "With SMFS",
+          "score": 91.4
+        }
+      ],
+      "conditions": "Source reports 53.8% fewer tokens. xAFS combines AgentFS, FS-Research and StateFS tasks; it is not a LoCoMo or LongMemEval test. Do not apply this result to every Supermemory product.",
+      "source": {
+        "url": "https://smfs.ai/research/memory-as-a-filesystem/",
+        "title": "Supermemory primary evaluation"
+      }
+    },
+    {
+      "provider_id": "byterover",
+      "publisher": "ByteRover",
+      "date": "Reviewed 14 September 2026",
+      "title": "LoCoMo · HTML versus Markdown",
+      "description": "ByteRover changes the memory representation in its own pipeline. Accuracy is close; the latency tradeoff is not.",
+      "metric_label": "Reported answer accuracy · %",
+      "rows": [
+        {
+          "name": "Markdown",
+          "score": 90.51
+        },
+        {
+          "name": "HTML",
+          "score": 90.77
+        }
+      ],
+      "conditions": "1,982 questions / 11 conversations. HTML p95 latency: 4,311 ms versus 259 ms for Markdown. Small accuracy differences lack an uncertainty interval here. This tests file formats, not ByteRover versus other providers.",
+      "source": {
+        "url": "https://www.byterover.dev/blog/html-vs-markdown-for-agent-memory-a-full-scale-benchmark-on-accuracy-latency-and-cost",
+        "title": "ByteRover primary evaluation"
+      }
+    },
+    {
+      "provider_id": "retaindb",
+      "publisher": "RetainDB",
+      "date": "Reviewed 14 September 2026",
+      "title": "LongMemEval · oracle input",
+      "description": "RetainDB reports an overall result while its category coverage is still marked in progress. The answer model receives the full chronological memory dump.",
+      "metric_label": "Reported overall accuracy · %",
+      "rows": [
+        {
+          "name": "RetainDB",
+          "score": 79.0
+        }
+      ],
+      "conditions": "Oracle split and full-timeline input—not a measured production retrieval pipeline. The page conflicts on extractor-model labels. Published competitor values on the page are not new matched reruns; they are deliberately not charted here.",
+      "source": {
+        "url": "https://retaindb.com/benchmark",
+        "title": "RetainDB primary evaluation"
+      }
+    },
+    {
+      "provider_id": "holographic",
+      "publisher": "Holographic (Hermes plugin)",
+      "date": "Reviewed 14 September 2026",
+      "title": "A plugin, not a leaderboard entry",
+      "description": "The Hermes plugin stores local memory and supports SQLite/FTS5 retrieval, with optional holographic associations and trust scoring.",
+      "metric_label": "No comparable benchmark found",
+      "rows": [],
+      "conditions": "Reviewed plugin implementation, not a measured accuracy result. Verify relevance, update behavior and latency on your own workload.",
+      "source": {
+        "url": "https://raw.githubusercontent.com/NousResearch/hermes-agent/5eb99eb2844b22ebb723711b8e6a0bbb80bb5f04/plugins/memory/holographic/README.md",
+        "title": "Holographic (Hermes plugin) primary evaluation"
+      }
+    },
+    {
+      "provider_id": "memori",
+      "publisher": "Memori",
+      "date": "Reviewed 14 September 2026",
+      "title": "LoCoMo · memory-to-context",
+      "description": "Memori’s current results pair answer accuracy with a compact supplied context. The benchmark repository uses pre-generated memory assets.",
+      "metric_label": "Reported overall accuracy · %",
+      "rows": [
+        {
+          "name": "Memori",
+          "score": 87.0
+        }
+      ],
+      "conditions": "721 mean context tokens reported. Public evaluation does not measure a complete new-ingestion-to-answer Hermes journey. Current origin and pinned source agree; an extraction cache still returns older 81.95% / 1,294-token figures, which are not used here.",
+      "source": {
+        "url": "https://raw.githubusercontent.com/MemoriLabs/Memori/10d65015007131a69b2597fa5130da58da24a0c2/docs/memori-cloud/benchmark/results.mdx",
+        "title": "Memori primary evaluation"
+      }
+    }
+  ]
+}

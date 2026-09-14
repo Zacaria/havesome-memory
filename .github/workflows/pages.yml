@@ -28,6 +28,12 @@ jobs:
         run: python3 scripts/build_site.py
       - name: Verify static artifact and tracked boundary
         run: python3 scripts/check_site.py
+      - name: Verify comparison entry point
+        run: python3 scripts/test_comparison.py
+      - name: Exercise comparison over HTTP
+        env:
+          BROWSER_EXECUTABLE: ""
+        run: python3 scripts/test_comparison_browser.py
       - name: Exercise story and technology chapter over HTTP
         env:
           BROWSER_EXECUTABLE: ""

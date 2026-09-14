@@ -17,9 +17,14 @@
 !/src/chapter-five.html
 !/src/chapter-five.css
 !/src/chapter-five.js
+!/src/comparison.css
+!/src/comparison.json
 
 !/scripts/
 /scripts/*
 !/scripts/build_site.py
 !/scripts/check_site.py
 !/scripts/test_site_browser.py
+!/scripts/build_comparison.py
+!/scripts/test_comparison.py
+!/scripts/test_comparison_browser.py

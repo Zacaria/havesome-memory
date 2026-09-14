@@ -29,6 +29,9 @@ def serve_site(site: Path):
             if path in {"/havesome-memory", "/havesome-memory/", "/havesome-memory/index.html"}:
                 payload = (site / "index.html").read_bytes()
                 status = 200
+            elif path == "/havesome-memory/story.html":
+                payload = (site / "story.html").read_bytes()
+                status = 200
             else:
                 payload = (site / "404.html").read_bytes()
                 status = 404
@@ -61,7 +64,7 @@ def main() -> None:
     parser.add_argument("--browser", default=os.environ.get("BROWSER_EXECUTABLE", local_browser))
     parser.add_argument("--screenshots", type=Path, default=ROOT / "_verification")
     args = parser.parse_args()
-    file = args.site.resolve() / "index.html"
+    file = args.site.resolve() / "story.html"
     assert file.exists(), "Build the site first"
     if args.browser:
         assert Path(args.browser).exists(), f"Browser executable not found: {args.browser}"
@@ -73,6 +76,7 @@ def main() -> None:
     system_states = 0
 
     with serve_site(args.site.resolve()) as base_url, sync_playwright() as playwright:
+        base_url += "story.html"
         launch_options = {"headless": True}
         if args.browser:
             launch_options["executable_path"] = args.browser
@@ -88,7 +92,7 @@ def main() -> None:
                 page.on(
                     "request",
                     lambda request: remote_requests.append(request.url)
-                    if request.url.startswith(("http:", "https:")) and not request.url.startswith(base_url)
+                    if request.url.startswith(("http:", "https:")) and not request.url.startswith(base_url.rsplit('/', 1)[0] + '/')
                     else None,
                 )
                 response = page.goto(base_url, wait_until="load")

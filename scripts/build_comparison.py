@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""Render the comparison from explicit, attributed editorial data."""
+from html import escape
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+def e(value):
+    return escape(str(value), quote=True)
+
+def link(source, label=None):
+    return f'<a href="{e(source["url"])}" rel="noreferrer">{e(label or source["title"])} ↗</a>'
+
+def render():
+    data = json.loads((ROOT / 'src/comparison.json').read_text())
+    css = (ROOT / 'src/comparison.css').read_text()
+    rows, dossiers = [], []
+    for item in data['approaches']:
+        ident = item['id']
+        evidence = item['evidence_label']
+        rows.append(f'''<tr data-kind="{e(item['kind'])}" data-search="{e((item['name']+' '+item['focus']+' '+item['storage']).lower())}">
+<th scope="row"><a href="#provider-{e(ident)}">{e(item.get('short_name',item['name']))}<span aria-hidden="true"> ↗</span></a><small>{e(item['category'])}</small></th>
+<td data-label="Keeps">{e(item['focus'])}</td><td data-label="Finds it through">{e(item['retrieval'])}</td>
+<td data-label="Published evidence"><span class="evidence-label">{e(evidence)}</span><small>{e(item['evidence_note'])}</small></td>
+<td data-label="Where it runs">{e(item['storage'])}</td></tr>''')
+        steps = ''.join(f'<li><span class="step-number">0{n}</span><strong>{e(step[0])}</strong><span>{e(step[1])}</span></li>' for n, step in enumerate(item['flow'], 1))
+        claims, historical = '', ''
+        for claim in item.get('claims', []):
+            rendered = f'''<article class="claim"><div class="claim-top"><span>{e(claim['benchmark'])}</span><b>{e(claim['value'])}</b></div><p>{e(claim['metric'])}</p><p class="small">{e(claim['conditions'])}</p><p class="small">Published by {e(claim['publisher'])}. {link({'url':claim['url'],'title':'Original report (now redirects)' if claim.get('historical') else 'Read the result'})}</p></article>'''
+            if claim.get('historical'):
+                historical += rendered
+            else:
+                claims += rendered
+        if historical:
+            claims += '<details class="historical"><summary>Historical report · mixed/ambiguous metric labeling</summary><p class="small">These figures were retrieved from an older report through extraction, not reproduced by this guide. The original URL no longer serves that report. Current SMFS evidence above is a different product and benchmark.</p>' + historical + '</details>'
+        if not claims:
+            claims = f'<p class="gap"><strong>No comparable score shown.</strong> {e(item["evidence_gap"])}</p>'
+        sources = ''.join(f'<li>{link(s)}<small>{e(s["publisher"])}</small></li>' for s in item['sources'])
+        voice = 'Why use this pattern' if item['kind'] == 'basic' else 'The provider’s case · paraphrased from its own sources'
+        dossiers.append(f'''<details class="dossier" id="provider-{e(ident)}"><summary><span><small>{e(item['category'])}</small><strong>{e(item['name'])}</strong></span><span class="dossier-teaser">{e(item['thesis'])}</span><span class="expand" aria-hidden="true">+</span></summary>
+<div class="dossier-body"><p class="eyebrow">{voice}</p><p class="thesis">{e(item['thesis'])}</p>
+<ol class="flow" aria-label="Conceptual {e(item['name'])} memory flow">{steps}</ol>
+<p class="small">Conceptual flow, not a live trace or a measured outcome.</p>
+<div class="detail-grid"><div><h3>What changes</h3><p>{e(item['mechanism'])}</p><h3>What you still own</h3><p>{e(item['tradeoff'])}</p><h3>In Hermes</h3><p>{e(item['hermes'])}</p></div><div><h3>Published evidence, in context</h3>{claims}</div></div>
+<details class="citations"><summary>Primary sources &amp; evidence boundary</summary><ul>{sources}</ul><p class="small">{e(item['evidence_gap'])}</p></details>
+<a class="back" href="#comparison">↑ Back to comparison</a></div></details>''')
+    cohorts = []
+    for cohort in data.get('cohorts', []):
+        bars = ''.join(f'<div class="bar-row"><span>{e(row["name"])}</span><div class="track"><div class="bar" style="width:{float(row["score"])}%"></div></div><b>{float(row["score"]):.1f}</b></div>' for row in cohort['rows'])
+        graphic = f'<div class="bars" role="img" aria-label="{e(cohort["metric_label"])}: {e("; ".join(row["name"]+" "+str(row["score"]) for row in cohort["rows"]))}">{bars}</div>' if cohort['rows'] else '<div class="unscored-flow" aria-label="Conceptual plugin flow, not performance data"><span>Local records</span><b aria-hidden="true">→</b><span>SQLite / FTS5</span><b aria-hidden="true">→</b><span>Recall</span></div>'
+        cohorts.append(f'''<article class="cohort" data-cohort-provider="{e(cohort['provider_id'])}"><p class="eyebrow">{e(cohort['publisher'])} · {e(cohort['date'])}</p><h3>{e(cohort['title'])}</h3><p>{e(cohort['description'])}</p><p class="metric-label">{e(cohort['metric_label'])}</p>{graphic}<p class="small">{e(cohort['conditions'])}</p><p>{link(cohort['source'], 'Read the plugin source' if not cohort['rows'] else 'Read this publisher’s evaluation')}</p></article>''')
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Havesome Memory · Compare agent memory approaches</title><meta name="description" content="Compare basic memory patterns and every documented Hermes memory provider. Each provider’s own case, published benchmark evidence, and limits—without a universal leaderboard."><link rel="canonical" href="https://zacaria.github.io/havesome-memory/"><meta property="og:title" content="Havesome Memory · Choose how your agent remembers"><meta property="og:description" content="Basic patterns, specialized providers, and the evidence behind their claims."><meta name="twitter:card" content="summary"><style>{css}</style></head><body>
+<a class="skip" href="#comparison">Skip to comparison</a>
+<header><a class="brand" href="index.html"><span aria-hidden="true">▰</span> HAVESOME MEMORY</a><nav aria-label="Main navigation"><a href="#comparison">Compare</a><a href="#benchmarks">Benchmarks</a><a href="story.html">Read the story ↗</a></nav></header>
+<main><section class="opening"><div><p class="eyebrow">AGENT MEMORY / A FIELD GUIDE</p><h1>Choose how your agent remembers.</h1><p class="intro">Basic memory patterns and Hermes providers, compared through their own published evidence.</p></div></section>
+<section id="comparison" aria-labelledby="comparison-title"><div class="section-heading"><div><p class="eyebrow">01 / THE SHORT VERSION</p><h2 id="comparison-title">Memory at a glance.</h2></div><span class="review-date">Evidence reviewed {e(data['reviewed'])}</span></div>
+
+<div class="controls" hidden><div class="filters" role="group" aria-label="Filter approaches"><button type="button" data-filter="all" aria-pressed="true">All approaches</button><button type="button" data-filter="basic" aria-pressed="false">Basic patterns</button><button type="button" data-filter="provider" aria-pressed="false">Hermes providers</button></div><label>Find an approach <input type="search" id="search" placeholder="Name, mechanism, hosting…"></label></div>
+<p id="filter-status" class="small" role="status" aria-live="polite" hidden></p>
+<table><caption class="sr-only">Memory approaches. Follow a name for its mechanism, provider perspective and source evidence.</caption><thead><tr><th scope="col">Approach</th><th scope="col">What it keeps</th><th scope="col">How it finds it</th><th scope="col">Its published evidence</th><th scope="col">Where it runs</th></tr></thead><tbody>{''.join(rows)}</tbody></table><p class="scope">Four basic patterns · eight bundled Hermes plugins + the separately installed Memori integration. Built-in memory stays active by default alongside one selected external provider. {link(data['hermes_source'], 'Hermes integration scope')}</p>
+<p class="table-note">Read across for fit, not down for rank. Published scores below come from different tests. “No score” is an evidence gap, not a failure. Hosting modes do not imply equal features, privacy guarantees, or zero operating cost.</p></section>
+<section id="benchmarks"><div class="section-heading"><div><p class="eyebrow">02 / READ THE TEST, NOT JUST THE NUMBER</p><h2>Same benchmark name ≠ same experiment.</h2></div></div><p class="section-intro">Nine provider perspectives, kept separate. Each panel names its own experiment, metric and limits. These are attributed reports, not our own benchmark runs—and panels are not ranked.</p><div class="cohort-grid">{''.join(cohorts)}</div><div class="rule"><strong>No blended leaderboard.</strong><span>Check dataset revision, history size, system version, answering model, judge, retrieval budget, latency and cost. Unknown conditions remain unknown. A recall score does not test permissions, deletion, reliability or your workflow.</span></div></section>
+<section id="approaches"><div class="section-heading"><div><p class="eyebrow">03 / EACH APPROACH, ON ITS OWN TERMS</p><h2>What is each one trying to solve?</h2></div></div><p class="section-intro">Open a name. Follow the information from conversation to stored representation to recalled context. Then inspect the evidence and the work left to you.</p>{''.join(dossiers)}</section>
+<section id="how-memory-works"><p class="eyebrow">04 / THE MECHANISM, IN ONE EXAMPLE</p><h2>Keep the information.<br>Change what you carry.</h2><p class="section-intro">Illustrative conversation: “We changed the API timeout to 30 seconds.” Later: “Which timeout should the client use?” Follow the same fact through three choices—not three levels of quality.</p>
+<div class="example-grid"><article><span class="example-number">01 / KEEP IN CONTEXT</span><h3>Carry the conversation</h3><div class="context-gauge"><span>Earlier messages</span><span class="fact">timeout = 30 seconds</span><span>More conversation</span><span>Today’s question</span></div><p>The fact is directly available while it remains in the supplied context. More history consumes more of the working window.</p><p class="annotation">Constraint → context is bounded; a summary can omit a detail.</p></article>
+<article><span class="example-number">02 / WRITE IT DOWN</span><h3>Save a file. Read it back.</h3><div class="example-flow"><span class="fact">timeout = 30 seconds</span><span class="arrow">↓ write</span><span class="file-node">api-decisions.md</span><span class="arrow">↓ find + read</span><span class="context-node">Fact + today’s question</span></div><p>A durable file can be enough. The agent needs a rule for writing it and a way to locate the right passage later.</p><p class="annotation">Work left → maintain the file and its retrieval instructions.</p></article>
+<article><span class="example-number">03 / USE A MEMORY LAYER</span><h3>Represent. Retrieve. Recheck.</h3><div class="example-flow"><span class="fact">timeout = 30 seconds</span><span class="arrow">↓ retain</span><span class="memory-node">Fact · source · project · time</span><span class="arrow">↓ retrieve for this question</span><span class="context-node">Selected fact + question</span></div><p>A provider may extract facts, build profiles, organize files or connect entities. Different representations help with different questions.</p><p class="annotation">Work left → check scope, freshness and the answer against evidence.</p></article></div>
+<p class="small">Authored example, not a provider output. A later timeout change needs an explicit update and a check of which version applies. Specialized memory is optional, not an automatic upgrade.</p></section>
+<section class="story-invitation"><div><p class="eyebrow">WANT THE WHY?</p><h2>See what breaks<br>when knowledge changes.</h2><p>The Morrow Works story follows one company through scattered files, conflicting rules, access boundaries and forgetting. The complete story and its technology deep dive are still here.</p></div><a class="story-link" href="story.html">Read the story <span aria-hidden="true">↗</span></a></section>
+</main><footer><span>HAVESOME MEMORY</span><p>Primary-source desk research. No providers connected or independently benchmarked. No analytics, accounts or runtime API calls. Product evidence reviewed {e(data['reviewed'])}.</p><a href="#comparison">Back to comparison ↑</a></footer>
+<script>(()=>{{'use strict';const oldStoryHashes=new Set(['meet','company','chapter-two','chapter-three','chapter-four','chapter-five','systems','hindsight','mem0','openviking','supermemory','graphrag','failure-cases','cost','selection','final-close']);if(oldStoryHashes.has(location.hash.slice(1)))location.replace('story.html'+location.hash);const rows=[...document.querySelectorAll('tbody tr')];const controls=document.querySelector('.controls');const status=document.querySelector('#filter-status');const input=document.querySelector('#search');let kind='all';function filter(){{let count=0;for(const row of rows){{row.hidden=!((kind==='all'||row.dataset.kind===kind)&&row.dataset.search.includes(input.value.trim().toLowerCase()));if(!row.hidden)count++;}}status.textContent=count+' of '+rows.length+' approaches'+(count?'':' — try another name or clear the search.');}}controls.hidden=false;status.hidden=false;document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{{kind=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));filter();}}));input.addEventListener('input',filter);function openTarget(){{const id=location.hash.slice(1);if(oldStoryHashes.has(id)){{location.replace('story.html'+location.hash);return;}}const target=document.getElementById(id);if(target?.classList.contains('dossier')){{target.open=true;requestAnimationFrame(()=>target.scrollIntoView({{block:'start'}}));}}}}addEventListener('hashchange',openTarget);openTarget();filter();}})();</script></body></html>'''

@@ -14,7 +14,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_SITE_FILES = {".nojekyll", "404.html", "index.html"}
+EXPECTED_SITE_FILES = {".nojekyll", "404.html", "index.html", "story.html"}
 TRACKED_ALLOWLIST = {
     ".github/workflows/pages.yml",
     ".gitignore",
@@ -23,6 +23,11 @@ TRACKED_ALLOWLIST = {
     "README.md",
     "THIRD_PARTY_NOTICES.md",
     "scripts/build_site.py",
+    "scripts/build_comparison.py",
+    "scripts/test_comparison.py",
+    "scripts/test_comparison_browser.py",
+    "src/comparison.css",
+    "src/comparison.json",
     "scripts/check_site.py",
     "scripts/test_site_browser.py",
     "src/chapter-five.css",
@@ -124,14 +129,14 @@ def check_generated(site: Path) -> dict[str, object]:
     assert actual_files == EXPECTED_SITE_FILES, (actual_files, EXPECTED_SITE_FILES)
     assert not any(path.is_symlink() for path in site.rglob("*")), "Site contains a symlink"
 
-    index = site / "index.html"
+    index = site / "story.html"
     not_found = site / "404.html"
     text = index.read_text(encoding="utf-8")
     lower = text.lower()
     assert text.startswith("<!doctype html>"), "Missing HTML doctype"
     assert "DOCUMENTED, NOT TESTED" in text
     assert "Evidence reviewed 13 September 2026" in text
-    assert '<link rel="canonical" href="https://zacaria.github.io/havesome-memory/">' in text
+    assert '<link rel="canonical" href="https://zacaria.github.io/havesome-memory/story.html">' in text
 
     parser = AuditParser()
     parser.feed(text)
@@ -177,6 +182,32 @@ def check_generated(site: Path) -> dict[str, object]:
     assert text.count('class="morrow-test"') == 5, "Each technology needs a Morrow Works test"
     assert text.count("<textarea") == 10, "Selection exercise is incomplete"
 
+    homepage = (site / "index.html").read_text(encoding="utf-8")
+    home_parser = AuditParser()
+    home_parser.feed(homepage)
+    assert len(home_parser.ids) == len(set(home_parser.ids)), "Duplicate comparison IDs"
+    assert all(fragment in home_parser.ids for fragment in home_parser.fragment_links), "Broken homepage fragment"
+    assert not home_parser.subresources and not home_parser.network_targets and not home_parser.meta_refreshes
+    assert all(urlparse(href).scheme == "https" and "noreferrer" in rel.split() for href, rel in home_parser.external_links)
+    assert '<link rel="canonical" href="https://zacaria.github.io/havesome-memory/">' in homepage
+    assert '<h1>Choose how your agent remembers.</h1>' in homepage
+    assert 'Evidence reviewed 14 September 2026' in homepage
+    assert 'href="story.html"' in homepage and 'story.html'+chr(39)+'+location.hash' in homepage
+    catalogue = json.loads((ROOT / 'src/comparison.json').read_text())
+    provider_ids = {item['id'] for item in catalogue['approaches'] if item['kind'] == 'provider'}
+    assert provider_ids == {'hindsight','honcho','mem0','openviking','supermemory','byterover','retaindb','holographic','memori'}
+    assert len(catalogue['approaches']) == 13
+    assert homepage.count('<tr data-kind="provider"') == 9 and homepage.count('<tr data-kind="basic"') == 4
+    for item in catalogue['approaches']:
+        assert 'provider-' + item['id'] in home_parser.ids
+        assert item['sources'] and item['evidence_gap'] and len(item['flow']) == 3
+        for claim in item['claims']:
+            assert all(claim[k] for k in ('benchmark','metric','value','conditions','url','publisher','quote'))
+    for phrase in FORBIDDEN_TEXT | set(FORBIDDEN_RUNTIME):
+        assert phrase not in homepage.lower(), ('Forbidden comparison content', phrase)
+    for label, pattern in SECRET_PATTERNS.items():
+        assert not pattern.search(homepage), f'Potential {label} in comparison'
+
     nf = not_found.read_text(encoding="utf-8")
     assert '<meta name="robots" content="noindex">' in nf
     assert '<a href="https://zacaria.github.io/havesome-memory/">Return to Havesome Memory →</a>' in nf
@@ -185,13 +216,17 @@ def check_generated(site: Path) -> dict[str, object]:
     return {
         "status": "pass",
         "site_files": sorted(actual_files),
-        "index_bytes": index.stat().st_size,
-        "index_sha256": sha(index),
+        "story_bytes": index.stat().st_size,
+        "index_bytes": (site / "index.html").stat().st_size,
+        "story_sha256": sha(index),
+        "index_sha256": sha(site / "index.html"),
+        "comparison_approaches": len(catalogue["approaches"]),
+        "hermes_providers": len(provider_ids),
         "story_beats": len(beats),
         "fictional_sources": len(corpus),
         "technologies": 5,
         "source_drawers": source_drawers,
-        "outbound_source_hosts": sorted(hosts),
+        "outbound_source_hosts": sorted(hosts | {urlparse(href).netloc for href, _ in home_parser.external_links}),
         "external_subresources": 0,
     }
 
@@ -239,9 +274,9 @@ def run_negative_controls(site: Path) -> list[str]:
     return ["network_attributes", "tracked_allowlist", "post-check_artifact_injection"]
 
 
-def check_tracked_tree() -> None:
+def check_tracked_tree(worktree: bool = False) -> None:
     result = subprocess.run(
-        ["git", "ls-files"], cwd=ROOT, check=True, capture_output=True, text=True
+        ["git", "ls-files"] + (["--cached", "--others", "--exclude-standard"] if worktree else []), cwd=ROOT, check=True, capture_output=True, text=True
     )
     tracked = {line for line in result.stdout.splitlines() if line}
     if not tracked:
@@ -257,7 +292,7 @@ def check_tracked_tree() -> None:
         assert path.is_file() and not path.is_symlink(), f"Tracked path is not a regular file: {relative}"
         assert path.suffix.lower() not in FORBIDDEN_TRACKED_SUFFIXES, f"Forbidden tracked type: {relative}"
         assert not credential_name.search(relative), f"Credential-like tracked filename: {relative}"
-        payload = subprocess.run(
+        payload = path.read_bytes() if worktree else subprocess.run(
             ["git", "show", f":{relative}"], cwd=ROOT, check=True, capture_output=True
         ).stdout
         assert b"\0" not in payload, f"Binary tracked blob: {relative}"
@@ -285,12 +320,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--site", type=Path, default=ROOT / "_site")
     parser.add_argument("--skip-determinism", action="store_true")
+    parser.add_argument("--worktree", action="store_true", help="Audit explicit local source closure before staging; CI audits the Git index")
     args = parser.parse_args()
     report = check_generated(args.site.resolve())
     if not args.skip_determinism:
         check_determinism(args.site.resolve())
         report["deterministic_build"] = True
-    check_tracked_tree()
+    check_tracked_tree(args.worktree)
     report["negative_controls_rejected"] = run_negative_controls(args.site.resolve())
     print(json.dumps(report, indent=2))
 
