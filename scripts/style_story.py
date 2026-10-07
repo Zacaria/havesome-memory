@@ -3,7 +3,7 @@ from html import escape
 from pathlib import Path
 import json
 import re
-from visual_assets import badge, emblem, icon, load_assets, load_ui_icons
+from visual_assets import illustration, badge, emblem, icon, load_assets, load_ui_icons
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -82,6 +82,11 @@ def apply_story_design(page):
     for old, new in copy_edits:
         main = once(main, old, new, 'reader copy: '+old[:48])
     main = main.replace('Primary sources and evidence boundary', 'Sources')
+    # Generated photos replace the hand-drawn SVG sketches (story.html stays pinned).
+    main,n = re.subn(r'<svg class="floorplan".*?</svg>', lambda _: illustration('company','floorplan'), main, count=1, flags=re.S)
+    if n != 1: raise ValueError('Missing floor plan')
+    main = once(main,'<div class="entity-drawing room-drawing" aria-hidden="true"></div>',illustration('room','entity-photo'),'room drawing')
+    main = once(main,'<div class="entity-drawing kit-drawing" aria-hidden="true"></div>',illustration('kit','entity-photo'),'kit drawing')
 
     # Pair each representation with its source system, not a nameless strip of jargon.
     objects=[('facts → observations','Hindsight'),('memories → entity graph','Mem0'),('L0 → L1 → L2','OpenViking'),('documents → evolving facts','Supermemory'),('text units → communities','GraphRAG')]

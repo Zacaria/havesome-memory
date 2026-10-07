@@ -44,7 +44,9 @@
 .hero-step-label.agent{text-align:right;justify-content:flex-end;margin-top:10px}
 .hero-sequence .hero-day p.bubble{margin:4px 0 0;padding:8px 12px;border:1px solid var(--line);border-radius:10px 10px 10px 2px;background:var(--bg);font-size:17px;max-width:85%}
 .hero-sequence .hero-day p.bubble.agent{margin-left:auto;border-color:var(--accent);border-radius:10px 10px 2px 10px}
-.hero-sequence .hero-retention{margin:16px 0;padding:12px 104px 12px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line)}
+.hero-sequence .hero-retention{margin:16px 0;padding:12px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line)}
 .hero-sequence .hero-retention p{border:0;padding:0;font:600 16px/1.4 'Courier New',monospace;color:var(--accent)}
 .hero-retention p small{display:block;font:12px/1.4 'Helvetica Neue',Arial,sans-serif;color:var(--muted);margin-top:2px}
-.retained-art{right:0;top:50%;bottom:auto;transform:translateY(-50%);width:88px;height:66px}
+.hero-example .retained-art{position:static;display:block;width:calc(100% + 44px);height:auto;aspect-ratio:4/1;object-fit:cover;object-position:50% 62%;margin:-20px -22px 12px;transform:none}
+@media(min-width:1001px){.opening{padding:24px 0 28px}.hero-sequence .hero-retention{margin:10px 0;padding:8px 0}}
+@media(min-width:1001px) and (max-height:780px){.hero-example .retained-art{aspect-ratio:auto;height:64px}}

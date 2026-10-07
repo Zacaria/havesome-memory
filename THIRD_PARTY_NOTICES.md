@@ -12,7 +12,7 @@ GitHub Actions used by the deployment workflow are maintained by GitHub and are 
 
 Four repository-sourced marks are embedded solely for editorial identification. No sponsorship, affiliation or endorsement is implied. Copyright licenses do not themselves grant general trademark rights. Other provider tiles show names/initials or a Lucide concept icon—not unofficial replacement logos.
 
-The Havesome Memory emblem and retained-note illustration are original site artwork. Concept, section and navigation icons come from the Lucide subset credited below.
+The Havesome Memory emblem is original site artwork. The four photographs (homepage desk, Morrow Works workspace, Atlas room, Atlas kit) were generated with OpenAI image generation through the Codex CLI in October 2026; they show fictional scenes, are stored in `src/illustrations.json`, and are hash-checked at build time. Concept, section and navigation icons come from the Lucide subset credited below.
 
 ### Mem0
 

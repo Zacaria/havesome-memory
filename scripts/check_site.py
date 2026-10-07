@@ -50,6 +50,7 @@ TRACKED_ALLOWLIST = {
     "src/chapter-five.html",
     "src/chapter-five.js",
     "src/story.html",
+    "src/illustrations.json",
 }
 FORBIDDEN_TRACKED_SUFFIXES = {
     ".zip", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf", ".pyc",
@@ -164,7 +165,8 @@ def check_generated(site: Path) -> dict[str, object]:
     assert not missing_fragments, f"Broken fragment links: {missing_fragments}"
     from visual_assets import load_assets, raster_data
     story_images = {('img', 'src', raster_data(asset)) for asset in load_assets().values() if asset['format'] == 'png'}
-    assert set(parser.subresources) == story_images and len(parser.subresources) == 1, "Unexpected story subresource"
+    photos = {name: ('img', 'src', 'data:image/webp;base64,' + item['webp_base64']) for name, item in json.loads((ROOT / 'src/illustrations.json').read_text())['illustrations'].items()}
+    assert set(parser.subresources) == story_images | {photos['company'], photos['room'], photos['kit']} and len(parser.subresources) == 4, "Unexpected story subresource"
     assert text.count('class="story-provider-site"') == 5
     assert text.count('class="architecture-flow"') == 5
     assert 'class="flow-reading-guide"' not in text
@@ -213,7 +215,7 @@ def check_generated(site: Path) -> dict[str, object]:
     logos = load_assets()
     assert set(logos) == {'hindsight','mem0','supermemory','byterover'}
     allowed_images = {('img','src',raster_data(asset)) for asset in logos.values() if asset['format'] == 'png'}
-    assert set(home_parser.subresources) == allowed_images and len(home_parser.subresources) == 3
+    assert set(home_parser.subresources) == allowed_images | {photos['hero']} and len(home_parser.subresources) == 4
     assert not home_parser.network_targets and not home_parser.meta_refreshes
     assert homepage.count('class="identity-badge ') == 35
     assert homepage.count('class="identity-badge provider-logo ') == 12

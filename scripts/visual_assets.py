@@ -131,6 +131,14 @@ def emblem():
     return '<svg class="memory-emblem" viewBox="0 0 40 40" fill="none" aria-hidden="true" focusable="false"><path d="M7 8h23v25H7z" fill="#8ebcff" transform="rotate(-9 18 20)"/><path d="M11 5h20l5 6v23H11z" fill="#ffaf83"/><path d="M29 5v8h7M17 18h12M17 24h8" stroke="#0a1930" stroke-width="2"/><circle cx="7" cy="6" r="3" fill="#edf1fa"/></svg>'
 
 
+def illustration(name, cls):
+    """Inline a hash-pinned generated WebP photo from src/illustrations.json."""
+    item = json.loads((ROOT/'src/illustrations.json').read_text())['illustrations'][name]
+    raw = base64.b64decode(item['webp_base64'], validate=True)
+    if len(raw) > 100_000 or hashlib.sha256(raw).hexdigest() != item['sha256'] or raw[8:12] != b'WEBP':
+        raise ValueError(f'Illustration {name} failed its size/checksum check')
+    return f'<img class="{cls}" src="data:image/webp;base64,{item["webp_base64"]}" alt="{escape(item["alt"])}" width="1200" height="800" decoding="async">'
+
+
 def retained_art():
-    # An index card in a box: the decision filed between conversations.
-    return '<svg class="retained-art" data-art="retained-decision" viewBox="0 0 96 72" fill="none" aria-hidden="true" focusable="false"><path d="M18 30h60v34H18z" fill="#10243e" stroke="#8ebcff" stroke-width="1.5"/><path d="M27 10h44v34H27z" fill="#ffaf83" transform="rotate(-4 49 27)"/><path d="M33 19h22M33 26h30M33 33h18" stroke="#0a1930" stroke-width="2" stroke-linecap="round" transform="rotate(-4 49 27)"/><path d="M18 40h60" stroke="#8ebcff" stroke-width="1.5"/><path d="M42 50h12" stroke="#8ebcff" stroke-width="2" stroke-linecap="round"/></svg>'
+    return illustration('hero', 'retained-art').replace('<img ', '<img data-art="retained-decision" ', 1)

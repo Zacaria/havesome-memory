@@ -67,3 +67,8 @@
 @media(max-width:360px){.story-brand{gap:8px;font-size:11px}.story-brand .memory-emblem{width:29px;height:29px}.story-site-header .chapter-name{font-size:10px;max-width:100px}.story-design .site-index{gap:2px 8px}.story-design .site-index a{font-size:12px;gap:5px}.story-nav-icon{width:16px;height:16px}.story-design .visual-heading{font-size:11px;letter-spacing:.03em}}
 @media(max-width:800px){.story-design #chapter-two,.story-design #chapter-three,.story-design #chapter-four{scroll-margin-top:calc(clamp(370px,42svh,430px) + 112px)}.story-design #packet-original{top:35%}.story-design [data-scene=context-supplied] #packet-original,.story-design [data-scene=context-supplied] #packet-amendment{top:24%;height:35%}}
 @media(prefers-reduced-motion:reduce){.story-design .identity-badge,.story-design .story-provider-site{transition:none}}
+
+/* Generated photos in place of the old line drawings */
+.story-design .floorplan{width:min(46%,560px);height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:6px;opacity:1;filter:none;box-shadow:0 20px 50px #0006}
+.story-design .entity-photo{display:block;width:100%;flex:1 1 auto;min-height:0;object-fit:cover;border-radius:4px}
+@media(max-width:820px){.story-design .floorplan{width:100%}}
