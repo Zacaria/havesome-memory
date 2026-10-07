@@ -244,7 +244,7 @@ class AssessmentTests(unittest.TestCase):
         root = ET.fromstring(self.api().render_methodology(data))
         self.assertEqual((root.tag, root.get('id')), ('details', 'score-rubric'))
         text = ''.join(root.itertext())
-        for word in ('editorial', 'not our own benchmarks', 'Unknown', 'not zero', 'no connecting shape'):
+        for word in ('our reading', 'did not run any tests', 'Unknown', 'not a zero', 'left off the chart'):
             self.assertIn(word, text)
         for value in data['methodology'].values():
             self.assertIn(value, text)

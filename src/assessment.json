@@ -68,9 +68,9 @@
     }
   ],
   "methodology": {
-    "title": "Editorial capability coverage — not a benchmark ranking",
-    "summary": "Six evidence-grounded ordinal judgments describe documented mechanisms in one explicitly named scope per approach. They measure capability coverage and editorial operating burden, not how well a system performs. Basic patterns are useful low-complexity tradeoffs, not deliberately weakened competitors. There is no total, average, winner, or universal recommendation.",
-    "scale_note": "0–3 are criterion-specific anchors, not equal intervals or measured quantities. null means Unknown: evidence is insufficient or the generic pattern leaves the implementation unspecified. Missing evidence is never zero. Read each score with its rationale, deployment scope and first-party excerpts; larger radar area is not a quality metric.",
+    "title": "How scoring works — what each system can do, not how well it does it",
+    "summary": "We scored six things from 0 to 3, using each project’s own documentation. The scores show which capabilities a system documents and how much setup it asks for. They do not measure how well it performs. Simple building blocks are fair trade-offs, not weak competitors. There is no total score and no winner.",
+    "scale_note": "Each 0–3 scale has its own meaning (see below), and the steps are not equal distances. “Unknown” means the documentation does not say; it is never a zero. Read each score with its reason and scope. A larger chart area does not mean a better system.",
     "scope_note": "A working single-user agent, its normal model access and host are assumed. Simplicity counts the additional setup/maintenance of the named route: managed API rows do not include self-hosted operations; self-hosted/local rows do. Managed convenience is not evidence of local control, privacy, security, latency or monetary savings. Optional enterprise, cloud sync, alternate engines and adapters receive no automatic parity.",
     "anchor_policy": "Choose the highest anchor directly supported for the assessed mechanism, not a count of marketing features. Levels are descriptive coverage bands rather than an exhaustive absence audit: a 1 or 2 does not prove a provider lacks every higher-band feature. Traceability 3 requires source references as well as a derivation/history path. Explicit historical coexistence earns change coverage, not a claim that contradictions are resolved correctly.",
     "scope_caveats": [
@@ -332,7 +332,7 @@
     },
     {
       "id": "hindsight",
-      "scope": "Self-hosted Hindsight API with local PostgreSQL and a configured structured-output LLM; current retain/recall API, including optional source-fact/chunk expansion. Hermes adapter is cited separately; Hindsight Cloud is not the simplicity scope.",
+      "scope": "Self-hosted Hindsight API with local PostgreSQL and a configured structured-output LLM; current save-and-recall API, including optional expansion to source facts and text chunks. Hermes adapter is cited separately; The simplicity score covers self-hosting only, not Hindsight Cloud.",
       "scores": {
         "retrieval": {
           "value": 3,

@@ -237,8 +237,8 @@
       "focus": "Peer representations and conclusions",
       "retrieval": "Context + semantic search + reasoning",
       "storage": "Cloud / self-hosted",
-      "evidence_label": "BEAM 10M · 0.406 / 1",
-      "evidence_note": "Own dashboard: 0.409; not an identity-modeling test",
+      "evidence_label": "BEAM 10M · 40.6 / 100",
+      "evidence_note": "Own dashboard: 40.9 / 100; not an identity-modeling test",
       "flow": [
         [
           "Observe",

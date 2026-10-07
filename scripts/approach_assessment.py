@@ -176,29 +176,29 @@ def render_cells(assessment, criteria):
     return ''.join(cells)
 
 
-def render_methodology(data):
+def render_methodology(data, names=None):
     """One native details element. Validate catalogue membership separately first."""
     _data(data)
     method = data['methodology']
     parts = [f'<details id="score-rubric" class="assessment-rubric">'
              f'<summary>{escape(method["title"])}</summary>',
-             '<p>These editorial scores are not our own benchmarks.</p>',
+             '<p>These scores come from our reading of each project’s documentation. We did not run any tests.</p>',
              f'<p>{escape(method["summary"])}</p><p>{escape(method["scale_note"])}</p>',
-             '<p>Unknown is not zero. Unknown points are omitted; incomplete profiles have no '
-             'connecting shape.</p>',
+             '<p>“Unknown” means the documentation does not say. It is not a zero, so unknown points are left off the chart.</p>',
              f'<p><strong>Source scope:</strong> {escape(method["scope_note"])}</p>',
 
-             '<h3>Per-axis level anchors</h3><div class="assessment-anchors">']
+             '<h3>What each score means</h3><div class="assessment-anchors">']
     for criterion in _criteria(data['criteria']):
         parts.append(f'<section><h4>{escape(criterion["label"])}</h4>'
                      f'<p>{escape(criterion["question"])}</p><dl>')
         for level in range(4):
             parts.append(f'<dt>{level}</dt><dd>{escape(criterion["levels"][str(level)])}</dd>')
         parts.append('</dl></section>')
-    parts.append('</div><h3>Assessed scopes</h3><ul class="assessment-scopes">')
+    names = names or {}
+    parts.append('</div><h3>What each score covers</h3><ul class="assessment-scopes">')
     for assessment in data['approaches']:
         ident = assessment['id']
-        parts.append(f'<li><a href="#provider-{ident}">{escape(ident)}</a>: '
+        parts.append(f'<li><a href="#provider-{ident}">{escape(names.get(ident, ident))}</a>: '
                      f'{escape(assessment["scope"])}</li>')
     return ''.join(parts) + '</ul></details>'
 
@@ -328,12 +328,12 @@ def render_profile(assessment, criteria):
              f'aria-labelledby="assessment-heading-{ident}">'
              f'<h3 id="assessment-heading-{ident}">Editorial capability profile</h3>'
              f'<p class="assessment-scope"><strong>Assessed scope:</strong> {escape(assessment["scope"])}</p>'
-             '<p class="assessment-note"><a href="#score-rubric">Rubric and level anchors</a></p>'
+             '<p class="assessment-note"><a href="#score-rubric">How scoring works</a></p>'
              '<div class="assessment-layout"><figure class="assessment-radar">',
              _radar(assessment, criteria),
 
              '</figure>'+tradeoffs+'</div>'
-             '<details class="assessment-rationale"><summary>Why these scores? Criteria and sources</summary>'
+             '<details class="assessment-rationale"><summary>Why these scores? Reasons and sources</summary>'
              '<ol class="assessment-criteria">']
     for criterion in criteria:
         axis = criterion['id']
