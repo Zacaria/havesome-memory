@@ -303,7 +303,8 @@ def render_comparison_radar(data, catalogue):
         if known is not None:
             parts.append(f'<text class="series-letter" x="{float(known.attrib["cx"])+7:.2f}" y="{float(known.attrib["cy"])-7:.2f}">{chr(65+n)}</text>')
         parts.append('</g>')
-        partial = ' · partial' if any(v is None for v in values.values()) else ''
+        unknown = [c['label'] for c in criteria if values[c['id']] is None]
+        partial = f' · {", ".join(unknown)} unknown' if unknown else ''
         legend.append(f'<li data-legend="{ident}" style="--series-color:{color}" hidden>'
                       f'<button type="button" data-highlight="{ident}" aria-pressed="false">'
                       f'<span class="series-swatch" aria-hidden="true">{chr(65+n)}</span>{escape(names[ident])}{partial}</button>'
