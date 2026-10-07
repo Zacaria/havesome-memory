@@ -67,8 +67,8 @@ def main():
                 assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
                 # The problem, definition and comparison action precede tool names.
                 hero = page.locator('#memory-introduction')
-                assert 'not automatically every past conversation' in hero.inner_text()
-                assert 'Memory means keeping useful information' in hero.inner_text()
+                assert 'Yesterday’s conversation is not included by default.' in hero.inner_text()
+                assert 'Memory is how it keeps useful things' in hero.inner_text()
                 assert hero.locator('.hero-sequence li').count()==3
                 cta = hero.locator('.hero-compare')
                 rect = cta.bounding_box()

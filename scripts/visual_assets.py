@@ -132,4 +132,5 @@ def emblem():
 
 
 def retained_art():
-    return '<svg class="retained-art" data-art="retained-decision" viewBox="0 0 132 80" fill="none" aria-hidden="true" focusable="false"><path d="M17 14h64v51H17z" stroke="#8ebcff" stroke-width="1.5" transform="rotate(-8 49 40)"/><path d="m40 9 51 5 8 12-5 48-60-6z" fill="#ffaf83"/><path d="m81 14-1 14 17 1M46 36l31 3M44 46l23 3M43 56l29 3" stroke="#0a1930" stroke-width="2" stroke-linecap="round"/><path d="m111 8 2 7 7 2-7 2-2 7-2-7-7-2 7-2z" fill="#8ebcff"/><path d="m10 69 4-4m-5-4 5 1m0 13 4-2" stroke="#8ebcff" stroke-width="1.5"/></svg>'
+    # An index card in a box: the decision filed between conversations.
+    return '<svg class="retained-art" data-art="retained-decision" viewBox="0 0 96 72" fill="none" aria-hidden="true" focusable="false"><path d="M18 30h60v34H18z" fill="#10243e" stroke="#8ebcff" stroke-width="1.5"/><path d="M27 10h44v34H27z" fill="#ffaf83" transform="rotate(-4 49 27)"/><path d="M33 19h22M33 26h30M33 33h18" stroke="#0a1930" stroke-width="2" stroke-linecap="round" transform="rotate(-4 49 27)"/><path d="M18 40h60" stroke="#8ebcff" stroke-width="1.5"/><path d="M42 50h12" stroke="#8ebcff" stroke-width="2" stroke-linecap="round"/></svg>'

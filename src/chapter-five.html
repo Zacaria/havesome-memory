@@ -2,8 +2,8 @@
   <div class="systems-opening__inner">
     <p class="eyebrow">CHAPTER FIVE / REAL SYSTEMS</p>
     <h2 id="systems-title">A feature does not remove responsibility.<br>It moves it.</h2>
-    <p class="systems-lede">Morrow Works needed more than search: sources that survive change, useful organization, reliable retrieval, explicit scope, inspectable derivations, permission boundaries, deliberate context, and a workable operating model.</p>
-    <p>Current memory technologies divide that work differently. The useful question is not <em>“Which one has memory?”</em> It is <em>“Which objects does it create, what do those objects mean, and who remains responsible when they are wrong?”</em></p>
+    <p class="systems-lede">Morrow Works needed more than search. It needed sources that survive changes, sensible organisation, search that works, clear scope, summaries you can check, access rules, careful choice of context, and someone to run it all.</p>
+    <p>Each memory system takes on a different share of that work. So ask: what does it store, what do those records mean, and who fixes them when they are wrong?</p>
     <div class="evidence-banner" role="note">
       <strong>DOCUMENTED, NOT TESTED</strong>
       <span>Evidence reviewed 13 September 2026. Five selected systems—not exhaustive market coverage or a procurement shortlist. No provider was deployed, benchmarked, or security-tested for this guide.</span>
@@ -15,7 +15,7 @@
   <aside class="responsibility-rail" aria-label="Memory engineering responsibility map">
     <p class="rail-kicker">THE WHOLE LOOP</p>
     <h2 id="active-system-name">Compare the work</h2>
-    <p id="active-system-note">No single mechanism owns this entire path.</p>
+    <p id="active-system-note">No single tool covers all seven steps.</p>
     <ol class="responsibility-list">
       <li data-responsibility="sources"><span>01</span><strong>Keep sources</strong><small>content, versions, provenance</small></li>
       <li data-responsibility="representation"><span>02</span><strong>Build representations</strong><small>facts, entities, summaries, views</small></li>
@@ -33,7 +33,7 @@
       <p class="system-number">28 / BEFORE THE BRANDS</p>
       <h2>First ask what each system makes.</h2>
       <p>Hindsight distinguishes extracted facts, consolidated observations, and curated mental models. Mem0 stores memories with entity links and temporal metadata, then may consolidate them through Dream. OpenViking presents resources, memories, and skills through a hierarchical virtual filesystem. Supermemory separates source documents from evolving extracted memories. Microsoft GraphRAG builds entities, relationships, communities, and generated reports from a corpus.</p>
-      <p>Those objects are not interchangeable. A graph edge, folder, embedding, or generated summary is a <strong>representation</strong>—not proof that the source collection is complete, coherent, authorized, or understood.</p>
+      <p>These are different kinds of thing. A graph link, a folder, an embedding or a generated summary is a view of the sources. It doesn’t prove the sources are complete, consistent, allowed or understood.</p>
       <div class="object-strip" aria-label="Five different representation stacks">
         <span>facts → observations</span><span>memories → entity graph</span><span>L0 → L1 → L2</span><span>documents → evolving facts</span><span>text units → communities</span>
       </div>
@@ -47,7 +47,7 @@
       <p>This directly addresses several moments in the story. Keyword retrieval can preserve exact names such as <code>ATLAS-ROOM-FR</code>. Semantic retrieval can bridge different wording. Graph traversal can reach structurally related facts. Temporal retrieval can distinguish “what applied then?” from “what do we know now?” Reflect can synthesize across those results rather than merely returning a list.</p>
       <h3>Where responsibility remains</h3>
       <p>Document identity matters. Re-retaining the same document identifier is documented as replacing the previous document content and its extracted facts. If Morrow Works must preserve S02 and S03 as independently inspectable revisions, it must model those revisions explicitly instead of assuming the memory layer will invent the right history.</p>
-      <p>Entity resolution is also a judgment. Similar names may merge incorrectly; unrelated aliases may remain separate. Visibility tags and banks are retrieval-scoping primitives, but the application must use strict boundaries and enforce authorization. A delete API establishes a deletion mechanism—not proof that every cache, backup, downstream answer, or external copy is gone.</p>
+      <p>Entity resolution is also a judgment. Similar names may merge incorrectly; unrelated aliases may remain separate. Visibility tags and banks are retrieval-scoping primitives, but the application must use strict boundaries and enforce authorization. A delete API gives you a way to delete. It doesn’t prove every cache, backup, later answer or outside copy is gone.</p>
       <aside class="morrow-test"><strong>Morrow Works test</strong><p>Retain the 14-day base rule and scoped 7-day amendment without turning one into an unconditional replacement. Then trace the resulting observation to both passages, correct a deliberately merged Atlas entity, and verify the repaired derived views.</p></aside>
       <details class="source-drawer"><summary>Primary sources and evidence boundary</summary><ul><li><a href="https://hindsight.vectorize.io/" rel="noreferrer">Overview and memory types</a></li><li><a href="https://hindsight.vectorize.io/developer/retain" rel="noreferrer">Retain and entity resolution</a></li><li><a href="https://hindsight.vectorize.io/developer/retrieval" rel="noreferrer">Recall strategies, fusion, and token budgets</a></li><li><a href="https://hindsight.vectorize.io/developer/api/documents" rel="noreferrer">Documents, replacement, tags, and deletion</a></li></ul><p>These are current vendor documents. We did not reproduce Hindsight benchmark claims or test a hosted or self-hosted deployment.</p></details>
     </article>
@@ -61,7 +61,7 @@
       <h3>Where responsibility remains</h3>
       <p>Applicability cannot be reduced to “newer wins.” Morrow Works’ 14-day and 7-day rules coexist because they apply to different booking dates. The application must encode scope well enough that consolidation does not mistake a bounded amendment for a universal contradiction. Default reads and current-only reads also differ; callers must request and test the view they actually intend to use.</p>
       <p>Mem0 Platform, its self-hosted server, and the OSS in-process library are distinct operating surfaces. Managed benchmark results include proprietary Platform optimizations and should not be presented as guaranteed OSS performance. Accuracy, tokens retrieved, latency, extraction models, and retrieval depth must be compared under equal constraints.</p>
-      <aside class="morrow-test"><strong>Morrow Works test</strong><p>Preserve both scoped cancellation rules; inspect ordinary and current-only reads; then seed a false duplicate and verify whether consolidation merges, supersedes, or retains it—and whether the evidence needed to undo that choice remains available.</p></aside>
+      <aside class="morrow-test"><strong>Morrow Works test</strong><p>Preserve both scoped cancellation rules; inspect ordinary and current-only reads; then plant a false duplicate and see whether consolidation merges, replaces or keeps it, and whether you can still undo that choice.</p></aside>
       <details class="source-drawer"><summary>Primary sources and evidence boundary</summary><ul><li><a href="https://docs.mem0.ai/core-concepts/memory-evaluation" rel="noreferrer">Current extraction, retrieval, and evaluation architecture</a></li><li><a href="https://docs.mem0.ai/platform/features/graph-memory" rel="noreferrer">Platform graph memory</a></li><li><a href="https://docs.mem0.ai/platform/features/dream" rel="noreferrer">Dream consolidation</a></li><li><a href="https://docs.mem0.ai/platform/platform-vs-oss" rel="noreferrer">Platform versus open source</a></li></ul><p>Published benchmark scores are vendor-produced. This guide does not rank Mem0 from those results or transfer Platform claims to OSS.</p></details>
     </article>
 
@@ -82,7 +82,7 @@
       <header class="system-card__header"><p class="system-number">32 / SUPERMEMORY</p><h2>Keep source documents distinct from extracted memory.</h2><p class="system-position">Context infrastructure combining document retrieval, evolving memory relations, profiles, connectors, and scoped containers.</p></header>
       <div class="architecture-flow" aria-label="Supermemory architecture flow"><span>files + chats</span><b>index</b><span>document chunks</span><b>dream</b><span>memory graph</span><b>retrieve</b><span>RAG / memories / profile</span></div>
       <h3>What the architecture does</h3>
-      <p>Supermemory distinguishes raw documents—the material supplied for document retrieval—from memories extracted to model personal or entity state over time. Document processing extracts text, chunks it, embeds it, and indexes it. A separate “dreaming” phase groups material and forms evolving memories. Retrieval can return document chunks, traverse memories, or assemble profile context from the same scoped pool.</p>
+      <p>Supermemory keeps raw documents (what you hand it for document search) apart from memories it extracts to track a person or thing over time. Document processing extracts text, chunks it, embeds it, and indexes it. A separate “dreaming” phase groups material and forms evolving memories. Retrieval can return document chunks, traverse memories, or assemble profile context from the same scoped pool.</p>
       <p>Memory-to-memory relations carry different meanings. <em>Updates</em> marks a newer state, <em>Extends</em> adds compatible detail, and <em>Derives</em> records an inferred pattern. These are not classic hand-authored entity–predicate–entity triples. The distinction is useful for Morrow Works: “the source reports unused rooms” should remain visibly different from “shorter notice probably improves utilization.”</p>
       <h3>Where responsibility remains</h3>
       <p>A derived memory is still an inference. It must not silently become source truth. Document content updates trigger reprocessing, while metadata-only changes do not. Document deletion endpoints exist, but the researched material does not establish complete removal from every extracted memory, profile, cache, backup, or previously generated answer. That must be tested, not inferred from the verb <em>delete</em>.</p>
@@ -106,7 +106,7 @@
 
     <section id="failure-cases" class="system-card system-card--tests" data-system="tests" data-label="The failure cases" data-note="Evaluate the seams with seeded mistakes and scoped changes." data-responsibilities="sources,change,control,context,operation">
       <p class="system-number">34 / ONE CORPUS, FOUR HARD TESTS</p>
-      <h2>Run the failure cases, not the logos.</h2>
+      <h2>Test the failure cases, not the logos.</h2>
       <div class="test-grid">
         <article><span>01</span><h3>Scoped change</h3><p>Can the system preserve both 14 and 7 days, then select by country, product, booking date, and knowledge date?</p></article>
         <article><span>02</span><h3>Exploration</h3><p>Can it suggest the utilization-policy connection while preserving the labels <em>reported</em>, <em>proposed</em>, and <em>not measured</em>?</p></article>
@@ -121,7 +121,7 @@
       <h2>The bill has more than one unit.</h2>
       <p>Managed providers may meter writes, retrieved context, synthesis calls, file conversion, storage, or background processing. Self-hosted systems replace some subscription costs with model inference, databases, upgrades, observability, recovery, and engineering time. Graph extraction can make initial indexing and reprocessing materially more expensive than plain chunk-and-embed pipelines.</p>
       <p>Compare one explicit workload: initial corpus size, monthly additions and corrections, reprocessing after policy changes, background consolidation, reads, returned context, latency targets, storage, backups, incident response, and human review. <em>Open source</em>, <em>self-hosted</em>, <em>free tier</em>, and two similarly priced plans do not describe the same total cost.</p>
-      <p class="dated-note">Exact prices are intentionally excluded from the main narrative because they change. Recheck each official pricing page against the planned workload before adoption.</p>
+      <p class="dated-note">We left exact prices out because they change. Check each official pricing page against your expected workload before you commit.</p>
     </section>
 
     <section id="selection" class="system-card system-card--selection" data-system="selection" data-label="Your decision" data-note="Choose by requirement and disqualifier, then test the candidate." data-responsibilities="sources,representation,retrieval,change,control,context,operation">
@@ -140,7 +140,7 @@
         <label><span>Baseline</span><textarea rows="2" placeholder="Would versioned sources, metadata, and hybrid retrieval already be sufficient?"></textarea></label>
       </form>
       <p class="privacy-note">This note stays in your browser page. It is not saved or sent anywhere.</p>
-      <p>A valid conclusion may be a conditional shortlist, a simpler versioned-source and hybrid-search baseline, or deferral until the evidence is stronger. There is no universal winner.</p>
+      <p>A fair outcome might be a shortlist with conditions, a simpler setup (versioned files plus hybrid search), or waiting for better evidence. No system wins everywhere.</p>
     </section>
   </div>
 </section>
@@ -149,9 +149,9 @@
   <div>
     <p class="eyebrow">END OF HAVESOME MEMORY</p>
     <h2 id="final-title">Keep the evidence.<br>Name the derived objects.<br>Test the seams.</h2>
-    <p>Memory engineering is not the promise that a system will remember everything. It is the work of deciding what should persist, representing it without hiding its limits, finding and supplying the right evidence, and following change, permission, and forgetting through every derived copy.</p>
-    <p>The right system is the one whose documented responsibilities fit your collection—and whose remaining responsibilities you are prepared to own and test.</p>
-    <p class="boundary">Five selected systems. Primary-source desk research only. No provider deployment, benchmark reproduction, security validation, or universal recommendation.</p>
+    <p>Memory isn’t a promise to remember everything. It’s the work of deciding what to keep, storing it without hiding its limits, finding and handing over the right evidence, and carrying every change, permission and deletion through to each copy.</p>
+    <p>Pick the system whose documented features fit your files, and whose gaps you are ready to own and test yourself.</p>
+    <p class="boundary">Five systems, chosen by us. Based on their own documentation only: we did not deploy them, rerun their benchmarks or check their security.</p>
     <a class="return-link" href="#meet">Return to the beginning ↑</a>
   </div>
 </section>

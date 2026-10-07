@@ -67,17 +67,6 @@ def apply_story_design(page):
 
     # Reader-facing copy: leave all source passages and embedded fixtures intact.
     copy_edits = [
-        ('<p class="aside">This is an authored illustration, not a live AI response. Including evidence still does not guarantee that a real model will use it correctly.</p>', ''),
-        ('This saved summary is an authored example, not a real stored record or a claim about how a provider updates memory. The received decision remains S03.', 'The received decision remains S03.'),
-        (' The illustrated correction is authored, not an executed provider update.', ''),
-        (' Public teaching illustration, not a real access-control system; no waiver payload is included in this version.', ''),
-        ('Authored failure example, not a live retrieval or model run. ', ''),
-        (' This is an authored context packet, not an actual provider integration.', ''),
-        ('Illustrated answer and checks, not measured model performance. ', ''),
-        ('In this authored diagram, the instruction has also reached an extracted fact, an overview and an answer cache. Those copies are illustrative—not observed records in a running system. They make the maintenance question visible: which owned representations depend on this source?', 'The instruction has also reached an extracted fact, an overview and an answer cache. Which of these copies depend on the source?'),
-        (' Source inspection throughout this page is a public authoring reference, not a simulated user’s live retrieval.', ''),
-        ('That is the obligation illustrated here, not proof of an executed purge. The public teaching page and authoring corpus retain the invented fixture for inspection. Hiding or changing a diagram is neither physical deletion nor real authorization. ', ''),
-        ('The limit is the modeled owned stores, not every copy in the world. No live storage, access enforcement or deletion operation runs here.', 'The deletion rule covers stores owned by the team.'),
         ('SUPPORTED EXAMPLE · NOT A MODEL RUN', 'SUPPORTED ANSWER'),
         ('<div id="trust-model-label">AUTHORED ILLUSTRATION · NOT LIVE ENFORCEMENT</div>', ''),
         ('Illustrated copies · not live storage', 'Source and dependent copies'),
