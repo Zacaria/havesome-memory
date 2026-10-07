@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 STORY = ROOT / "src" / "story.html"
-STORY_SHA256 = "2cf273fdc18cb25d05830fd671c0f537869a32b9ed1477b2d9320648e633b84e"
+STORY_SHA256 = "fbcbc43a6a22a518dfc6b713bdec9e81d7a9c67272c53c9eed9318fdba63572e"
 
 
 def replace_once(page: str, old: str, new: str, label: str) -> str:
