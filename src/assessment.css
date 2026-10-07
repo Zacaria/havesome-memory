@@ -89,3 +89,6 @@ td.assessment-cell { min-width: 0; overflow-wrap: anywhere; vertical-align: midd
   .radar-label, .radar-scale { fill: CanvasText; }
   .score-tick.is-filled { background: Highlight; forced-color-adjust: none; }
 }
+.assessment-bars{list-style:none;margin:0 0 6px;padding:0;display:grid;gap:8px}.assessment-bars li{display:grid;grid-template-columns:minmax(96px,128px) minmax(0,1fr) 52px;gap:10px;align-items:center;font-size:15px}.assessment-bars .bar-track{display:block;height:10px;background:#7895c433;border-radius:5px;overflow:hidden}.assessment-bars .bar-track i{display:block;height:100%;background:var(--accent,#ffaf83)}.assessment-bars b{text-align:right;font-weight:600}.assessment-bars li[data-score="unknown"] b{color:var(--muted,#b1c2db)}
+.assessment-profile h3{font-size:22px;line-height:1.35}.assessment-profile .assessment-note,.assessment-profile .assessment-question,.assessment-profile .assessment-sources{font-size:14px}
+.radar-grid,.radar-axis{stroke-opacity:.6}.radar-scale{font-size:18px}

@@ -187,10 +187,12 @@
     highlight(null);
     document.querySelector('#series-count').textContent = selected + ' selected';
     document.querySelector('#radar-empty').hidden = selected > 0;
+    panel.hidden = selected === 0;
+    workspace.classList.toggle('has-selection', selected > 0);
     pinned.hidden = selected === 0;
     pinned.tabIndex = selected ? 0 : -1;
     clear.disabled = selected === 0;
-    pinStatus.textContent = selected + ' selected' + (selected ? ' · scroll pinned rows' : ' · select rows to compare');
+    pinStatus.textContent = selected + ' selected' + (selected ? ' · scroll the selected rows' : ' · tick rows to compare');
     status.textContent = matches + ' of ' + rows.length + ' approaches match' + (selected ? ' · ' + selected + ' selected (' + retained + ' outside filter, kept visible)' : '') + (matches ? '' : ' — try another name or clear the search.');
     measure();
   }
@@ -216,18 +218,18 @@
   }
   checkboxes.forEach(checkbox => {
     checkbox.disabled = false;
-    const name = checkbox.getAttribute('aria-label').replace(/^Pin /, '').replace(/ for comparison$/, '');
+    const name = checkbox.getAttribute('aria-label').replace(/^Compare /, '');
     checkbox.addEventListener('change', () => {
-      checkbox.setAttribute('aria-label', (checkbox.checked ? 'Unpin ' : 'Pin ') + name + ' for comparison');
-      checkbox.nextElementSibling.textContent = checkbox.checked ? 'Unpin' : 'Pin';
+      checkbox.setAttribute('aria-label', (checkbox.checked ? 'Remove from comparison: ' : 'Compare ') + name);
+      checkbox.nextElementSibling.textContent = checkbox.checked ? 'Remove' : 'Compare';
       moveRows(checkbox);
     });
   });
   clear.addEventListener('click', () => {
     checkboxes.forEach(checkbox => {
       checkbox.checked = false;
-      checkbox.setAttribute('aria-label', checkbox.getAttribute('aria-label').replace(/^Unpin /, 'Pin '));
-      checkbox.nextElementSibling.textContent = 'Pin';
+      checkbox.setAttribute('aria-label', 'Compare ' + checkbox.getAttribute('aria-label').replace(/^Remove from comparison: /, ''));
+      checkbox.nextElementSibling.textContent = 'Compare';
     });
     moveRows();
   });

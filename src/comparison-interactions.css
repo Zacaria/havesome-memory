@@ -1,6 +1,6 @@
 /* One real table; rows move between rowgroups, never cloned. */
 #memory-comparison-table.descriptive-comparison {
-  --columns: 60px minmax(0,1.35fr) minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.15fr) minmax(0,.8fr);
+  --columns: 84px minmax(0,1.35fr) minmax(0,1.3fr) minmax(0,1.3fr) minmax(0,1.15fr) minmax(0,.8fr);
   --header-height: 0px;
   --scroll-gutter: 0px;
   display: block; position: relative; border-collapse: separate;
@@ -49,7 +49,7 @@
 #radar-tooltip strong { display: block; margin-bottom: 6px; }
 #radar-tooltip::backdrop { background: transparent; pointer-events: none; }
 @media(max-width:1400px) {
-  #memory-comparison-table.descriptive-comparison { --columns: 60px minmax(0,1.35fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.15fr) minmax(0,.85fr); }
+  #memory-comparison-table.descriptive-comparison { --columns: 84px minmax(0,1.35fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,1.15fr) minmax(0,.85fr); }
   #memory-comparison-table.descriptive-comparison th,#memory-comparison-table.descriptive-comparison td { padding: 12px 7px; }
 }
 @media(max-width:1000px) {
@@ -130,3 +130,6 @@
   .comparison-series .radar-point { fill: CanvasText; }
   .radar-axis-target:focus-visible rect { stroke: Highlight; }
 }
+.comparison-workspace:not(.has-selection){grid-template-columns:minmax(0,1fr)}
+.pin-label{font-size:12px}
+.pin-label,.pin-heading .column-title{white-space:nowrap}

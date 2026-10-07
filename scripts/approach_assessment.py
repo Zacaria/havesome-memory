@@ -280,7 +280,7 @@ def render_comparison_radar(data, catalogue):
               '#f6d56f', '#c5d2e8', '#f49379', '#92c969', '#c9a0dc', '#77cce8', '#e0c3a0')
     parts = ['<aside id="shared-radar-panel" hidden aria-label="Selected capability profiles">'
              '<details id="shared-radar-disclosure"><summary>Compare profiles <span id="series-count">0 selected</span></summary>'
-             '<div class="shared-radar-body"><p id="radar-empty">Select rows to overlay their capability profiles. No approach is selected by default.</p>'
+             '<div class="shared-radar-body"><p id="radar-empty">Tick “Compare” on two or more rows to overlay their scores.</p>'
              '<div class="shared-chart-display">'
              '<svg xmlns="http://www.w3.org/2000/svg" id="shared-radar" viewBox="-30 -20 320 300" role="group" aria-labelledby="shared-radar-title">'
              '<title id="shared-radar-title">Selected editorial capability profiles. Center 0; rings 1, 2, 3.</title>']
@@ -307,16 +307,16 @@ def render_comparison_radar(data, catalogue):
         legend.append(f'<li data-legend="{ident}" style="--series-color:{color}" hidden>'
                       f'<button type="button" data-highlight="{ident}" aria-pressed="false">'
                       f'<span class="series-swatch" aria-hidden="true">{chr(65+n)}</span>{escape(names[ident])}{partial}</button>'
-                      f'<button type="button" data-remove="{ident}" aria-label="Unpin {escape(names[ident])}">×</button></li>')
+                      f'<button type="button" data-remove="{ident}" aria-label="Remove {escape(names[ident])} from comparison">×</button></li>')
     for n, criterion in enumerate(criteria):
         parts.append(_axis_label(n, criterion, interactive=True))
-    parts.append('</svg><ul class="series-legend" aria-label="Selected series; highlight or unpin">'+''.join(legend)+'</ul></div>'
+    parts.append('</svg><ul class="series-legend" aria-label="Selected approaches; highlight or remove">'+''.join(legend)+'</ul></div>'
                  '<p id="series-highlight" role="status">All selected profiles</p><button type="button" id="reset-series">Clear highlight</button>'
                  '<p class="shared-radar-note">Focus or tap an axis for scores; a series name to highlight it.</p></div></details></aside>')
     return ''.join(parts)
 
 
-def render_profile(assessment, criteria):
+def render_profile(assessment, criteria, name=None):
     """Render a quick trade-off profile with directly named axes and sourced detail."""
     ident = _assessment(assessment)
     criteria = _criteria(criteria)
@@ -324,15 +324,20 @@ def render_profile(assessment, criteria):
     tradeoffs = '<div class="assessment-tradeoffs">' + ''.join(
         f'<div><h4>{title}</h4><ul>' + ''.join(f'<li>{escape(text)}</li>' for text in assessment[key]) + '</ul></div>'
         for key,title in (('strengths','Upsides'),('limits','Limits'))) + '</div>'
+    heading = f'{name}: {assessment["verdict"]}' if name and assessment.get('verdict') else 'Capability profile'
+    bars = '<ul class="assessment-bars" aria-label="Scores out of 3">' + ''.join(
+        f'<li data-score="{_score_key(assessment["scores"][c["id"]]["value"])}"><span>{escape(c["label"])}</span>'
+        f'<span class="bar-track" aria-hidden="true"><i style="width:{(assessment["scores"][c["id"]]["value"] or 0) * 100 / 3:.0f}%"></i></span>'
+        f'<b>{_score_text(assessment["scores"][c["id"]]["value"])}</b></li>' for c in criteria) + '</ul>'
     parts = [f'<section class="assessment-profile" data-assessment-id="{ident}" '
              f'aria-labelledby="assessment-heading-{ident}">'
-             f'<h3 id="assessment-heading-{ident}">Editorial capability profile</h3>'
-             f'<p class="assessment-scope"><strong>Assessed scope:</strong> {escape(assessment["scope"])}</p>'
+             f'<h3 id="assessment-heading-{ident}">{escape(heading)}</h3>'
+             f'<p class="assessment-scope"><strong>What this covers:</strong> {escape(assessment["scope"])}</p>'
              '<p class="assessment-note"><a href="#score-rubric">How scoring works</a></p>'
              '<div class="assessment-layout"><figure class="assessment-radar">',
              _radar(assessment, criteria),
 
-             '</figure>'+tradeoffs+'</div>'
+             '</figure><div class="assessment-side">'+bars+tradeoffs+'</div></div>'
              '<details class="assessment-rationale"><summary>Why these scores? Reasons and sources</summary>'
              '<ol class="assessment-criteria">']
     for criterion in criteria:

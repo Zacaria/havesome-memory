@@ -157,7 +157,8 @@
         "Capacity is intentionally bounded; the agent must consolidate when full.",
         "The prompt snapshot is frozen until the next session; tool responses show live edits."
       ],
-      "scope_label": "Built-in notes"
+      "scope_label": "Built-in notes",
+      "verdict": "Simple, portable and always on, but it cannot search or keep history."
     },
     {
       "id": "files-and-skills",
@@ -214,7 +215,8 @@
         "Usefulness depends on discovery descriptions and maintained instructions.",
         "Document loading alone does not capture every conversation or reconcile changing facts."
       ],
-      "scope_label": "Local documents"
+      "scope_label": "Local documents",
+      "verdict": "Portable and easy to edit by hand; finding things and upkeep are up to you."
     },
     {
       "id": "compaction",
@@ -271,7 +273,8 @@
         "Summarization is lossy; details may require an explicit recovery search.",
         "It manages working context rather than replacing cross-session curated memory."
       ],
-      "scope_label": "Default compressor"
+      "scope_label": "Default compressor",
+      "verdict": "Easy and automatic, but it only shortens the current conversation."
     },
     {
       "id": "vector-rag",
@@ -328,7 +331,8 @@
         "Chunking, indexing and updates remain implementation responsibilities.",
         "A basic passage retriever is not automatically a user model or temporal fact lifecycle."
       ],
-      "scope_label": "Basic dense RAG"
+      "scope_label": "Basic dense RAG",
+      "verdict": "Finds similar passages well, but does not track change and takes real setup."
     },
     {
       "id": "hindsight",
@@ -388,7 +392,8 @@
         "Self-hosted operation adds service, database and model configuration.",
         "Source expansions are optional; replacing a document reprocesses it rather than preserving that document version."
       ],
-      "scope_label": "Self-hosted API"
+      "scope_label": "Self-hosted API",
+      "verdict": "Top scores for finding, organizing, history and sources; the heaviest to run."
     },
     {
       "id": "honcho",
@@ -447,7 +452,8 @@
         "Derived representations remain interpretations, not a substitute for checking original messages.",
         "Managed setup convenience does not describe the separate self-hosted stack."
       ],
-      "scope_label": "Managed service"
+      "scope_label": "Managed service",
+      "verdict": "Strong at finding and organizing; weaker on sources and portability."
     },
     {
       "id": "mem0",
@@ -510,7 +516,8 @@
         "Raw versus inferred inserts can duplicate facts; coexistence is not automatic contradiction resolution.",
         "Platform behavior and convenience must not be projected onto OSS or self-hosted modes."
       ],
-      "scope_label": "Platform v3 · managed"
+      "scope_label": "Platform v3 · managed",
+      "verdict": "Tracks changes well and is managed for you; little source tracing."
     },
     {
       "id": "openviking",
@@ -571,7 +578,8 @@
         "Self-hosting and derived summaries introduce operational upkeep.",
         "Virtual paths are not proof of native-file portability or fact-level provenance."
       ],
-      "scope_label": "Self-hosted core"
+      "scope_label": "Self-hosted core",
+      "verdict": "Strong retrieval; you host it, and sources and portability are limited."
     },
     {
       "id": "supermemory",
@@ -631,7 +639,8 @@
         "API-visible graph relationships do not alone establish graph-traversal retrieval.",
         "SMFS behavior and local deployment control are separate from the assessed managed API."
       ],
-      "scope_label": "Managed API"
+      "scope_label": "Managed API",
+      "verdict": "Strong on organization, history and sources; managed, so less portable."
     },
     {
       "id": "byterover",
@@ -690,7 +699,8 @@
         "Curation still depends on a configured model/provider and maintained knowledge.",
         "Live docs differ between V3 CLI and V4 Desktop surfaces; these scores apply only to the named CLI scope."
       ],
-      "scope_label": "Local CLI · V3"
+      "scope_label": "Local CLI · V3",
+      "verdict": "Strong retrieval and portable local files; limited history and sources."
     },
     {
       "id": "retaindb",
@@ -750,7 +760,8 @@
         "Async writes and pending visibility require attention when recalling fresh information.",
         "Export, fact-level lineage and automatic reconciliation are not established by the inspected memory-model/adapter docs."
       ],
-      "scope_label": "Managed API"
+      "scope_label": "Managed API",
+      "verdict": "Strong retrieval as a managed service; thin on history and sources."
     },
     {
       "id": "holographic",
@@ -811,7 +822,8 @@
         "HRR token composition is not learned semantic embedding retrieval.",
         "Automatic extraction is off by default; timestamps and trust scores do not supply source provenance."
       ],
-      "scope_label": "Local plugin"
+      "scope_label": "Local plugin",
+      "verdict": "Local and simple; organizes well, but retrieval and history are modest."
     },
     {
       "id": "memori",
@@ -868,7 +880,8 @@
         "Capture is asynchronous and limited to completed, non-interrupted turns.",
         "Cloud recall is not evidence of BYODB control, portable export or per-fact source citations."
       ],
-      "scope_label": "Cloud adapter"
+      "scope_label": "Cloud adapter",
+      "verdict": "Balanced and managed; little source tracing or portability."
     }
   ]
 }

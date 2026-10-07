@@ -20,7 +20,7 @@ class ComparisonTests(unittest.TestCase):
         self.assertEqual(home.count('id="shared-radar"'), 1)
         self.assertEqual(table.count('class="pin-checkbox"'), 13)
         self.assertEqual(table.count('type="checkbox"'), 13)
-        self.assertEqual(table.count('for comparison" disabled'), 13)
+        self.assertEqual(table.count('" disabled><span aria-hidden="true">Compare</span>'), 13)
         self.assertEqual(home.count('class="radar-axis-target"'), 6)
         self.assertEqual(home.count('class="comparison-series"'), 13)
         for item in json.loads((ROOT/'src/comparison.json').read_text())['approaches']:
