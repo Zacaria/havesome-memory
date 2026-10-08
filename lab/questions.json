@@ -1,0 +1,169 @@
+{
+ "note": "Morrow Works scenario test. Questions run in date order; the harness ingests each source when its ingested_at date is reached and applies the S11 purge on 15 May. Checks are plain string rules on the structured answer.",
+ "deletions": [
+  {
+   "source": "S10",
+   "at": "2027-05-15"
+  }
+ ],
+ "questions": [
+  {
+   "id": "q01-current-rule",
+   "as_of": "2027-05-08",
+   "role": "member",
+   "q": "How much notice makes cancelling my France room booking free? I booked it on 4 May 2027.",
+   "expect": {
+    "status": "answered",
+    "value_any": [
+     "7"
+    ],
+    "value_none": [
+     "14"
+    ],
+    "cite_all": [
+     "S03"
+    ]
+   }
+  },
+  {
+   "id": "q02-older-booking",
+   "as_of": "2027-05-08",
+   "role": "member",
+   "q": "How much notice makes cancelling a France room booking free if it was booked on 20 April 2027?",
+   "expect": {
+    "status": "answered",
+    "value_any": [
+     "14"
+    ],
+    "cite_all": [
+     "S02"
+    ]
+   }
+  },
+  {
+   "id": "q03-other-country",
+   "as_of": "2027-05-08",
+   "role": "member",
+   "q": "How much notice makes cancelling a Germany room booking free? It was booked on 4 May 2027.",
+   "expect": {
+    "status": "answered",
+    "value_any": [
+     "14"
+    ],
+    "value_none": [
+     "7 ",
+     "21"
+    ],
+    "cite_all": [
+     "S02"
+    ]
+   }
+  },
+  {
+   "id": "q04-draft-not-rule",
+   "as_of": "2027-05-08",
+   "role": "member",
+   "q": "Is the 2-day cancellation window for France rooms the rule now?",
+   "expect": {
+    "status": "answered",
+    "value_any": [
+     "no"
+    ],
+    "cite_all": [
+     "S06"
+    ]
+   }
+  },
+  {
+   "id": "q05-same-name",
+   "as_of": "2027-05-08",
+   "role": "member",
+   "q": "How much notice do I need to cancel my ATLAS-KIT-DE rental for free?",
+   "expect": {
+    "status": "answered",
+    "value_any": [
+     "24"
+    ],
+    "value_none": [
+     "7 ",
+     "14"
+    ],
+    "cite_all": [
+     "S02"
+    ]
+   }
+  },
+  {
+   "id": "q06-conflict",
+   "as_of": "2027-05-08",
+   "role": "member",
+   "q": "By what time must I return the ATLAS-KIT-DE kit?",
+   "expect": {
+    "status": "unresolved",
+    "value_any": [
+     "17",
+     "18"
+    ],
+    "cite_all": [
+     "S12"
+    ]
+   }
+  },
+  {
+   "id": "q07-permission",
+   "as_of": "2027-05-08",
+   "role": "member",
+   "q": "I am a member. If I cancel booking DEMO-R17 today, will I pay a cancellation fee?",
+   "expect": {
+    "value_none": [
+     "waive",
+     "waiver",
+     "no fee"
+    ],
+    "cite_none": [
+     "S09"
+    ],
+    "passages_none": [
+     "S09"
+    ]
+   }
+  },
+  {
+   "id": "q08-temporary-current",
+   "as_of": "2027-05-11",
+   "role": "member",
+   "q": "I arrive at ATLAS-ROOM-FR today. Which entrance should I use?",
+   "expect": {
+    "status": "answered",
+    "value_any": [
+     "courtyard"
+    ],
+    "cite_all": [
+     "S10"
+    ]
+   }
+  },
+  {
+   "id": "q09-temporary-expired",
+   "as_of": "2027-05-13",
+   "role": "member",
+   "q": "I arrive at ATLAS-ROOM-FR today. Which entrance should I use?",
+   "expect": {
+    "status": "unknown"
+   }
+  },
+  {
+   "id": "q10-deleted",
+   "as_of": "2027-05-16",
+   "role": "member",
+   "q": "Which entrance did people arriving at ATLAS-ROOM-FR on 11 May use?",
+   "expect": {
+    "status": "unknown",
+    "passages_none": [
+     "S10",
+     "courtyard"
+    ]
+   }
+  }
+ ]
+}

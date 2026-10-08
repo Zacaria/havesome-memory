@@ -51,6 +51,24 @@ TRACKED_ALLOWLIST = {
     "src/chapter-five.js",
     "src/story.html",
     "src/illustrations.json",
+    "lab/README.md",
+    "lab/questions.json",
+    "lab/corpus.json",
+    "lab/run.py",
+    "lab/adapters/keyword.py",
+    "lab/adapters/hindsight.py",
+    "lab/adapters/mem0.py",
+    "lab/adapters/supermemory.py",
+    "lab/adapters/openviking.py",
+    "lab/adapters/graphrag.py",
+    "lab/servers/mem0_server.py",
+    "lab/servers/graphrag_query.py",
+    "lab/results/keyword.json",
+    "lab/results/hindsight.json",
+    "lab/results/mem0.json",
+    "lab/results/supermemory.json",
+    "lab/results/openviking.json",
+    "lab/results/graphrag.json",
 }
 FORBIDDEN_TRACKED_SUFFIXES = {
     ".zip", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf", ".pyc",
@@ -151,7 +169,8 @@ def check_generated(site: Path) -> dict[str, object]:
     text = index.read_text(encoding="utf-8")
     lower = text.lower()
     assert text.startswith("<!doctype html>"), "Missing HTML doctype"
-    assert "DOCUMENTED, NOT TESTED" in text
+    assert "DOCUMENTED, THEN TESTED ON ONE SCENARIO" in text
+    assert 'id="scenario-results"' in text and "not a general benchmark" in text
     assert "Evidence reviewed 13 September 2026" in text
     assert '<link rel="canonical" href="https://zacaria.github.io/havesome-memory/story.html">' in text
 

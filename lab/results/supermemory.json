@@ -1,0 +1,244 @@
+[
+ {
+  "id": "q01-current-rule",
+  "pass": false,
+  "fails": [
+   "status",
+   "value_any",
+   "cite_all"
+  ],
+  "result": {
+   "status": "unknown",
+   "answer": "No passages were retrieved, so I can’t determine the notice required to cancel your France room booking for free.",
+   "citations": []
+  },
+  "passages": []
+ },
+ {
+  "id": "q02-older-booking",
+  "pass": false,
+  "fails": [
+   "status",
+   "value_any",
+   "cite_all"
+  ],
+  "result": {
+   "status": "unknown",
+   "answer": "No passages were retrieved, so I can’t determine the notice required for free cancellation of a France room booking made on 20 April 2027.",
+   "citations": []
+  },
+  "passages": []
+ },
+ {
+  "id": "q03-other-country",
+  "pass": false,
+  "fails": [
+   "status",
+   "value_any",
+   "cite_all"
+  ],
+  "result": {
+   "status": "unknown",
+   "answer": "The passage does not state how much notice makes cancelling a Germany room booking free, including one booked on 4 May 2027.",
+   "citations": [
+    "S12"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S12",
+    "text": "The document titled 'Unresolved equipment handover instructions' was recorded on 2027-05-04."
+   }
+  ]
+ },
+ {
+  "id": "q04-draft-not-rule",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "answered",
+   "answer": "No. The 2-day window is an unapproved proposal with no effective date (S06). France room bookings created on or after 2027-05-01 require at least 7 days’ notice for free cancellation; earlier bookings retain the 14-day rule. Below the applicable threshold, the cancellation fee is 20% (S03, S02).",
+   "citations": [
+    "S06",
+    "S03",
+    "S02"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S04",
+    "text": "France room bookings have a free cancellation policy with at least 14 days notice."
+   },
+   {
+    "source": "S03",
+    "text": "For France room bookings created on or after 2027-05-01, cancellation is free with at least 7 notice days."
+   },
+   {
+    "source": "S04",
+    "text": "For France room bookings canceled below 14 days, the cancellation fee is 20% of the booking price."
+   },
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18) APPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged. The board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue. The decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   },
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07) France / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Copied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S06",
+    "text": "# A possible next experiment (launch-memo.md, recorded 2027-05-08) DRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule. Before deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+   },
+   {
+    "source": "S01",
+    "text": "Cancellation times are compared against service start"
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01) France / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies. Germany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies. France and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms. These terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties. Historical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date."
+   }
+  ]
+ },
+ {
+  "id": "q05-same-name",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "answered",
+   "answer": "Cancel your ATLAS-KIT-DE rental at least 24 hours before its start time for free. [S08, S02, S01]",
+   "citations": [
+    "S08",
+    "S02",
+    "S01"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S03",
+    "text": "For France room bookings created on or after 2027-05-01, cancellation is free with at least 7 notice days."
+   },
+   {
+    "source": "S04",
+    "text": "France room bookings have a free cancellation policy with at least 14 days notice."
+   },
+   {
+    "source": "S04",
+    "text": "For France room bookings canceled below 14 days, the cancellation fee is 20% of the booking price."
+   },
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07) France / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Copied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01) France / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies. Germany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies. France and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms. These terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties. Historical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date."
+   },
+   {
+    "source": "S01",
+    "text": "Cancellation times are compared against service start"
+   },
+   {
+    "source": "S08",
+    "text": "# Vocabulary and identity notes (words-and-places.md, recorded 2027-04-15) In these sources, cancel a room, release a reserved slot and void a reservation can refer to ending a booking. Move a booking means rescheduling and must not be silently treated as cancellation. This is a partial vocabulary note, not a complete taxonomy. ATLAS-ROOM-FR is the Atlas room in France. Its product type is room. ATLAS-KIT-DE is the Atlas recording kit rented in Germany. Its product type is equipment. It is not the Atlas room. The shared display name alone is not evidence of entity identity. DEMO-R17 identifies a fictional France room booking created on 29 April 2027. No person or real customer is identified. Individual booking-specific terms require an authorized check."
+   },
+   {
+    "source": "S02",
+    "text": "Historical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   }
+  ]
+ },
+ {
+  "id": "q06-conflict",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "unresolved",
+   "answer": "The return deadline is unresolved: one equally authorized lead says before 17:00 UTC, the other before 18:00 UTC. Neither instruction supersedes the other. Ask logistics for an authoritative resolution. [S12]",
+   "citations": [
+    "S12"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S12",
+    "text": "Logistics lead A approved the return of ATLAS-KIT-DE before 17:00 UTC on 6 May 2027."
+   },
+   {
+    "source": "S12",
+    "text": "Logistics lead B approved the return of ATLAS-KIT-DE before 18:00 UTC on 6 May 2027."
+   },
+   {
+    "source": "S12",
+    "text": "# Unresolved equipment handover instructions (handover-thread.md, recorded 2027-05-04) APPROVED by logistics lead A for ATLAS-KIT-DE returns from 6 May 2027: return the kit before 17:00 UTC. APPROVED by logistics lead B for the same ATLAS-KIT-DE returns from 6 May 2027: return the kit before 18:00 UTC. Both leads have the same delegated authority for this logistics scope. Both statements were recorded on 4 May. No supersession or tie-breaking decision is present. Preserve the two instructions and request an authoritative resolution; do not choose by paragraph order or invent a combined policy."
+   },
+   {
+    "source": "S12",
+    "text": "There is no supersession or tie-breaking decision present in the document regarding the ATLAS-KIT-DE returns instructions."
+   },
+   {
+    "source": "S01",
+    "text": "Cancellation times are compared against service start"
+   },
+   {
+    "source": "S08",
+    "text": "# Vocabulary and identity notes (words-and-places.md, recorded 2027-04-15) In these sources, cancel a room, release a reserved slot and void a reservation can refer to ending a booking. Move a booking means rescheduling and must not be silently treated as cancellation. This is a partial vocabulary note, not a complete taxonomy. ATLAS-ROOM-FR is the Atlas room in France. Its product type is room. ATLAS-KIT-DE is the Atlas recording kit rented in Germany. Its product type is equipment. It is not the Atlas room. The shared display name alone is not evidence of entity identity. DEMO-R17 identifies a fictional France room booking created on 29 April 2027. No person or real customer is identified. Individual booking-specific terms require an authorized check."
+   },
+   {
+    "source": "S12",
+    "text": "Logistics leads A and B have the same delegated authority for the ATLAS-KIT-DE returns logistics scope."
+   },
+   {
+    "source": "S03",
+    "text": "For France room bookings created on or after 2027-05-01, cancellation is free with at least 7 notice days."
+   }
+  ]
+ },
+ {
+  "id": "q07-permission",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "unknown",
+   "answer": "I can’t determine whether canceling DEMO-R17 today will incur a fee because no passages were provided.",
+   "citations": []
+  },
+  "passages": []
+ },
+ {
+  "id": "q08-temporary-current",
+  "pass": false,
+  "fails": [
+   "status",
+   "value_any",
+   "cite_all"
+  ],
+  "result": {
+   "status": "unknown",
+   "answer": "The retrieved passages don’t say which entrance to use at ATLAS-ROOM-FR today.",
+   "citations": []
+  },
+  "passages": []
+ },
+ {
+  "id": "q09-temporary-expired",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "unknown",
+   "answer": "No passages were retrieved, so I can’t determine which entrance to use for ATLAS-ROOM-FR today.",
+   "citations": []
+  },
+  "passages": []
+ },
+ {
+  "id": "q10-deleted",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "unknown",
+   "answer": "No passages were retrieved, so the entrance used by people arriving at ATLAS-ROOM-FR on 11 May is unknown.",
+   "citations": []
+  },
+  "passages": []
+ }
+]

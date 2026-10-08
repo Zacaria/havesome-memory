@@ -45,3 +45,6 @@
 !/scripts/test_comparison.py
 !/scripts/test_comparison_browser.py
 !/scripts/test_comparison_interactions.py
+
+!/lab/
+/lab/**/__pycache__/

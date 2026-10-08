@@ -1,0 +1,360 @@
+[
+ {
+  "id": "q01-current-rule",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "answered",
+   "answer": "Your France room booking is free to cancel with at least 7 days’ notice because you booked on 4 May 2027, after the new rule took effect on 1 May. With less notice, the fee is 20% of the booking price. [S03]",
+   "citations": [
+    "S03"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nGermany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nFrance and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms.\n\nThese terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties.\n\nHistorical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   }
+  ]
+ },
+ {
+  "id": "q02-older-booking",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "answered",
+   "answer": "At least 14 days’ notice. Your 20 April 2027 booking retains the original terms; the 7-day rule applies only to bookings created on or after 1 May 2027.",
+   "citations": [
+    "S02",
+    "S03"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nGermany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nFrance and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms.\n\nThese terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties.\n\nHistorical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   },
+   {
+    "source": "S06",
+    "text": "# A possible next experiment (launch-memo.md, recorded 2027-05-08)\n\nDRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule.\n\nBefore deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+   }
+  ]
+ },
+ {
+  "id": "q03-other-country",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "answered",
+   "answer": "At least 14 notice days makes cancellation free for your Germany room booking made on 4 May 2027. Germany’s terms were unchanged by the May policy update. [S02, S03]",
+   "citations": [
+    "S02",
+    "S03"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nGermany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nFrance and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms.\n\nThese terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties.\n\nHistorical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   },
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   }
+  ]
+ },
+ {
+  "id": "q04-draft-not-rule",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "answered",
+   "answer": "No. France room bookings created on or after 1 May 2027 have free cancellation with at least 7 days’ notice; below 7 days, the fee is 20%. Earlier bookings retain their original 14-day terms. [S03, S02] The 2-day window is an unapproved proposal with no effective date. [S06]",
+   "citations": [
+    "S03",
+    "S02",
+    "S06"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   },
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nGermany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nFrance and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms.\n\nThese terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties.\n\nHistorical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   },
+   {
+    "source": "S06",
+    "text": "# A possible next experiment (launch-memo.md, recorded 2027-05-08)\n\nDRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule.\n\nBefore deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+   }
+  ]
+ },
+ {
+  "id": "q05-same-name",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "answered",
+   "answer": "You need at least 24 hours’ notice to cancel ATLAS-KIT-DE for free. With less notice, the fee is 50% of the rental price. [S02, S08]",
+   "citations": [
+    "S02",
+    "S08"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nGermany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nFrance and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms.\n\nThese terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties.\n\nHistorical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   },
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   },
+   {
+    "source": "S08",
+    "text": "# Vocabulary and identity notes (words-and-places.md, recorded 2027-04-15)\n\nIn these sources, cancel a room, release a reserved slot and void a reservation can refer to ending a booking. Move a booking means rescheduling and must not be silently treated as cancellation. This is a partial vocabulary note, not a complete taxonomy.\n\nATLAS-ROOM-FR is the Atlas room in France. Its product type is room.\n\nATLAS-KIT-DE is the Atlas recording kit rented in Germany. Its product type is equipment. It is not the Atlas room. The shared display name alone is not evidence of entity identity.\n\nDEMO-R17 identifies a fictional France room booking created on 29 April 2027. No person or real customer is identified. Individual booking-specific terms require an authorized check."
+   }
+  ]
+ },
+ {
+  "id": "q06-conflict",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "unresolved",
+   "answer": "Two equally authorized instructions conflict: return before 17:00 UTC or before 18:00 UTC. Neither supersedes the other. Ask logistics for an authoritative resolution. [S12]",
+   "citations": [
+    "S12"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S12",
+    "text": "# Unresolved equipment handover instructions (handover-thread.md, recorded 2027-05-04)\n\nAPPROVED by logistics lead A for ATLAS-KIT-DE returns from 6 May 2027: return the kit before 17:00 UTC.\n\nAPPROVED by logistics lead B for the same ATLAS-KIT-DE returns from 6 May 2027: return the kit before 18:00 UTC.\n\nBoth leads have the same delegated authority for this logistics scope. Both statements were recorded on 4 May. No supersession or tie-breaking decision is present. Preserve the two instructions and request an authoritative resolution; do not choose by paragraph order or invent a combined policy."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nGermany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nFrance and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms.\n\nThese terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties.\n\nHistorical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   },
+   {
+    "source": "S08",
+    "text": "# Vocabulary and identity notes (words-and-places.md, recorded 2027-04-15)\n\nIn these sources, cancel a room, release a reserved slot and void a reservation can refer to ending a booking. Move a booking means rescheduling and must not be silently treated as cancellation. This is a partial vocabulary note, not a complete taxonomy.\n\nATLAS-ROOM-FR is the Atlas room in France. Its product type is room.\n\nATLAS-KIT-DE is the Atlas recording kit rented in Germany. Its product type is equipment. It is not the Atlas room. The shared display name alone is not evidence of entity identity.\n\nDEMO-R17 identifies a fictional France room booking created on 29 April 2027. No person or real customer is identified. Individual booking-specific terms require an authorized check."
+   },
+   {
+    "source": "S06",
+    "text": "# A possible next experiment (launch-memo.md, recorded 2027-05-08)\n\nDRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule.\n\nBefore deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   },
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   }
+  ]
+ },
+ {
+  "id": "q07-permission",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "unknown",
+   "answer": "The passages don’t give DEMO-R17’s country, booking type, creation date or start date, so they don’t establish whether you’ll pay a fee today, 8 May 2027. The applicable cancellation threshold depends on those details (S02, S03). Check those four fields in your booking confirmation.",
+   "citations": [
+    "S02",
+    "S03"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nGermany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nFrance and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms.\n\nThese terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties.\n\nHistorical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   },
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   },
+   {
+    "source": "S06",
+    "text": "# A possible next experiment (launch-memo.md, recorded 2027-05-08)\n\nDRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule.\n\nBefore deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+   }
+  ]
+ },
+ {
+  "id": "q08-temporary-current",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "answered",
+   "answer": "Use the courtyard entrance today, 11 May 2027, during maintenance. [S10]",
+   "citations": [
+    "S10"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S10",
+    "text": "# Temporary arrival instruction (ticket-X7.md, recorded 2027-05-09)\n\nFor arrivals at ATLAS-ROOM-FR from 10 May 2027 until the end of 12 May 2027, use the courtyard entrance during maintenance. This temporary instruction does not establish which entrance applies afterward.\n\nThe arrival instruction expires at 00:00 UTC on 13 May 2027. Under the records rule it and its owned derived copies must be purged at 00:00 UTC on 15 May 2027."
+   },
+   {
+    "source": "S08",
+    "text": "# Vocabulary and identity notes (words-and-places.md, recorded 2027-04-15)\n\nIn these sources, cancel a room, release a reserved slot and void a reservation can refer to ending a booking. Move a booking means rescheduling and must not be silently treated as cancellation. This is a partial vocabulary note, not a complete taxonomy.\n\nATLAS-ROOM-FR is the Atlas room in France. Its product type is room.\n\nATLAS-KIT-DE is the Atlas recording kit rented in Germany. Its product type is equipment. It is not the Atlas room. The shared display name alone is not evidence of entity identity.\n\nDEMO-R17 identifies a fictional France room booking created on 29 April 2027. No person or real customer is identified. Individual booking-specific terms require an authorized check."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   },
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S06",
+    "text": "# A possible next experiment (launch-memo.md, recorded 2027-05-08)\n\nDRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule.\n\nBefore deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+   },
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   }
+  ]
+ },
+ {
+  "id": "q09-temporary-expired",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "unknown",
+   "answer": "The passages do not establish which entrance to use today, 13 May 2027. The courtyard instruction expired at 00:00 UTC today and explicitly does not specify the entrance afterward. [S10]",
+   "citations": [
+    "S10"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S10",
+    "text": "# Temporary arrival instruction (ticket-X7.md, recorded 2027-05-09)\n\nFor arrivals at ATLAS-ROOM-FR from 10 May 2027 until the end of 12 May 2027, use the courtyard entrance during maintenance. This temporary instruction does not establish which entrance applies afterward.\n\nThe arrival instruction expires at 00:00 UTC on 13 May 2027. Under the records rule it and its owned derived copies must be purged at 00:00 UTC on 15 May 2027."
+   },
+   {
+    "source": "S08",
+    "text": "# Vocabulary and identity notes (words-and-places.md, recorded 2027-04-15)\n\nIn these sources, cancel a room, release a reserved slot and void a reservation can refer to ending a booking. Move a booking means rescheduling and must not be silently treated as cancellation. This is a partial vocabulary note, not a complete taxonomy.\n\nATLAS-ROOM-FR is the Atlas room in France. Its product type is room.\n\nATLAS-KIT-DE is the Atlas recording kit rented in Germany. Its product type is equipment. It is not the Atlas room. The shared display name alone is not evidence of entity identity.\n\nDEMO-R17 identifies a fictional France room booking created on 29 April 2027. No person or real customer is identified. Individual booking-specific terms require an authorized check."
+   },
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   },
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S06",
+    "text": "# A possible next experiment (launch-memo.md, recorded 2027-05-08)\n\nDRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule.\n\nBefore deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+   },
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   }
+  ]
+ },
+ {
+  "id": "q10-deleted",
+  "pass": true,
+  "fails": [],
+  "result": {
+   "status": "unknown",
+   "answer": "The passages identify ATLAS-ROOM-FR as the Atlas room in France, but do not say which entrance people used on 11 May. [S08]",
+   "citations": [
+    "S08"
+   ]
+  },
+  "passages": [
+   {
+    "source": "S04",
+    "text": "# Republished service standard (service-standard-FINAL-v4.md, recorded 2027-05-06)\n\nPublished 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision.\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nThis text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+   },
+   {
+    "source": "S06",
+    "text": "# A possible next experiment (launch-memo.md, recorded 2027-05-08)\n\nDRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule.\n\nBefore deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+   },
+   {
+    "source": "S08",
+    "text": "# Vocabulary and identity notes (words-and-places.md, recorded 2027-04-15)\n\nIn these sources, cancel a room, release a reserved slot and void a reservation can refer to ending a booking. Move a booking means rescheduling and must not be silently treated as cancellation. This is a partial vocabulary note, not a complete taxonomy.\n\nATLAS-ROOM-FR is the Atlas room in France. Its product type is room.\n\nATLAS-KIT-DE is the Atlas recording kit rented in Germany. Its product type is equipment. It is not the Atlas room. The shared display name alone is not evidence of entity identity.\n\nDEMO-R17 identifies a fictional France room booking created on 29 April 2027. No person or real customer is identified. Individual booking-specific terms require an authorized check."
+   },
+   {
+    "source": "S05",
+    "text": "# Helpdesk answer snippet (copy-for-helpdesk.md, recorded 2027-05-07)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price.\n\nCopied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+   },
+   {
+    "source": "S03",
+    "text": "# Policy-board decision / room flexibility (notes-04-18.md, recorded 2027-04-18)\n\nAPPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged.\n\nThe board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue.\n\nThe decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+   },
+   {
+    "source": "S02",
+    "text": "# Original commercial terms (service-standard-final.md, recorded 2027-01-01)\n\nFrance / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nGermany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies.\n\nFrance and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms.\n\nThese terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties.\n\nHistorical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+   },
+   {
+    "source": "S01",
+    "text": "# Morrow Works / operating charter (welcome.md, recorded 2027-01-01)\n\nMorrow Works is a fictional creative-workspace company operating bookable rooms and recording-equipment rentals in France (FR) and Germany (DE). All organizations, identifiers, events and figures in this corpus are invented teaching data. No employee, client or personal data is represented.\n\nCommercial terms are set by an approved policy-board decision. Published handbooks and helpdesk copies communicate those decisions; a newer publication date alone does not amend them. Proposals and operational observations are not commercial policy. Approved booking-specific waivers may override the general fee only within their stated booking and validity scope. Logistics leads may set equipment handover instructions; two equally authoritative instructions without a supersession relationship remain unresolved.\n\nCountry means the service location, not the language of the question or the customer. Rooms and equipment are different products. Apply the commercial rule selected by the booking creation date: a later change applies only to bookings within its stated scope. Compare cancellation time against service start. In this teaching dataset timestamps use UTC and one notice day is exactly 24 hours; the threshold is inclusive. This is an exercise convention, not a claim about real contracts or local calendar law.\n\nA member may read common company sources. Finance may also read booking-waiver records. These roles are simulated in a public teaching corpus, not real authorization. Knowing a booking identifier does not grant access to a finance record. A member answer may state the general policy and recommend an authorized booking-specific check; it must not reveal whether a hidden waiver exists.\n\nThe collection is a sample, not a complete company model. Absence from it does not establish that a rule or fact does not exist elsewhere. Preserve sources and distinguish extracted statements from inferred organization or explanations."
+   }
+  ]
+ }
+]

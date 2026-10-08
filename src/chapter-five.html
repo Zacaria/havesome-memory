@@ -5,8 +5,8 @@
     <p class="systems-lede">Morrow Works needed more than search. It needed sources that survive changes, sensible organisation, search that works, clear scope, summaries you can check, access rules, careful choice of context, and someone to run it all.</p>
     <p>Each memory system takes on a different share of that work. So ask: what does it store, what do those records mean, and who fixes them when they are wrong?</p>
     <div class="evidence-banner" role="note">
-      <strong>DOCUMENTED, NOT TESTED</strong>
-      <span>Evidence reviewed 13 September 2026. Five selected systems—not exhaustive market coverage or a procurement shortlist. No provider was deployed, benchmarked, or security-tested for this guide.</span>
+      <strong>DOCUMENTED, THEN TESTED ON ONE SCENARIO</strong>
+      <span>Evidence reviewed 13 September 2026. Five selected systems, not the whole market or a shortlist. On 7–8 October 2026 we ran all five, self-hosted, against ten Morrow Works questions: <a href="#scenario-results">see the results</a>. That is a small scenario test, not a general benchmark or a security check.</span>
     </div>
   </div>
 </section>
@@ -113,6 +113,13 @@
         <article><span>03</span><h3>Correction</h3><p>If two Atlas entities merge or a summary loses a qualifier, can an owner inspect the evidence, correct the object, and refresh downstream views?</p></article>
         <article><span>04</span><h3>Control</h3><p>If access is revoked or S10 must be forgotten, can the team deny retrieval and trace removal through sources, extracted facts, overviews, profiles, and answer caches?</p></article>
       </div>
+      <div id="scenario-results" class="scenario-results">
+        <h3>What happened when we ran them</h3>
+        <p class="key">Three systems answered all ten Morrow Works questions correctly. Plain keyword search got nine; its one miss was showing a member a finance-only file.</p>
+        <p>Each system ran self-hosted on an isolated machine, with the same local model (qwen3 14B) doing its extraction. The files arrived in date order; S10 was deleted on 15 May. Every system then gave its retrieved passages to the same answer model with the same prompt, and simple rules checked the answers.</p>
+        <p class="swipe-hint" aria-hidden="true">Swipe the table for notes →</p><div class="results-table" role="region" aria-label="Scenario test results" tabindex="0"><table><thead><tr><th scope="col">System</th><th scope="col">Score</th><th scope="col">Passages per question</th><th scope="col">What we saw</th></tr></thead><tbody><tr><th scope="row">Hindsight</th><td>10/10</td><td>about 70</td><td>Passed everything, but handed the answer model about ten times as many passages as the others.</td></tr><tr><th scope="row">Mem0 (open-source library)</th><td>10/10</td><td>8</td><td>Its date options are paid-platform only, so each file’s date went into the text.</td></tr><tr><th scope="row">OpenViking</th><td>10/10</td><td>5 whole files</td><td>Search returns summaries; the test then read the matched files, as its docs describe.</td></tr><tr><th scope="row">Keyword search (baseline)</th><td>9/10</td><td>6</td><td>No access rules: a member was shown the finance-only waiver.</td></tr><tr><th scope="row">Microsoft GraphRAG</th><td>7/10</td><td>7</td><td>Missed the new 7-day rule and the clashing kit deadlines; no access rules, so the waiver reached the member.</td></tr><tr><th scope="row">Supermemory (free local server)</th><td>6/10</td><td>2.5</td><td>Found nothing for 6 of 10 questions. Three of those still passed because the right answer was “unknown”.</td></tr></tbody></table></div>
+        <p class="results-limits">Read these scores with care. Ten questions cannot separate the top systems: keyword search nearly matched them, and the deletion and expiry questions also pass when nothing is found. The amount of text handed over is not scored. Each system ran once, with a small local model rather than the hosted models they are tuned for. Questions, adapters and every raw answer: <a href="https://github.com/Zacaria/havesome-memory/tree/main/lab" rel="noreferrer">github.com/Zacaria/havesome-memory/lab</a>.</p>
+      </div>
       <blockquote>No mechanism passes these tests merely by existing. A filter is not proof of authorization. A source link is not proof that the source is correct. A delete endpoint is not proof of complete erasure. A generated overview is not proof of corpus coverage.</blockquote>
     </section>
 
@@ -151,7 +158,7 @@
     <h2 id="final-title">Keep the evidence.<br>Name the derived objects.<br>Test the seams.</h2>
     <p>Memory isn’t a promise to remember everything. It’s the work of deciding what to keep, storing it without hiding its limits, finding and handing over the right evidence, and carrying every change, permission and deletion through to each copy.</p>
     <p>Pick the system whose documented features fit your files, and whose gaps you are ready to own and test yourself.</p>
-    <p class="boundary">Five systems, chosen by us. Based on their own documentation only: we did not deploy them, rerun their benchmarks or check their security.</p>
+    <p class="boundary">Five systems, chosen by us. Descriptions come from their own documentation. We ran each one once on the ten Morrow Works questions; we did not rerun their published benchmarks or check their security.</p>
     <a class="return-link" href="#meet">Return to the beginning ↑</a>
   </div>
 </section>

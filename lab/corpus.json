@@ -1,0 +1,344 @@
+{
+  "schema_version": 1,
+  "task_id": "t_5a64ded6",
+  "fictional": true,
+  "name": "Morrow Works",
+  "timezone_convention": "UTC; one notice day is exactly 24 hours for this exercise",
+  "sources": [
+    {
+      "id": "S01",
+      "filename": "welcome.md",
+      "title": "Morrow Works / operating charter",
+      "recorded_at": "2027-01-01",
+      "ingested_at": "2027-01-02",
+      "authority": "governance",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "company",
+          "text": "Morrow Works is a fictional creative-workspace company operating bookable rooms and recording-equipment rentals in France (FR) and Germany (DE). All organizations, identifiers, events and figures in this corpus are invented teaching data. No employee, client or personal data is represented."
+        },
+        {
+          "anchor": "authority",
+          "text": "Commercial terms are set by an approved policy-board decision. Published handbooks and helpdesk copies communicate those decisions; a newer publication date alone does not amend them. Proposals and operational observations are not commercial policy. Approved booking-specific waivers may override the general fee only within their stated booking and validity scope. Logistics leads may set equipment handover instructions; two equally authoritative instructions without a supersession relationship remain unresolved."
+        },
+        {
+          "anchor": "applicability",
+          "text": "Country means the service location, not the language of the question or the customer. Rooms and equipment are different products. Apply the commercial rule selected by the booking creation date: a later change applies only to bookings within its stated scope. Compare cancellation time against service start. In this teaching dataset timestamps use UTC and one notice day is exactly 24 hours; the threshold is inclusive. This is an exercise convention, not a claim about real contracts or local calendar law."
+        },
+        {
+          "anchor": "readers",
+          "text": "A member may read common company sources. Finance may also read booking-waiver records. These roles are simulated in a public teaching corpus, not real authorization. Knowing a booking identifier does not grant access to a finance record. A member answer may state the general policy and recommend an authorized booking-specific check; it must not reveal whether a hidden waiver exists."
+        },
+        {
+          "anchor": "limits",
+          "text": "The collection is a sample, not a complete company model. Absence from it does not establish that a rule or fact does not exist elsewhere. Preserve sources and distinguish extracted statements from inferred organization or explanations."
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "filename": "service-standard-final.md",
+      "title": "Original commercial terms",
+      "recorded_at": "2027-01-01",
+      "ingested_at": "2027-01-02",
+      "authority": "approved-policy",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "rooms-fr",
+          "text": "France / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies."
+        },
+        {
+          "anchor": "rooms-de",
+          "text": "Germany / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 30% of the booking price. Applies to bookings created from 1 January 2027, unless a later approved change explicitly applies."
+        },
+        {
+          "anchor": "equipment",
+          "text": "France and Germany / recording equipment: cancellation is free with at least 24 hours of notice. Below 24 hours, the cancellation fee is 50% of the rental price. Room-policy changes do not change equipment terms."
+        },
+        {
+          "anchor": "boundaries",
+          "text": "These terms concern cancellation only. They do not establish rescheduling fees, damage cover, deposits or late-return penalties."
+        },
+        {
+          "anchor": "germany-history",
+          "text": "Historical Germany revision: the policy board approved a reduction from 21 to 14 notice days on 1 January 2027, applying only to Germany room bookings created from that date. Germany room bookings created before 1 January 2027 retain free cancellation with at least 21 notice days; below that threshold the cancellation fee is 30%. This retained history is evidence recorded in January, not a source the collection possessed before its ingestion."
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "filename": "notes-04-18.md",
+      "title": "Policy-board decision / room flexibility",
+      "recorded_at": "2027-04-18",
+      "ingested_at": "2027-05-03",
+      "authority": "approved-policy",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "decision",
+          "text": "APPROVED. For France room bookings created on or after 1 May 2027, cancellation is free with at least 7 notice days. Below 7 days, the cancellation fee remains 20%. This supersedes the 14-day threshold in the original commercial terms only for these bookings. Earlier bookings retain their original terms. Germany rooms and all equipment rentals are unchanged."
+        },
+        {
+          "anchor": "reason",
+          "text": "The board used the operational note on unused room slots as one input to this decision. It proposes testing whether a shorter cancellation window helps room reuse. The note does not prove that this policy will increase occupancy or revenue."
+        },
+        {
+          "anchor": "publication",
+          "text": "The decision is approved on 18 April and takes effect for eligible bookings on 1 May. Handbook synchronization is not a condition of effectiveness. The knowledge collection receives these minutes on 3 May, after the effective date."
+        }
+      ],
+      "effective_from": "2027-05-01",
+      "supersedes_scoped": [
+        "S02#rooms-fr"
+      ]
+    },
+    {
+      "id": "S04",
+      "filename": "service-standard-FINAL-v4.md",
+      "title": "Republished service standard",
+      "recorded_at": "2027-05-06",
+      "ingested_at": "2027-05-06",
+      "authority": "publication",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "cover",
+          "text": "Published 6 May 2027. Cover, typography and contact-channel formatting refreshed. This publication is not a policy-board decision."
+        },
+        {
+          "anchor": "copied-rule",
+          "text": "France / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price."
+        },
+        {
+          "anchor": "editorial",
+          "text": "This text was carried forward from the January handbook. No commercial amendment was approved as part of this publication."
+        }
+      ],
+      "copied_from": [
+        "S02#rooms-fr"
+      ],
+      "failure_modes": [
+        "stale-publication"
+      ]
+    },
+    {
+      "id": "S05",
+      "filename": "copy-for-helpdesk.md",
+      "title": "Helpdesk answer snippet",
+      "recorded_at": "2027-05-07",
+      "ingested_at": "2027-05-07",
+      "authority": "copy",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "copied-rule",
+          "text": "France / room bookings: cancellation is free with at least 14 notice days. Below 14 days, the cancellation fee is 20% of the booking price."
+        },
+        {
+          "anchor": "lineage",
+          "text": "Copied from service-standard-FINAL-v4.md. This is a reuse of the same statement, not another policy decision or independent corroboration."
+        }
+      ],
+      "copied_from": [
+        "S04#copied-rule"
+      ]
+    },
+    {
+      "id": "S06",
+      "filename": "launch-memo.md",
+      "title": "A possible next experiment",
+      "recorded_at": "2027-05-08",
+      "ingested_at": "2027-05-08",
+      "authority": "proposal",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "proposal",
+          "text": "DRAFT — NOT APPROVED. Proposal for a future France-room pilot: reduce the cancellation notice threshold to 2 days for selected future bookings. No effective date has been approved. This document must not be used as the current rule."
+        },
+        {
+          "anchor": "questions",
+          "text": "Before deciding, compare unused capacity, actual rebooking and operational preparation costs. A promising pilot proposal is not evidence that the proposed outcome will occur."
+        }
+      ]
+    },
+    {
+      "id": "S07",
+      "filename": "room-turnover.md",
+      "title": "Unused slots and preparation work",
+      "recorded_at": "2027-04-14",
+      "ingested_at": "2027-04-15",
+      "authority": "observation",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "observations",
+          "text": "Operations notes describe rooms left unused after cancellations, requests arriving close to the desired booking date, and preparation work that differs between a room booking and an equipment rental. These are qualitative observations, not an occupancy study or measured effect size."
+        },
+        {
+          "anchor": "hypothesis",
+          "text": "Working hypothesis: giving a room slot back sooner could allow reuse. It is not established how often released slots are rebooked, whether a shorter free-cancellation window changes behavior, or whether any revenue gain would exceed preparation costs."
+        },
+        {
+          "anchor": "organization",
+          "text": "Useful views include room capacity, booking lifecycle, equipment preparation and policy experiments. A single folder label such as operations does not express all of those connections."
+        }
+      ]
+    },
+    {
+      "id": "S08",
+      "filename": "words-and-places.md",
+      "title": "Vocabulary and identity notes",
+      "recorded_at": "2027-04-15",
+      "ingested_at": "2027-04-16",
+      "authority": "reference",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "aliases",
+          "text": "In these sources, cancel a room, release a reserved slot and void a reservation can refer to ending a booking. Move a booking means rescheduling and must not be silently treated as cancellation. This is a partial vocabulary note, not a complete taxonomy."
+        },
+        {
+          "anchor": "room",
+          "text": "ATLAS-ROOM-FR is the Atlas room in France. Its product type is room."
+        },
+        {
+          "anchor": "kit",
+          "text": "ATLAS-KIT-DE is the Atlas recording kit rented in Germany. Its product type is equipment. It is not the Atlas room. The shared display name alone is not evidence of entity identity."
+        },
+        {
+          "anchor": "booking",
+          "text": "DEMO-R17 identifies a fictional France room booking created on 29 April 2027. No person or real customer is identified. Individual booking-specific terms require an authorized check."
+        }
+      ]
+    },
+    {
+      "id": "S09",
+      "filename": "ops-27.md",
+      "title": "Booking-specific waiver",
+      "recorded_at": "2027-04-29",
+      "ingested_at": "2027-04-30",
+      "authority": "approved-waiver",
+      "roles": [
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "waiver",
+          "text": "FINANCE ONLY. Approved waiver for DEMO-R17 only: the cancellation fee is waived when cancellation occurs on or after 1 May 2027 and before 1 June 2027. This does not change the room-policy notice threshold or the general rule for other bookings."
+        },
+        {
+          "anchor": "expiry",
+          "text": "The waiver is inapplicable from 1 June onward. The original general commercial terms then govern any later cancellation of this booking unless another authorized decision is supplied. Expiry makes the waiver inapplicable; it does not require erasing its historical record."
+        }
+      ],
+      "effective_from": "2027-05-01",
+      "effective_until_exclusive": "2027-06-01",
+      "booking_id": "DEMO-R17"
+    },
+    {
+      "id": "S10",
+      "filename": "ticket-X7.md",
+      "title": "Temporary arrival instruction",
+      "recorded_at": "2027-05-09",
+      "ingested_at": "2027-05-09",
+      "authority": "temporary-operation",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "gate",
+          "text": "For arrivals at ATLAS-ROOM-FR from 10 May 2027 until the end of 12 May 2027, use the courtyard entrance during maintenance. This temporary instruction does not establish which entrance applies afterward."
+        },
+        {
+          "anchor": "lifetime",
+          "text": "The arrival instruction expires at 00:00 UTC on 13 May 2027. Under the records rule it and its owned derived copies must be purged at 00:00 UTC on 15 May 2027."
+        }
+      ],
+      "effective_from": "2027-05-10",
+      "effective_until_exclusive": "2027-05-13",
+      "purge_at": "2027-05-15"
+    },
+    {
+      "id": "S11",
+      "filename": "records-rule.md",
+      "title": "Demo retention and deletion rule",
+      "recorded_at": "2027-04-01",
+      "ingested_at": "2027-04-01",
+      "authority": "governance",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "delete",
+          "text": "The temporary arrival instruction in ticket-X7.md must be purged on 15 May 2027 from the simulated operational source store, extracted facts, derived overview and answer cache. Keep a content-free deletion receipt with the source ID and deletion time. A retained source ID is not a retained payload."
+        },
+        {
+          "anchor": "history",
+          "text": "Expiration and deletion are separate. Between 13 and 15 May, the instruction may explain historical arrivals but must not answer current-entry questions. After deletion, the modeled system cannot answer the historical gate question from its owned stores. Commercial policy decisions and waiver history are not deleted by this rule."
+        },
+        {
+          "anchor": "boundary",
+          "text": "This is a synthetic deletion obligation, not legal advice or a claim about any provider. The downloadable authoring corpus preserves the original invented fixture for reproducibility; the post-deletion operational-state fixture excludes its payload. Hiding a node in a browser is not proof of physical deletion or real authorization."
+        }
+      ]
+    },
+    {
+      "id": "S12",
+      "filename": "handover-thread.md",
+      "title": "Unresolved equipment handover instructions",
+      "recorded_at": "2027-05-04",
+      "ingested_at": "2027-05-05",
+      "authority": "approved-logistics-conflict",
+      "roles": [
+        "member",
+        "finance"
+      ],
+      "sections": [
+        {
+          "anchor": "instruction-a",
+          "text": "APPROVED by logistics lead A for ATLAS-KIT-DE returns from 6 May 2027: return the kit before 17:00 UTC."
+        },
+        {
+          "anchor": "instruction-b",
+          "text": "APPROVED by logistics lead B for the same ATLAS-KIT-DE returns from 6 May 2027: return the kit before 18:00 UTC."
+        },
+        {
+          "anchor": "unresolved",
+          "text": "Both leads have the same delegated authority for this logistics scope. Both statements were recorded on 4 May. No supersession or tie-breaking decision is present. Preserve the two instructions and request an authoritative resolution; do not choose by paragraph order or invent a combined policy."
+        }
+      ],
+      "effective_from": "2027-05-06"
+    }
+  ]
+}
